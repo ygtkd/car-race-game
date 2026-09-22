@@ -33,6 +33,8 @@ Write-Host 'Free-tier resource configuration verified.'
 if(-not $Publish){Write-Host 'Read-only check complete. Use -Publish only when deployment is authorized.';return}
 $zip=Join-Path $PSScriptRoot '../Builds/coast-racer-appservice.zip'
 if(-not(Test-Path -LiteralPath $zip)){throw 'Run Prepare-Publish.ps1 first.'}
-& az webapp deploy --subscription $SubscriptionId --resource-group $ResourceGroup --name $AppName --src-path $zip --type zip
+& az webapp identity assign --subscription $SubscriptionId --resource-group $ResourceGroup --name $AppName --output none
+if($LASTEXITCODE -ne 0){throw 'Managed identity setup failed.'}
+& az webapp deploy --subscription $SubscriptionId --resource-group $ResourceGroup --name $AppName --src-path $zip --type zip --track-status false
 if($LASTEXITCODE -ne 0){throw 'Deployment failed.'}
 Write-Host ('https://'+$app.defaultHostName)
