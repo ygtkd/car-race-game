@@ -1,0 +1,38 @@
+name: Diagnose SQL records
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    environment: production
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Read sanitized SQL failure codes
+        shell: bash
+        env:
+          RG: ${{ vars.AZURE_RESOURCE_GROUP }}
+          APP: ${{ vars.AZURE_APP_NAME }}
+        run: |
+          set -euo pipefail
+          az webapp log config -g "$RG" -n "$APP" --docker-container-logging filesystem -o none
+          host=$(az webapp show -g "$RG" -n "$APP" --query defaultHostName -o tsv)
+          curl --max-time 60 -sS -w '\nHTTP %{http_code}\n' "https://$host/api/records/ridge" || true
+          sleep 10
+          az webapp log download -g "$RG" -n "$APP" --log-file logs.zip
+          python3 - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('logs.zip') as z:
+              for name in z.namelist():
+                  if name.endswith(('.log','.txt')):
+                      for line in z.read(name).decode('utf-8',errors='replace').splitlines():
+                          if 'SQL_RECORDS_FAILURE type=' in line:
+                              print(line[line.index('SQL_RECORDS_FAILURE type='):])
+          PY
