@@ -1,0 +1,27 @@
+name: Inspect Azure application
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: production
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Inspect runtime
+        shell: bash
+        env:
+          RG: ${{ vars.AZURE_RESOURCE_GROUP }}
+          APP: ${{ vars.AZURE_APP_NAME }}
+        run: |
+          az webapp show -g "$RG" -n "$APP" --query '{host:defaultHostName,state:state,identity:identity.type}' -o json
+          az webapp config show -g "$RG" -n "$APP" --query '{runtime:linuxFxVersion,webSockets:webSocketsEnabled,alwaysOn:alwaysOn,startup:appCommandLine}' -o json
+          az webapp config appsettings list -g "$RG" -n "$APP" --query '[].name' -o json
+          az webapp log deployment list -g "$RG" -n "$APP" -o json
