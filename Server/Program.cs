@@ -44,7 +44,7 @@ app.MapGet("/health",()=>Results.Ok(new{status="ok",protocol=3}));
 app.MapGet("/api/courses",()=>new[]{new{id="ridge",name="山岳サーキット"},new{id="suzuka",name="鈴鹿風"}});
 app.MapGet("/api/records/{track}",async(string track,ResultStore store,CancellationToken ct)=>{
     if(track!="ridge"&&track!="suzuka")return Results.BadRequest();
-    try{return Results.Ok(await store.Read(track,ct));}catch(Exception ex){app.Logger.LogError("SQL_RECORDS_FAILURE type={Type} sqlNumber={Number} innerType={InnerType}",ex.GetType().Name,ex is Microsoft.Data.SqlClient.SqlException sql?sql.Number:0,ex.InnerException?.GetType().Name);return Results.Json(new{error="RECORDS_UNAVAILABLE"},statusCode:503);}
+    try{return Results.Ok(await store.Read(track,ct));}catch(Exception ex){if(ex is Microsoft.Data.SqlClient.SqlException firewall && firewall.Number==40615){var ip=System.Text.RegularExpressions.Regex.Match(firewall.Message,@"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b").Value;app.Logger.LogError("SQL_RECORDS_FAILURE type=Firewall clientIp={ClientIp}",ip);}app.Logger.LogError("SQL_RECORDS_FAILURE type={Type} sqlNumber={Number} innerType={InnerType}",ex.GetType().Name,ex is Microsoft.Data.SqlClient.SqlException sql?sql.Number:0,ex.InnerException?.GetType().Name);return Results.Json(new{error="RECORDS_UNAVAILABLE"},statusCode:503);}
 });
 app.Map("/ws",async(HttpContext context,RaceHub hub)=>{
     if(!context.WebSockets.IsWebSocketRequest){context.Response.StatusCode=400;return;}
