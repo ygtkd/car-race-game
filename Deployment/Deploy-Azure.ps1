@@ -21,6 +21,13 @@ $dbId='/subscriptions/'+$SubscriptionId+'/resourceGroups/'+$ResourceGroup+'/prov
 $db=Read-AzJson @('resource','show','--ids',$dbId,'--api-version','2023-08-01')
 if($db.properties.useFreeLimit -ne $true -or $db.properties.freeLimitExhaustionBehavior -ne 'AutoPause'){throw 'SQL free offer with AutoPause is required. No deployment performed.'}
 $config=Read-AzJson @('webapp','config','show','--resource-group',$ResourceGroup,'--name',$AppName)
+Write-Host ("Runtime={0}, WebSockets={1}, AlwaysOn={2}" -f $config.linuxFxVersion,$config.webSocketsEnabled,$config.alwaysOn)
+if($Publish){
+ if($plan.properties.reserved -ne $true -and $plan.reserved -ne $true){throw 'Expected a Linux App Service plan.'}
+ & az webapp config set --subscription $SubscriptionId --resource-group $ResourceGroup --name $AppName --linux-fx-version 'DOTNETCORE|10.0' --web-sockets-enabled true --always-on false --startup-file 'dotnet CoastRacer.Server.dll' --output none
+ if($LASTEXITCODE -ne 0){throw 'App Service configuration update failed.'}
+ $config=Read-AzJson @('webapp','config','show','--resource-group',$ResourceGroup,'--name',$AppName)
+}
 if($config.linuxFxVersion -ne 'DOTNETCORE|10.0' -or $config.alwaysOn -eq $true -or $config.webSocketsEnabled -ne $true){throw 'Expected .NET 10 Linux, WebSockets enabled and Always On disabled.'}
 Write-Host 'Free-tier resource configuration verified.'
 if(-not $Publish){Write-Host 'Read-only check complete. Use -Publish only when deployment is authorized.';return}
