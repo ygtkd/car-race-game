@@ -1,0 +1,60 @@
+name: Deploy racing game to Azure
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: azure-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+      AZURE_APP_NAME: ${{ vars.AZURE_APP_NAME }}
+      AZURE_SQL_SERVER: ${{ vars.AZURE_SQL_SERVER }}
+      AZURE_SQL_DATABASE: ${{ vars.AZURE_SQL_DATABASE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Check required configuration
+        shell: pwsh
+        run: |
+          foreach ($key in @('AZURE_SUBSCRIPTION_ID','AZURE_RESOURCE_GROUP','AZURE_APP_NAME','AZURE_SQL_SERVER','AZURE_SQL_DATABASE')) {
+            if (-not [Environment]::GetEnvironmentVariable($key)) { throw "Missing production variable: $key" }
+          }
+      - name: Build deployment package
+        shell: pwsh
+        run: ./Deployment/Prepare-CI.ps1
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Verify free tiers and deploy
+        shell: pwsh
+        run: |
+          ./Deployment/Deploy-Azure.ps1 -SubscriptionId $env:AZURE_SUBSCRIPTION_ID -ResourceGroup $env:AZURE_RESOURCE_GROUP -AppName $env:AZURE_APP_NAME -SqlServer $env:AZURE_SQL_SERVER -DatabaseName $env:AZURE_SQL_DATABASE -Publish
+      - name: Verify public application
+        shell: pwsh
+        run: |
+          $hostName = az webapp show --subscription $env:AZURE_SUBSCRIPTION_ID --resource-group $env:AZURE_RESOURCE_GROUP --name $env:AZURE_APP_NAME --query defaultHostName -o tsv
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot resolve deployment hostname.' }
+          $baseUrl = "https://$hostName"
+          $ok = $false
+          for ($attempt=0; $attempt -lt 12; $attempt++) {
+            try {
+              $health = Invoke-RestMethod "$baseUrl/health" -TimeoutSec 20
+              $page = Invoke-WebRequest "$baseUrl/play/" -TimeoutSec 20
+              if ($page.StatusCode -eq 200) { $ok=$true; break }
+            } catch { Write-Host 'Waiting for application startup.' }
+            Start-Sleep -Seconds 10
+          }
+          if (-not $ok) { throw 'Public application health check failed.' }
+          "Game: $baseUrl/play/" >> $env:GITHUB_STEP_SUMMARY

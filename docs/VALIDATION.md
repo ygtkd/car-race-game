@@ -1,0 +1,52 @@
+# 検証結果（2026-09-22）
+
+## 確認済み
+- Unity 6000.6.2f1で最終Webビルド成功。Logs/pro-racer-final-retry.log。
+- 共通走行ロジック: 両コースの高低差、停止中の周回増加防止、ショートカット防止、AIの3周完走、復帰ペナルティを検証。
+- 2つの独立WebSocketクライアントで両コースを3周完走し、順位・結果一致と再戦を確認。実際の結果はLogs/online-full-race-results.json。
+- 通信検証8項目: 2接続制限、不正形式拒否、位置・周回の偽装拒否、入力途絶時減速、20秒以内の復帰、復帰時のゲート保持、切断後のレース継続、期限切れセッション拒否。Logs/protocol-checks.json。
+- Edgeのモバイルエミュレーション: 日本語初期表示、英語設定保存、コース変更、カウントダウン、ハンドルとアクセルの同時タッチ、ブレーキ、一時停止、2ブラウザで入室・準備・オンライン開始。ブラウザ実行時エラーなし。Logs/pro-browser-checks.json。
+- Bicepのコンパイル成功。App Service F1、SQL無料枠有効、無料枠超過時AutoPauseを生成JSONでも確認。
+- Web主要データ・コードはBrotli事前圧縮で約18MBから約5.2MBに縮小。
+
+## 未確認・制約
+- 物理的なiPhone/Android端末での操作、メモリ使用量、FPSは未検証。モバイルエミュレーションは実機検証の代替にはなりません。
+- Azureリソースの作成・公開は未実施。Azure SQLへの実接続、マネージドID権限、SQL休止からの復帰、F1上の負荷と通信は公開時に検証が必要です。
+- ローカル対戦結果は開発用JSONに保存して検証しました。本番はSQL接続を必須とします。
+- 初期設定は同時接続2人。4人構成の負荷検証は未実施です。
+- 鈴鹿風コースは特徴と形状を取り入れた短縮・簡略モデルで、公式の精密再現ではありません。
+- 車両挙動は独自の軽量モデルです。市販シミュレーターと同等の物理再現を保証するものではありません。
+- サーバー再起動時に進行中の部屋は失われます。完走結果のみ永続化します。
+
+## 再検証
+Deployment/Verify-Code.ps1で共通ロジックとサーバーのビルド、PowerShell構文を確認できます。
+ローカルサーバー起動後、Unity同梱Node.jsでDeployment/Smoke-Web.mjsとDeployment/Test-Network.mjsを順番に実行できます。
+両コースの実時間完走テストはdotnet run --project Tests/Network/Network.csprojを使用します（接続先はテストコード参照）。
+## メニュー・操作UIの改修
+
+- 専用メニューからモード選択、コース選択へ進む構成へ変更。説明文・キャッチコピーを削除し、コース名は「鈴鹿風」に統一しました。再現範囲の説明はコース資料に残しています。
+- 起動時、コース選択、オンライン待機中はUnityキャンバスを非表示にします。スタート後に表示します。
+- 左右タッチで操舵し、長押しで滑らかに舵角を増やします。左右移動による切り替え、リリースによる中央復帰、タッチキャンセル、ペダルとの同時操作を検証しました。
+- 設定を暗いモーダルへ変更し、言語設定を移動。×、背景への実際のタッチ、Escによる終了、内部クリックでは閉じないことを確認しました。
+- ソロ設定表示中の一時停止・再開と、オンライン設定表示中のレース継続を確認しました。
+- Unity最終Webビルド成功: Logs/menu-ui-final-build.log。
+- Edgeモバイルエミュレーションの結果: Logs/pro-browser-checks.json。物理スマホでは未検証です。
+- スクリーンショット: Logs/pro-menu.png、Logs/pro-settings.png、Logs/pro-suzuka-menu.png。
+- 公開用ZIPを更新しました。Azure公開は実施していません。
+## Club拡張の検証（再開後）
+
+- 最新の共通ロジックとサーバーはビルド成功。サーバーは警告0・エラー0。
+- 2コース、4車種、開始順位4通り、スペシャル有無の16レース・64台分を再計測し全車完走。Logs/vehicle-balance.json。
+- 実通信13項目: 2接続制限、不正形式拒否、古いレースIDで開始しないこと、全員ロード待ち、位置・周回・車種・コイン・ゲージの偽装拒否、無充填での発動拒否、3コインの共有状態配信、入力途絶減速、再接続、復帰時ゲート保持、切断後継続、期限切れ拒否。
+- ブラウザ55項目: 新メニュー、車体選択、展示回転、名前表示、音源デコード、BGM/SE個別音量・ミュートと保存、言語保存、左右操舵・マルチタッチ、ロード画面、ソロ設定中の停止・再開、退出確認、記録・バッジの重複防止・装着・復元、オンライン開始・設定中継続。Logs/club-browser-checks.json。
+- 記録・バッジの保存テストは明示的な完走結果fixtureを使い、レース走行の検証とは分離。fixtureは検証専用ブラウザ、検証用ポート5083で使用。
+- 音源のWAV形式・クリッピング・ループ境界とHTML/JS参照の170項目を確認。Logs/club-assets-checks.json。
+- 画面画像: Logs/club-menu.png、club-settings.png、club-vehicles.png、club-gallery.png、club-gallery-badge.png、club-records.png、club-driving.png、club-confirm.png、club-online.png。
+- 物理iPhone/Android、実機スピーカーでの聴感、Azure SQL実接続、インターネット上の対戦は未検証。
+- 仕様・車種性能・バランス・素材の出所はCLUB_EXPANSION.md。
+最終確認追加:
+- Logs/club-final-build.log にCOAST_RACER_BUILD_OK、Unity終了コード0。
+- Logs/club-online-fullrace.log で両コースの2人完走、全員の順位・タイム一致、再戦を確認。開発用JSON保存での検証。
+- 公開用ZIP Builds/coast-racer-appservice.zip を更新。梱包版をhttp://localhost:5080/play/で起動。
+- 容量監視付きビルドで残り1GiB未満の場合の自動停止を実装。今回の再開後は停止基準に達せずビルド完了。
+- GitHub Actions / Azureへの実公開は未実施。既存のクラウド制約を維持。
