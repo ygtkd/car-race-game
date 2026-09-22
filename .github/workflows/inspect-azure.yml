@@ -25,3 +25,8 @@ jobs:
           az webapp config show -g "$RG" -n "$APP" --query '{runtime:linuxFxVersion,webSockets:webSocketsEnabled,alwaysOn:alwaysOn,startup:appCommandLine}' -o json
           az webapp config appsettings list -g "$RG" -n "$APP" --query '[].name' -o json
           az webapp log deployment list -g "$RG" -n "$APP" -o json
+          az webapp show -g "$RG" -n "$APP" --query '{principal:identity.principalId,outbound:outboundIpAddresses}' -o json
+          az sql server show -g "$RG" -n takeda-server1 --query '{host:fullyQualifiedDomainName,network:publicNetworkAccess,administrators:administrators}' -o json
+          az sql server firewall-rule list -g "$RG" -s takeda-server1 -o json
+          az sql db show -g "$RG" -s takeda-server1 -n takeda-free-database --query '{status:status,free:useFreeLimit,limit:freeLimitExhaustionBehavior}' -o json
+          az webapp config appsettings list -g "$RG" -n "$APP" -o json | python3 -c 'import json,sys; a={x["name"]:x["value"] for x in json.load(sys.stdin)}; c=a.get("ConnectionStrings__RacerSql",""); fields=dict(x.split("=",1) for x in c.split(";") if "=" in x); print(json.dumps({k:v for k,v in fields.items() if k.strip().lower() in ["server","database","authentication"]})); print("Production:",a.get("ASPNETCORE_ENVIRONMENT")=="Production")'
