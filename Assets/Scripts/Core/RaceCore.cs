@@ -23,6 +23,7 @@ namespace CoastRacer.Core
     {
         public const int Samples=640;
         public const int Gates=24;
+        public const float RoadEdge=8.1f, GrassEdge=16f, BarrierEdge=25f;
         public readonly string id;
         public readonly Point[] points=new Point[Samples];
         public readonly float[] distance=new float[Samples+1];
@@ -114,7 +115,7 @@ namespace CoastRacer.Core
     {
         public string id="",name="",vehicle="apex",badge="";
         public float recoveryRemaining,recoveryElapsed,recoveryProtection,safeDistance;
-        public bool bot,estimated,hasFront;public Point lastFront;
+        public bool bot,estimated,hasFront,onGrass;public Point lastFront,safePoint;public int safeIndex;public float safeYaw;
         public float gauge,specialTime,jamTime,jamImmunity,distance,furthestDistance;public int coins,specialUses;
         public float x,y,z,yaw,speed,vx,vz,steering,elapsed,lapStart,bestLap,finishTime,offroad,slip;
         public int index,lap,gate=1,rank,gear=1;
@@ -130,13 +131,13 @@ namespace CoastRacer.Core
             Point p=track.points[0],t=track.Tangent(0);
             float side=slot%2==0?-2.5f:2.5f;
             p+=new Point(t.z,0,-t.x)*side-t*(slot/2*5);
-            return new CarState{x=p.x,y=p.y,z=p.z,yaw=track.Yaw(0)};
+            int index=track.Nearest(p);float distance=track.RoadDistance(p,index);return new CarState{x=p.x,y=p.y,z=p.z,yaw=track.Yaw(0),index=index,safeIndex=index,safeDistance=distance,safePoint=track.At(distance),safeYaw=track.Yaw(index)};
         }
         public static void Recover(CarState car,Track t)
         {
-            int index=(car.gate-1)*Track.Samples/Track.Gates;
+            int index=car.safeIndex;
             // A penalty makes recovery slower than driving. Returning behind the next gate never awards progress.
-            Point p=t.At(car.safeDistance);index=t.Nearest(p,car.index);car.x=p.x;car.y=p.y;car.z=p.z;car.yaw=t.Yaw(index);
+            Point p=car.safePoint;car.x=p.x;car.y=p.y;car.z=p.z;car.yaw=car.safeYaw;car.onGrass=false;
             car.hasFront=false;car.speed=car.vx=car.vz=0;car.index=index;car.elapsed+=3;car.offroad=0;car.recoveryRemaining=car.recoveryElapsed=0;car.recoveryProtection=2;
         }
         public static void StepCar(CarState c,DriveInput input,Track t,float dt)
@@ -151,7 +152,7 @@ namespace CoastRacer.Core
             c.index=t.Nearest(c.Position,c.index);
             Point center=t.points[c.index],forward=t.Tangent(c.index);
             float lateral=(c.x-center.x)*forward.z-(c.z-center.z)*forward.x;
-            bool grass=Math.Abs(lateral)>t.width*.5f;
+            bool grass=Math.Abs(lateral)>Track.GrassEdge,runoff=Math.Abs(lateral)>Track.RoadEdge&&!grass;
             float steer=Mathx.Clamp(input.steer* Mathx.Clamp(input.sensitivity,.5f,1.6f),-1,1);
             c.steering=Mathx.Move(c.steering,steer,dt*(assist>0?2.8f:5));
             float throttle=Mathx.Clamp(input.throttle,0,1),brake=Mathx.Clamp(input.brake,0,1);
@@ -160,6 +161,7 @@ namespace CoastRacer.Core
             float slope=forward.y*(float)Math.Cos(Mathx.Angle(c.yaw-t.Yaw(c.index)));
             float acceleration=throttle*spec.acceleration*(1-.35f*c.speed/spec.maxSpeed)*(boost?1.35f:cadence?1.30f:feast?1.20f:gripActive?1.12f:1)-brake*15-.32f-c.speed*c.speed*.0015f-slope*9.81f;
             if(c.jamTime>0)acceleration-=2;
+            if(runoff)acceleration-=2.5f+c.speed*.22f;
             if(grass)acceleration-=(3+c.speed*.18f)*(gripActive?.5f:1);
             c.speed=Mathx.Clamp(c.speed+acceleration*dt,0,spec.maxSpeed*(boost?1.12f:1));
             float maxAngle=.58f/(1+c.speed*.04f);
@@ -175,12 +177,12 @@ namespace CoastRacer.Core
             c.index=t.Nearest(c.Position,c.index);center=t.points[c.index];forward=t.Tangent(c.index);
             c.y=center.y;
             lateral=(c.x-center.x)*forward.z-(c.z-center.z)*forward.x;
-            c.offroad=Math.Abs(lateral)>t.width*.5f?1:0;
-            if(Math.Abs(lateral)>8.1f){c.recoveryElapsed+=dt;c.recoveryRemaining=Math.Max(0,5-c.recoveryElapsed);if(c.recoveryElapsed>=5){Recover(c,t);return;}}else if(Math.Abs(lateral)<t.width*.5f-.2f){c.recoveryElapsed=c.recoveryRemaining=0;c.safeDistance=t.RoadDistance(c.Position,c.index);}
+            c.onGrass=Math.Abs(lateral)>Track.GrassEdge;c.offroad=Math.Abs(lateral)>Track.RoadEdge?1:0;
+            if(c.onGrass){c.recoveryElapsed+=dt;c.recoveryRemaining=Math.Max(0,5-c.recoveryElapsed);if(c.recoveryElapsed>=5){Recover(c,t);return;}}else{c.recoveryElapsed=c.recoveryRemaining=0;if(Math.Abs(lateral)<=Track.RoadEdge){c.safeDistance=t.RoadDistance(c.Position,c.index);c.safePoint=t.At(c.safeDistance);c.safeIndex=c.index;c.safeYaw=t.Yaw(c.index);}}
             c.wrongWay=c.speed>3 && Math.Cos(Mathx.Angle(c.yaw-t.Yaw(c.index)))<-.25;
             // Barrier at the outer runoff edge. Vertical layers are selected using local track continuity.
-            if(Math.Abs(lateral)>t.width*.5f+9){
-                float bound=Math.Sign(lateral)*(t.width*.5f+8.8f);
+            if(Math.Abs(lateral)>Track.BarrierEdge){
+                float bound=Math.Sign(lateral)*(Track.BarrierEdge-.2f);
                 c.x=center.x+forward.z*bound;c.z=center.z-forward.x*bound;
                 c.speed*=.55f;c.vx*=.35f;c.vz*=.35f;
             }
@@ -220,7 +222,7 @@ namespace CoastRacer.Core
         public static void EstimateBots(IList<CarState> cars,Track t){
             float now=0;foreach(var c in cars)now=Math.Max(now,c.elapsed);
             foreach(var c in cars){if(!c.bot||c.finished||c.dnf)continue;
-                float position=t.distance[c.index];float left=Math.Max(1,Laps*t.Length-c.lap*t.Length-position);float seconds=0;
+                float position=Math.Min(t.distance[c.index],t.distance[Math.Min(Track.Samples,c.gate*Track.Samples/Track.Gates)]);float left=Math.Max(1,Laps*t.Length-c.lap*t.Length-position);float seconds=0;
                 for(float d=0;d<left;d+=10){int i=t.Nearest(t.At(position+d));float speed=Math.Max(8,Math.Min(Vehicles.Get(c.vehicle).maxSpeed*.72f,t.TargetSpeed(i)*.9f));seconds+=Math.Min(10,left-d)/speed;}
                 c.finishTime=now+seconds;c.finished=true;c.estimated=true;c.speed=c.vx=c.vz=0;
             }Rank(cars,t);

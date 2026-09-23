@@ -22,7 +22,7 @@ Console.WriteLine("All core checks passed.");
 // Automatic recovery uses elapsed simulation time, cancels in range, and preserves gates.
 {
  var t=new Track("ridge");var c=Simulation.Spawn(t);var tangent=t.Tangent(0);var centre=t.points[0];
- void Outside(){c.x=centre.x+tangent.z*15;c.z=centre.z-tangent.x*15;c.index=0;c.speed=c.vx=c.vz=0;}
+ void Outside(){c.x=centre.x+tangent.z*18;c.z=centre.z-tangent.x*18;c.index=0;c.speed=c.vx=c.vz=0;}
  Outside();for(int i=0;i<100;i++)Simulation.StepCar(c,new DriveInput(),t,.02f);
  Check(c.recoveryRemaining>0&&c.recoveryProtection==0,"automatic recovery waits five seconds");
  c.x=centre.x;c.z=centre.z;Simulation.StepCar(c,new DriveInput(),t,.02f);Check(c.recoveryRemaining==0,"returning in range cancels countdown");

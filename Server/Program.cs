@@ -24,10 +24,10 @@ app.Use(async(context,next)=>{
     // Serve offline-compressed public game assets, avoiding compression CPU work on F1.
     string requestPath=context.Request.Path.Value??"";
     bool acceptsBr=context.Request.Headers.AcceptEncoding.ToString().Split(',').Any(x=>x.Trim()=="br");
-    if(acceptsBr && (HttpMethods.IsGet(context.Request.Method)||HttpMethods.IsHead(context.Request.Method)) && requestPath.StartsWith("/play/Build/",StringComparison.Ordinal)){
+    if(acceptsBr && (HttpMethods.IsGet(context.Request.Method)||HttpMethods.IsHead(context.Request.Method)) && (requestPath.StartsWith("/play/Build/",StringComparison.Ordinal)||System.Text.RegularExpressions.Regex.IsMatch(requestPath,@"^/play/releases/[a-f0-9]{12}/Build/[^/]+$"))){
         string file=Path.GetFileName(requestPath);
         if(provider.TryGetContentType(file,out var contentType)){
-            string compressed=Path.Combine(staticRoot,"play","Build",file+".br");
+            string compressed=requestPath.StartsWith("/play/Build/",StringComparison.Ordinal)?Path.Combine(staticRoot,"play","Build",file+".br"):Path.Combine(staticRoot,requestPath.TrimStart('/').Replace('/',Path.DirectorySeparatorChar)+".br");
             if(File.Exists(compressed)){
                 context.Response.ContentType=contentType;context.Response.Headers.ContentEncoding="br";
                 context.Response.Headers.Vary="Accept-Encoding";context.Response.Headers.CacheControl="no-cache";
@@ -39,7 +39,7 @@ app.Use(async(context,next)=>{
     }
     await next();
 });
-app.UseStaticFiles(new StaticFileOptions{ContentTypeProvider=provider,OnPrepareResponse=context=>{if(new[]{".html",".css",".js"}.Contains(Path.GetExtension(context.File.Name)))context.Context.Response.Headers.CacheControl="no-cache";}});
+app.UseStaticFiles(new StaticFileOptions{ContentTypeProvider=provider,OnPrepareResponse=context=>{if(new[]{".html",".css",".js"}.Contains(Path.GetExtension(context.File.Name)))context.Context.Response.Headers.CacheControl="no-cache";if(context.File.Name=="release.json")context.Context.Response.Headers.CacheControl="no-store";}});
 app.MapGet("/api/rooms",(RaceHub hub)=>hub.ListRooms());
 app.MapGet("/health",()=>Results.Ok(new{status="ok",protocol=3}));
 app.MapGet("/api/courses",()=>new[]{new{id="ridge",name="山岳サーキット"},new{id="suzuka",name="鈴鹿サーキット"}});
@@ -144,7 +144,7 @@ public sealed class RaceHub:BackgroundService
                 }
             }
         }catch(OperationCanceledException){}catch(WebSocketException){}finally{
-            lock(gate)if(player!=null&&player.peer==peer){player.state.connected=false;player.disconnectedAt=Environment.TickCount64;if(voluntaryLeave&&!player.state.finished)player.state.dnf=true;player.input=new DriveInput{brake=1};player.peer=null;if(room!=null){if(room.phase=="lobby"){room.players.Remove(player);foreach(var member in room.players)member.ready=false;room.owner=room.players.FirstOrDefault(p=>!p.state.bot&&p.state.connected)?.state.id??"";}BroadcastLobby(room);}}
+            lock(gate)if(player!=null&&player.peer==peer){player.state.connected=false;player.disconnectedAt=Environment.TickCount64;if(voluntaryLeave&&!player.state.finished)player.state.dnf=true;player.input=new DriveInput{brake=1};player.peer=null;if(room!=null){if(room.phase=="lobby"){if(voluntaryLeave)room.players.Remove(player);foreach(var member in room.players)member.ready=false;room.owner=room.players.FirstOrDefault(p=>!p.state.bot&&p.state.connected)?.state.id??"";}BroadcastLobby(room);}}
             if(socket.State==WebSocketState.CloseReceived){try{using var closeTimeout=new CancellationTokenSource(2000);await socket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure,"Closed",closeTimeout.Token);}catch{}}
             peer.Close();socket.Abort();try{await sender;}catch{}
         }
@@ -189,8 +189,7 @@ public sealed class RaceHub:BackgroundService
                         room.session.Resolve(room.players.Select(p=>p.state).ToList(),.05f);
                         Simulation.Rank(room.players.Select(p=>p.state).ToList(),room.track);
                         if(room.firstFinish==0 && room.players.Any(p=>p.state.finished))room.firstFinish=room.time;
-                        bool deadline=room.time>900||(room.firstFinish>0&&room.time-room.firstFinish>90);
-                        if(deadline)foreach(var p in room.players.Where(p=>!p.state.finished))p.state.dnf=true;
+
                         if(Simulation.SettleOnline(states,room.track)){
                             room.phase="finished";Simulation.Rank(room.players.Select(p=>p.state).ToList(),room.track);
                             if(!room.recorded){room.recorded=true;saves.Add(room.players.Where(p=>!p.state.bot&&!p.state.estimated&&p.state.finished&&!p.state.dnf).Select(p=>new RaceResult(room.raceId,p.state.id,p.state.name,room.track.id+"-2lap",p.state.rank,p.state.finishTime,p.state.bestLap,p.state.dnf,DateTime.UtcNow)).ToArray());}

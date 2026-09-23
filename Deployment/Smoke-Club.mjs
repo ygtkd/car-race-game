@@ -148,7 +148,7 @@ try{
  // A deterministic completed-result fixture exercises local persistence, not driving physics.
  await first.evaluate('window.fixture={id:"local",name:"検証レーサー",vehicle:"swift",finished:true,dnf:false,rank:1,finishTime:240,bestLap:80,distance:5000,coins:25,specialUses:3};Club.record([fixture],{online:false,track:"ridge",raceId:"persistence-fixture"});Club.record([fixture],{online:false,track:"ridge",raceId:"persistence-fixture"})');
  await first.evaluate('Club.showAwards(()=>window.awardsClosed=true)');
- assert(await first.evaluate('!document.querySelector("#awardOverlay").hidden && document.querySelectorAll(".awardItem").length===2'),'New badges shown together before returning to menu');
+ assert(await first.evaluate('!document.querySelector("#awardOverlay").hidden && document.querySelectorAll(".awardItem img").length===2'),'New badge images shown before returning to menu');
  await first.evaluate('document.querySelector("#awardClose").click()');
  assert(await first.evaluate('window.awardsClosed && document.querySelector("#awardOverlay").hidden'),'Badge dismissal continues to menu');
  await first.evaluate('Club.record([{...fixture,bot:true}],{online:false,track:"ridge",raceId:"cpu-fixture"})');
@@ -184,8 +184,11 @@ try{
  await second.call('Page.bringToFront');await delay(1400);
  await first.call('Page.bringToFront');
  assert(await waitFor(first,'Racer.telemetry?.phase==="race"',15),'Owner enters online race');
+ assert(await first.evaluate('(()=>{const d=structuredClone(Racer.telemetry);d.cars[0].onGrass=false;d.cars[0].wrongWay=false;d.cars[0].recoveryRemaining=4;Racer.receive(d);return document.querySelector("#drivingWarning").textContent===""})()'),'Non-grass telemetry never shows recovery warning');
+ assert(await first.evaluate('(()=>{const d=structuredClone(Racer.telemetry);d.cars[0].onGrass=true;d.cars[0].recoveryRemaining=4;Racer.receive(d);return document.querySelector("#drivingWarning").textContent.includes("4秒")})()'),'Grass telemetry shows remaining seconds');
+ assert(await first.evaluate('(()=>{const e=document.querySelector("#centerMessage");e.textContent="3 2 1 START";return getComputedStyle(e).display==="none"})()'),'Legacy countdown DOM is never visible');
  assert(await first.evaluate('Racer.telemetry.cars.length===8 && Racer.telemetry.cars.filter(c=>c.bot).length===6'),'Host selected six CPUs with two humans');
- assert(await first.evaluate('document.querySelector("#centerMessage").textContent===""'),'No start text overlapping lights');
+ assert(await first.evaluate('getComputedStyle(document.querySelector("#centerMessage")).display==="none"'),'No start text overlapping lights');
  await second.call('Page.bringToFront');
  assert(await waitFor(second,'Racer.telemetry?.phase==="race"',15),'Guest enters same online race');
  await first.call('Page.bringToFront');
@@ -193,6 +196,12 @@ try{
  const before=await first.evaluate('Racer.telemetry.cars[0].elapsed');await delay(1200);
  assert(await first.evaluate('!document.querySelector("#settingsOverlay").hidden && Racer.telemetry.cars[0].elapsed')>before,'Online race continues behind settings');
  await first.evaluate('document.querySelector("#closeSettings").click()');
+ for(let repeat=0;repeat<10;repeat++){
+ await first.evaluate('document.querySelector("#pauseButton").click()');await delay(70);assert(await first.evaluate('!document.querySelector("#confirmExit").hidden && Racer.online'),'Online pause opens local confirmation '+repeat);
+ await first.evaluate('document.querySelector("#cancelExit").click();document.querySelector("#raceSettings").click()');await delay(100);await first.evaluate('document.querySelector("#closeSettings").click()');
+ const point=await first.evaluate('(()=>{const r=document.querySelector("#wheel").getBoundingClientRect();return {x:r.x+r.width*.75,y:r.y+r.height*.5}})()');
+ await first.call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:77,...point}]});await delay(160);assert(await first.evaluate('Racer.drive.steer>.1'),'Online steering survives modal cycle '+repeat);await first.call('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});await delay(100);assert(await first.evaluate('Racer.drive.steer===0'),'Online steering releases '+repeat);
+ }
  await screenshot(first,'club-online.png');await screenshot(second,'club-online-guest.png');
  await first.evaluate('document.querySelector("#pauseButton").click();document.querySelector("#acceptExit").click()');await second.evaluate('document.querySelector("#pauseButton").click();document.querySelector("#acceptExit").click()');
  await waitFor(first,'Racer.screen==="menu"');
@@ -203,8 +212,9 @@ try{
  await first.evaluate('document.querySelector("#createRoom").click()');assert(await waitFor(first,'Racer.online && Racer.screen==="lobby"',10),'Fresh connection works after protocol error');
  await first.evaluate('oldSocketHandler({data:JSON.stringify({type:"joined",id:"stale",token:"stale",code:"STALE"})})');
  assert(await first.evaluate('document.querySelector("#codeDisplay").textContent!=="STALE"'),'Messages from old socket cannot mutate current room');
- await first.evaluate('testSocket.onmessage=null');
- assert(await waitFor(first,'!Racer.online && Racer.screen==="connect" && testSocket.readyState===3',20),'Silent connection timeout closes socket');
+ await first.evaluate('window.previousSilentSocket=testSocket;testSocket.onmessage=null');
+ assert(await waitFor(first,'testSocket!==window.previousSilentSocket',22),'Silence triggers new connection');
+ assert(await waitFor(first,'Racer.online && testSocket.readyState===1',25),'Silent connection can recover within grace');
  await first.evaluate('window.WebSocket=OriginalWebSocket');
  assert(errors.length===0,'No browser runtime errors');
  fs.writeFileSync(path.join(logs,'club-browser-checks.json'),JSON.stringify({checks,errors,note:'Desktop Edge with mobile emulation; not physical iPhone/Android testing.'},null,2));

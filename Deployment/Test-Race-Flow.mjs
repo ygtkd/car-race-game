@@ -1,4 +1,4 @@
-﻿import fs from 'node:fs';
+import fs from 'node:fs';
 const base=process.argv[2]||'http://127.0.0.1:5089';const checks=[];const delay=ms=>new Promise(r=>setTimeout(r,ms));
 function check(v,label){if(!v)throw Error(label);checks.push(label);console.log('PASS '+label);}
 async function peer(){const ws=new WebSocket(base.replace('http','ws')+'/ws');const queue=[];ws.onmessage=e=>queue.push(JSON.parse(e.data));await new Promise((ok,no)=>{ws.onopen=ok;ws.onerror=no});return{ws,send:data=>ws.send(JSON.stringify(data)),async until(fn,ms=6000){const end=Date.now()+ms;while(Date.now()<end){const n=queue.findIndex(fn);if(n>=0)return queue.splice(n,1)[0];await delay(20);}throw Error('Timed out waiting for message');}};}
@@ -11,7 +11,7 @@ const peers=[];try{
  let rooms=await(await fetch(base+'/api/rooms')).json();check(!rooms.some(r=>r.code===code),'CPU slots make room full');
  const c=await peer();peers.push(c);c.send({action:'join',code,name:'Full'});check((await c.until(d=>d.type==='error')).code==='ROOM_FULL','Joining reserved CPU slots rejected');c.ws.close();
  a.send({action:'ready',ready:true});a.send({action:'configure',track:'suzuka',bots:5});const reset=await a.until(d=>d.type==='lobby'&&d.bots===5);check(reset.players.every(p=>!p.ready),'Settings change clears readiness');
- a.send({action:'configure',track:'suzuka',bots:6});await a.until(d=>d.type==='lobby'&&d.bots===6);
+ a.send({action:'configure',track:'suzuka',bots:6});await a.until(d=>d.type==='lobby'&&d.bots===6);await delay(200);
  a.send({action:'ready',ready:true});b.send({action:'ready',ready:true});
  const load=await a.until(d=>d.type==='state'&&d.phase==='loading');check(load.track==='suzuka'&&load.cars.length===8&&load.cars.filter(x=>x.bot).length===6,'Guest cannot change host setup; eight cars start automatically');
  a.send({action:'loaded',raceId:'wrong'});b.send({action:'loaded',raceId:load.raceId});await delay(150);check((await a.until(d=>d.type==='state'&&d.phase==='loading')).phase==='loading','Invalid load acknowledgement does not start race');

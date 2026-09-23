@@ -28,10 +28,16 @@ namespace CoastRacer {
   void Beam(Transform parent,Vector3 from,Vector3 to,float width,Material material){var item=Shape("Frame",PrimitiveType.Cube,(from+to)*.5f,new Vector3(width,width,Vector3.Distance(from,to)),material,parent);item.transform.localRotation=Quaternion.LookRotation(to-from);}
   void CreateBackdrop(){var sky=new Material(Resources.Load<Shader>("CoastBackdrop"));sky.SetFloat("_Mountain",track.id=="ridge"?1:0);if(RenderSettings.skybox!=null)Destroy(RenderSettings.skybox);RenderSettings.skybox=sky;cam.clearFlags=CameraClearFlags.Skybox;}
   void ExtraScenery(Transform scenery){
+   if(track.id=="suzuka"){
+    var distant=Mat("Circuit buildings",new Color(.47f,.51f,.53f));
+    float minX=0,maxX=0,minZ=0,maxZ=0;foreach(var point in track.points){minX=Mathf.Min(minX,point.x);maxX=Mathf.Max(maxX,point.x);minZ=Mathf.Min(minZ,point.z);maxZ=Mathf.Max(maxZ,point.z);}
+    for(int n=0;n<16;n++){float f=(n%4+.5f)/4;int side=n/4;var p=side<2?new Vector3(Mathf.Lerp(minX,maxX,f),8,side==0?minZ-75:maxZ+75):new Vector3(side==2?minX-75:maxX+75,8,Mathf.Lerp(minZ,maxZ,f));Shape("Distant circuit facility",PrimitiveType.Cube,p,new Vector3(35,14+n%4*5,22),distant,scenery);for(int row=0;row<2;row++)Shape("Facility glazing",PrimitiveType.Cube,p+new Vector3(0,row*4,11.1f),new Vector3(28,1.5f,.1f),glass,scenery);}
+    var hub=new Vector3(minX-70,40,minZ-70);for(int n=0;n<20;n++){float a=n*Mathf.PI*2/20,b=(n+1)*Mathf.PI*2/20;var p=hub+new Vector3(Mathf.Cos(a)*28,Mathf.Sin(a)*28,0);Beam(scenery,p,hub+new Vector3(Mathf.Cos(b)*28,Mathf.Sin(b)*28,0),.7f,white);if(n%2==0){Beam(scenery,hub,p,.3f,steel);Shape("Observation wheel cabin",PrimitiveType.Cube,p,new Vector3(3,3,3),red,scenery);}}Beam(scenery,hub,hub+new Vector3(-13,-40,0),1,steel);Beam(scenery,hub,hub+new Vector3(13,-40,0),1,steel);
+   }
    var rock=Mat("Rock",new Color(.30f,.32f,.29f));
    for(int i=12;i<CoastRacer.Core.Track.Samples;i+=24){var p=track.points[i];var t=track.Tangent(i);var right=new Vector3(t.z,0,-t.x);var center=V(p);
     if(track.id=="ridge"){
-     for(int side=-1;side<=1;side+=2){Shape("Mountain rock",PrimitiveType.Sphere,center+right*side*42+Vector3.up*3,new Vector3(12,10+(i%5),16),rock,scenery);for(int n=0;n<3;n++){var pos=center+right*side*(23+n*6)+new Vector3(n*2,0,-n*2);Shape("Pine trunk",PrimitiveType.Cylinder,pos+Vector3.up*2,new Vector3(.45f,2,.45f),rubber,scenery);Shape("Pine foliage",PrimitiveType.Capsule,pos+Vector3.up*6,new Vector3(3.5f,5,3.5f),grass,scenery);}}
+     for(int side=-1;side<=1;side+=2){Shape("Mountain rock",PrimitiveType.Sphere,center+right*side*42+Vector3.up*3,new Vector3(12,10+(i%5),16),rock,scenery);for(int n=0;n<3;n++){var pos=center+right*side*(23+n*6)+new Vector3(n*2,0,-n*2);NaturalTree(scenery,pos,i*7+n+side*13,true);}}
     }else{
      for(int row=0;row<4;row++){var seat=Shape("Grandstand tier",PrimitiveType.Cube,center+right*(24+row*2)+Vector3.up*(1+row),new Vector3(2,1,12),row%2==0?white:red,scenery);seat.transform.rotation=Quaternion.Euler(0,track.Yaw(i)*Mathf.Rad2Deg,0);}
      Shape("Light mast",PrimitiveType.Cylinder,center-right*21+Vector3.up*5,new Vector3(.15f,5,.15f),steel,scenery);Shape("Floodlight",PrimitiveType.Cube,center-right*21+Vector3.up*10,new Vector3(2,.45f,.45f),white,scenery);

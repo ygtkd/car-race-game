@@ -145,10 +145,10 @@ namespace CoastRacer
             track=new Track(id);session=new RaceSession(track);displayedCoins=session.coins;world=new GameObject("Circuit "+track.id);
             TerrainSurface();
             Ribbon("Landscape ribbon",-45,45,-.3f,grass);
-            Ribbon("Runoff",-16,16,-.05f,grass);
+            Ribbon("Runoff",-Track.GrassEdge,Track.GrassEdge,-.05f,Mat("Runoff",new Color(.34f,.36f,.33f)));
             Ribbon("Racing surface",-7,7,0,road);
             foreach(int side in new[]{-1,1}){
-                float a=side<0?-8.1f:7.1f,b=side<0?-7.1f:8.1f;
+                float a=side<0?-Track.RoadEdge:7f,b=side<0?-7f:Track.RoadEdge;
                 Ribbon("White curb",a,b,.025f,white);Ribbon("Red curb",a,b,.04f,red,true);
                 Ribbon("Track edge",side<0?-6.9f:6.7f,side<0?-6.7f:6.9f,.03f,white);
             }
@@ -157,12 +157,11 @@ namespace CoastRacer
                 Point p=track.points[i],t=track.Tangent(i);Vector3 r=new Vector3(t.z,0,-t.x);
                 float heading=track.Yaw(i)*Mathf.Rad2Deg;
                 for(int s=-1;s<=1;s+=2){
-                    var rail=Shape("Guardrail",PrimitiveType.Cube,V(p)+r*s*16.5f+Vector3.up*.7f,new Vector3(.22f,1.1f,6),steel,scenery);
+                    var rail=Shape("Guardrail",PrimitiveType.Cube,V(p)+r*s*(Track.BarrierEdge+.5f)+Vector3.up*.7f,new Vector3(.22f,1.1f,6),steel,scenery);
                     rail.transform.rotation=Quaternion.Euler(0,heading,0);
                     if(i%18==0){
                         Vector3 tree=V(p)+r*s*32;
-                        Shape("Tree trunk",PrimitiveType.Cylinder,tree+Vector3.up*2,new Vector3(.6f,2,.6f),rubber,scenery);
-                        Shape("Tree canopy",PrimitiveType.Sphere,tree+Vector3.up*5,new Vector3(5,7,5),grass,scenery);
+                        NaturalTree(scenery,tree,i+s*71,false);
                     }
                 }
                 if(track.TargetSpeed(i)<24 && i%24==0){
@@ -199,6 +198,7 @@ namespace CoastRacer
                 var mesh=new Mesh{indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};mesh.CombineMeshes(pair.Value.ToArray());
                 go.GetComponent<MeshFilter>().sharedMesh=mesh;go.GetComponent<MeshRenderer>().sharedMaterial=pair.Key;
             }
+            foreach(var mf in parent.GetComponentsInChildren<MeshFilter>())if(mf.sharedMesh.name=="Coast tree mesh")Destroy(mf.sharedMesh);
             Destroy(parent.gameObject);
         }
         Transform BuildCar(int n,string vehicle=null,string badge="")
@@ -246,7 +246,7 @@ namespace CoastRacer
             }
             if(c.action=="menu"){online=false;paused=false;phase="menu";SelectTrack(c.track??track.id);}
             if(c.action=="pause" && !online){paused=c.paused;input.throttle=input.brake=input.steer=0;}
-            if(c.action=="quality"){cam.farClipPlane=c.quality==0?500:850;QualitySettings.antiAliasing=c.quality==0?0:2;Application.targetFrameRate=c.quality==0?30:60;}
+            if(c.action=="quality"){effectQuality=c.quality;cam.farClipPlane=c.quality==0?500:850;QualitySettings.antiAliasing=c.quality==0?0:2;Application.targetFrameRate=c.quality==0?30:60;}
             Emit(true);
         }
         [UnityEngine.Scripting.Preserve]
@@ -288,7 +288,7 @@ namespace CoastRacer
                     }
                 }
             }
-            RefreshVisuals();UpdateCoins();
+            RefreshVisuals();UpdateCoins();UpdateSpecialVisuals();
             for(int i=0;i<cars.Count;i++)Place(visuals[i],cars[i],dt);
             CameraFollow(false);
             sendTime-=dt;if(sendTime<=0){sendTime=.1f;Emit(false);}
@@ -296,7 +296,7 @@ namespace CoastRacer
         void Place(Transform model,CarState c,float dt)
         {
             Vector3 target=V(c.Position);
-            if(dt<=0 || Vector3.Distance(model.position,target)>20)model.position=target;
+            if(c.finished || dt<=0 || Vector3.Distance(model.position,target)>20)model.position=target;
             else model.position=Vector3.Lerp(model.position,target,1-Mathf.Exp(-18*dt));
             Point tangent=track.Tangent(c.index);
             float pitch=-Mathf.Asin(Mathf.Clamp(tangent.y,-.9f,.9f))*Mathf.Rad2Deg*Mathf.Cos(c.yaw-track.Yaw(c.index));
@@ -321,7 +321,12 @@ namespace CoastRacer
             RacerEmit(json);
 #endif
         }
-        void OnApplicationFocus(bool focus){if(!focus){input.throttle=input.brake=input.steer=0;if(!online&&phase=="race")paused=true;}}
+        void OnApplicationFocus(bool focus){if(!focus){input.throttle=input.brake=input.steer=0;
+#if !UNITY_WEBGL || UNITY_EDITOR
+            if(!online&&phase=="race")paused=true;
+#endif
+            // In WebGL the browser owns pause/resume, including focus moving to HTML controls.
+        }}
 #if UNITY_EDITOR
         void OnGUI()
         {
@@ -332,7 +337,7 @@ namespace CoastRacer
                 if(GUI.Button(new Rect(40,85,420,45),"山岳サーキットで開始"))CommandFromWeb("{\"action\":\"start\",\"track\":\"ridge\"}");
                 if(GUI.Button(new Rect(40,140,420,45),"鈴鹿風サーキットで開始"))CommandFromWeb("{\"action\":\"start\",\"track\":\"suzuka\"}");
             }else{
-                GUI.Label(new Rect(20,20,700,80),$"速度 {cars[0].speed*3.6f:0} km/h  周回 {Math.Min(3,cars[0].lap+1)}/3  順位 {cars[0].rank}\n矢印:操舵・ペダル / R:復帰");
+                GUI.Label(new Rect(20,20,700,80),$"速度 {cars[0].speed*3.6f:0} km/h  周回 {Math.Min(2,cars[0].lap+1)}/2  順位 {cars[0].rank}\n矢印:操舵・ペダル / R:復帰");
                 if(GUI.Button(new Rect(20,110,180,40),paused?"再開":"一時停止"))paused=!paused;
                 if(GUI.Button(new Rect(20,160,180,40),"メニュー"))CommandFromWeb("{\"action\":\"menu\"}");
             }

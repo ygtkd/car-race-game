@@ -40,3 +40,9 @@ header>.brand{margin-left:0}.hudTop{left:20px;right:60px}.hudTop #pauseButton{ma
 #awardOverlay{position:fixed;inset:0;background:#000b;z-index:18;pointer-events:auto}.awardItem{display:flex;align-items:center;gap:18px;margin:14px}.awardIcon{color:#e8ba6a;font-size:32px}
 
 body:has(#menu:not([hidden])) #settingsButton{display:block}
+
+/* Start signals are the only start overlay, including stale DOM updates. */
+#centerMessage{display:none!important}
+.awardIcon{width:48px;height:48px}
+
+#specialButton.available{box-shadow:0 0 12px #ecc274;border-color:#ffe3a2}#specialButton.effectActive{box-shadow:0 0 15px currentColor;border-color:currentColor}#specialButton[data-effect=boost]{color:#77c9ff}#specialButton[data-effect=grip]{color:#a0ff80}#specialButton[data-effect=shield]{color:#ba9dff}#specialButton[data-effect=pulse]{color:#ff8bda}#specialButton[data-effect=feast]{color:#ffb86c}#specialButton[data-effect=surf]{color:#73ffe8}#specialButton[data-effect=dash]{color:#ffe87b}
