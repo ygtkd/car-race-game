@@ -39,7 +39,7 @@ app.Use(async(context,next)=>{
     }
     await next();
 });
-app.UseStaticFiles(new StaticFileOptions{ContentTypeProvider=provider});
+app.UseStaticFiles(new StaticFileOptions{ContentTypeProvider=provider,OnPrepareResponse=context=>{if(new[]{".html",".css",".js"}.Contains(Path.GetExtension(context.File.Name)))context.Context.Response.Headers.CacheControl="no-cache";}});
 app.MapGet("/api/rooms",(RaceHub hub)=>hub.ListRooms());
 app.MapGet("/health",()=>Results.Ok(new{status="ok",protocol=3}));
 app.MapGet("/api/courses",()=>new[]{new{id="ridge",name="山岳サーキット"},new{id="suzuka",name="鈴鹿サーキット"}});

@@ -20,7 +20,7 @@ button,a,select,label{touch-action:manipulation}
 #wheel,#pedals,#specialButton,#orbitSurface{touch-action:none}
 .cornerBack{position:absolute;top:6px;left:6px;width:44px;height:44px;padding:0;border:0;background:transparent;font-size:24px;z-index:2}
 .panel:has(.cornerBack)>h2,.panel:has(.cornerBack)>.eyebrow{margin-left:38px}
-#settingsButton,#raceSettings{position:fixed;left:max(8px,env(safe-area-inset-left));top:max(8px,env(safe-area-inset-top));width:44px;height:44px;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;font-size:26px!important;z-index:5}
+#settingsButton,#raceSettings{position:fixed;left:auto;right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));width:44px;height:44px;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;font-size:26px!important;z-index:5}
 header>.brand{margin-left:42px}.hudTop{left:58px}
 #instruments{width:71px;height:71px;padding:6px;gap:3px}#instruments #speed{font-size:23px}#instruments #gear{font-size:13px;padding-right:3px}#instruments small{font-size:8px}#instruments .at{display:none}
 #wheel{--wheel-size:158px;width:calc(var(--wheel-size)*2);height:var(--wheel-size);left:0;border-radius:0;display:flex;align-items:center;justify-content:center;border:0;background:transparent}
@@ -33,7 +33,7 @@ header>.brand{margin-left:42px}.hudTop{left:58px}
 @media(max-width:720px){#wheel{--wheel-size:120px}}
 
 /* Race flow revision: right-aligned controls and result awards. */
-#settingsButton,#raceSettings{left:auto;right:max(8px,env(safe-area-inset-right))}
+
 header>.brand{margin-left:0}.hudTop{left:20px;right:60px}.hudTop #pauseButton{margin-left:auto}
 #roomList{display:grid;gap:8px;margin:12px 0}#roomList button{text-align:left;font-size:12px}
 #lobby label{margin:8px 0}#lobby .person{padding:6px 0}#lobby h2{margin-bottom:8px}#botCount{width:80px}
