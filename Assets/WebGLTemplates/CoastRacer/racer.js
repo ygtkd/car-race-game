@@ -23,7 +23,7 @@ const command=(action,rest={})=>unity?.SendMessage('RaceGame','CommandFromWeb',J
 function toast(key){$('toast').textContent=t(key);$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6500);}
 function clearInput(){
  for(const release of inputReleases)release();
- input={steer:0,throttle:0,brake:0};keys.clear();wheelPointer=null;wheelDirection=0;document.querySelectorAll('.pressed').forEach(e=>e.classList.remove('pressed'));if(online)send('input',{...input,brake:1,assist:settings.assist,sensitivity:settings.sensitivity});}
+ input={steer:0,throttle:0,brake:0};keys.clear();wheelPointer=null;wheelDirection=0;document.querySelectorAll('.pressed').forEach(e=>e.classList.remove('pressed'));unity?.SendMessage('RaceGame','SetInput',JSON.stringify({...input,assist:settings.assist,sensitivity:settings.sensitivity}));if(online)send('input',{...input,brake:1,assist:settings.assist,sensitivity:settings.sensitivity});}
 let pendingScreen='',screenTransition=Promise.resolve(),transitionCount=0,hasShown=false;
 function show(name){
  if(name===screen&&hasShown&&!pendingScreen)return Promise.resolve();if(name===pendingScreen)return screenTransition;
@@ -198,22 +198,45 @@ for(const key of ['assist','sensitivity','quality']){
  $(key).value=settings[key];$(key).onchange=()=>{settings[key]=Number($(key).value);save('cr.settings',settings);command('quality',{quality:settings.quality});};
 }
 $('reload').onclick=()=>location.reload();
-for(const pedal of ['throttle','brake']){
- const element=$(pedal);const pointers=new Set();
- inputReleases.push(()=>{for(const id of pointers){if(element.hasPointerCapture(id))element.releasePointerCapture(id);}pointers.clear();input[pedal]=0;element.classList.remove('pressed');});
- element.onpointerdown=e=>{if(screen!=='race'||settingsOpen||pendingScreen||!$('confirmExit').hidden)return;e.preventDefault();try{element.setPointerCapture(e.pointerId);}catch{return;}pointers.add(e.pointerId);input[pedal]=1;element.classList.add('pressed');};
- const release=e=>{pointers.delete(e.pointerId);if(!pointers.size){input[pedal]=0;element.classList.remove('pressed');}};
- window.addEventListener('pointerup',release,true);window.addEventListener('pointercancel',release,true);
- element.onpointerup=release;element.onpointercancel=release;element.onlostpointercapture=release;
- element.onpointermove=e=>{const r=element.getBoundingClientRect();if(e.clientX<r.left-12||e.clientX>r.right+12||e.clientY<r.top-12||e.clientY>r.bottom+12)release(e);};
+// Touch identifiers are reconciled with the browser's complete live touch list.
+// Pointer events are used for mouse/pen (and touch only on browsers without Touch Events).
+const heldControls=new Map(),useTouchEvents=typeof TouchEvent!=='undefined'&&navigator.maxTouchPoints>0;
+const canDrive=()=>screen==='race'&&!settingsOpen&&!pendingScreen&&$('confirmExit').hidden&&!document.hidden;
+function controlAt(target){const el=target.closest?.('#wheel,#throttle,#brake');return el?.id;}
+function updateHeld(){
+ let wheel=null;input.throttle=input.brake=0;
+ for(const held of heldControls.values()){if(held.control==='wheel')wheel=held;else input[held.control]=1;}
+ for(const pedal of ['throttle','brake'])$(pedal).classList.toggle('pressed',!!input[pedal]);
+ if(wheel){const r=$('wheel').getBoundingClientRect();wheelDirection=wheel.x<r.left+r.width/2?-1:1;}
+ else {wheelDirection=0;input.steer=0;}
 }
-function touchDirection(e){const r=$('wheel').getBoundingClientRect();wheelDirection=e.clientX<r.left+r.width/2?-1:1;}
-inputReleases.push(()=>{const id=wheelPointer;wheelPointer=null;wheelDirection=0;input.steer=0;if(id!==null&&$('wheel').hasPointerCapture(id))$('wheel').releasePointerCapture(id);});
-$('wheel').onpointerdown=e=>{if(screen!=='race'||settingsOpen||pendingScreen||!$('confirmExit').hidden||wheelPointer!==null)return;e.preventDefault();wheelPointer=e.pointerId;touchDirection(e);try{$('wheel').setPointerCapture(e.pointerId);}catch{releaseWheel(e);}};
-$('wheel').onpointermove=e=>{if(e.pointerId===wheelPointer){if(e.buttons===0){releaseWheel(e);return;}touchDirection(e);}};
-const releaseWheel=e=>{if(e.pointerId===wheelPointer){wheelPointer=null;wheelDirection=0;input.steer=0;}};
-window.addEventListener('pointerup',releaseWheel,true);window.addEventListener('pointercancel',releaseWheel,true);
-$('wheel').onpointerup=releaseWheel;$('wheel').onpointercancel=releaseWheel;$('wheel').onlostpointercapture=releaseWheel;window.addEventListener('keydown',e=>{
+function endHeld(id){const held=heldControls.get(id);heldControls.delete(id);updateHeld();if(held?.pointerId!==undefined){const el=$(held.control);try{if(el.hasPointerCapture(held.pointerId))el.releasePointerCapture(held.pointerId);}catch{}}}
+inputReleases.push(()=>{for(const id of [...heldControls.keys()])endHeld(id);});
+function moveHeld(id,x,y){const held=heldControls.get(id);if(!held)return;const r=$(held.control).getBoundingClientRect();if(x<r.left-12||x>r.right+12||y<r.top-12||y>r.bottom+12){endHeld(id);return;}held.x=x;held.y=y;}
+if(useTouchEvents){
+ const touchEvent=e=>{
+  const alive=new Set([...e.touches].map(t=>'t'+t.identifier));
+  for(const id of [...heldControls.keys()])if(id.startsWith('t')&&!alive.has(id))endHeld(id);
+  let handled=false;
+  for(const touch of e.changedTouches){
+   const id='t'+touch.identifier,control=controlAt(touch.target);
+   if(e.type==='touchstart'&&control&&canDrive()){heldControls.set(id,{control,x:touch.clientX,y:touch.clientY});handled=true;}
+   else if(heldControls.has(id)){handled=true;if(e.type==='touchend'||e.type==='touchcancel')endHeld(id);else moveHeld(id,touch.clientX,touch.clientY);}
+  }
+  updateHeld();if(handled&&e.cancelable)e.preventDefault();
+ };
+ for(const type of ['touchstart','touchmove','touchend','touchcancel'])window.addEventListener(type,touchEvent,{capture:true,passive:false});
+}
+window.addEventListener('pointerdown',e=>{
+ if(useTouchEvents&&e.pointerType==='touch')return;
+ const control=controlAt(e.target);if(!control||!canDrive()||e.button!==0)return;
+ const id='p'+e.pointerId;heldControls.set(id,{control,x:e.clientX,y:e.clientY,pointerId:e.pointerId});
+ try{$(control).setPointerCapture(e.pointerId);}catch{}updateHeld();e.preventDefault();
+},true);
+window.addEventListener('pointermove',e=>{if(useTouchEvents&&e.pointerType==='touch')return;const id='p'+e.pointerId;if(e.buttons===0)endHeld(id);else{moveHeld(id,e.clientX,e.clientY);updateHeld();}},true);
+for(const type of ['pointerup','pointercancel','lostpointercapture'])window.addEventListener(type,e=>{if(useTouchEvents&&e.pointerType==='touch')return;endHeld('p'+e.pointerId);},true);
+window.addEventListener('pagehide',clearInput);window.addEventListener('orientationchange',clearInput);document.addEventListener('freeze',clearInput);
+window.addEventListener('keydown',e=>{
  if(!$('confirmExit').hidden)return;
  if(settingsOpen){if(e.key==='Escape'){e.preventDefault();closeSettings();}return;}
  if(/INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName)||screen!=='race')return;
@@ -231,7 +254,9 @@ function animate(now){
  requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
+let lastInputTick=performance.now();
 setInterval(()=>{
+ const now=performance.now();if(now-lastInputTick>750)clearInput();lastInputTick=now;
  const active=screen==='race'&&!settingsOpen&&!pendingScreen&&$('confirmExit').hidden&&!document.hidden;
  const drive={steer:active?Math.max(-1,Math.min(1,input.steer+(keys.has('arrowright')||keys.has('d')?1:0)-(keys.has('arrowleft')||keys.has('a')?1:0))):0,throttle:active?Math.max(input.throttle,keys.has('arrowup')||keys.has('w')?1:0):0,brake:active?Math.max(input.brake,keys.has('arrowdown')||keys.has('s')||keys.has(' ')?1:0):(online?1:0),assist:settings.assist,sensitivity:settings.sensitivity};
  window.Racer.drive=drive;unity?.SendMessage('RaceGame','SetInput',JSON.stringify(drive));

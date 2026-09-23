@@ -4,7 +4,7 @@ using System.Text.Json;
 using CoastRacer.Core;
 var options=new JsonSerializerOptions{IncludeFields=true};
 string address=args.FirstOrDefault()??"ws://127.0.0.1:5081/ws";
-foreach(string trackId in new[]{"ridge","suzuka"}){
+foreach(string trackId in (args.Length>1?args.Skip(1):new[]{"ridge","suzuka"})){
  using var timeout=new CancellationTokenSource(TimeSpan.FromMinutes(14));
  var ct=timeout.Token;var track=new Track(trackId);
  using var a=new ClientWebSocket();using var b=new ClientWebSocket();
@@ -46,12 +46,12 @@ foreach(string trackId in new[]{"ridge","suzuka"}){
  }
  var results=await Task.WhenAll(Drive(a,aid),Drive(b,bid));
  foreach(var result in results){
-  if(result.Count(c=>c.finished&&c.lap==Simulation.Laps)!=1||result.Count(c=>c.dnf&&c.finishTime==0)!=1)throw new Exception("Race incomplete "+JsonSerializer.Serialize(result,options));
+  if(!result.Any(c=>c.finished&&c.lap==Simulation.Laps)||result.Any(c=>!(c.finished&&c.lap==Simulation.Laps&&c.finishTime>0)&&!(c.dnf&&c.finishTime==0)))throw new Exception("Race incomplete "+JsonSerializer.Serialize(result,options));
  }
  var one=results[0].OrderBy(c=>c.rank).Select(c=>(c.id,c.rank,c.finishTime)).ToArray();
  var two=results[1].OrderBy(c=>c.rank).Select(c=>(c.id,c.rank,c.finishTime)).ToArray();
  if(!one.SequenceEqual(two))throw new Exception("Clients disagree on result");
- Console.WriteLine("PASS "+trackId+" winner completes two laps; last place has no time; both clients share standings");
+ Console.WriteLine("PASS "+trackId+" winner completes two laps; simultaneous finishes retain times; unfinished last place has no time; both clients share standings");
  await Send(a,new{action="rematch"});await Task.Delay(150,ct);
  await Send(a,new{action="ready",ready=true});await Send(b,new{action="ready",ready=true});
  await Task.Delay(100,ct);await Send(a,new{action="start"});

@@ -12,6 +12,7 @@ namespace CoastRacer {
   }
   // Deterministic low-poly crowns and tapered branches are baked with the scenery.
   void NaturalTree(Transform parent,Vector3 position,int seed,bool pine){
+   if(!track.SceneryClear(new Point(position.x,position.y,position.z),6))return;
    int nearest=track.Nearest(new Point(position.x,position.y,position.z));
    var roadPoint=V(track.points[nearest]);
    if(new Vector2(position.x-roadPoint.x,position.z-roadPoint.z).magnitude<Track.BarrierEdge+2)return;

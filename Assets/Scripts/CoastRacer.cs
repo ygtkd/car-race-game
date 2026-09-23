@@ -26,7 +26,7 @@ namespace CoastRacer
         float countdown=3,sendTime,accumulator,recoverCooldown;
         Font editorFont;
         Vector3 correction;
-        float cameraAngle;
+        float cameraAngle,lastWebInput;
         Material road,white,red,grass,steel,glass,rubber,paint;
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Boot(){if(FindAnyObjectByType<RaceGame>()==null)new GameObject("RaceGame").AddComponent<RaceGame>();}
@@ -65,6 +65,9 @@ namespace CoastRacer
         static Vector3 V(Point p)=>new Vector3(p.x,p.y,p.z);
         GameObject Shape(string name,PrimitiveType type,Vector3 p,Vector3 size,Material material,Transform parent)
         {
+            if(parent.name=="Track furniture"&&!track.SceneryClear(new Point(p.x,p.y,p.z),Mathf.Sqrt(size.x*size.x+size.z*size.z)*.5f)){
+                var omitted=new GameObject("Omitted overlapping "+name);omitted.transform.SetParent(parent,false);return omitted;
+            }
             var obj=GameObject.CreatePrimitive(type);obj.name=name;obj.transform.SetParent(parent,false);
             obj.transform.localPosition=p;obj.transform.localScale=size;
             obj.GetComponent<Renderer>().sharedMaterial=material;
@@ -75,6 +78,8 @@ namespace CoastRacer
             var verts=new List<Vector3>();var uv=new List<Vector2>();var tris=new List<int>();
             for(int i=0;i<Track.Samples;i++){
                 if(alternating && i%8>=4)continue;
+                // Ground shoulders must not become a broad roof over the lower road.
+                if(name=="Landscape ribbon"&&track.ForeignRoadBelow(i,65,.2f))continue;
                 int j=(i+1)%Track.Samples;int start=verts.Count;
                 Point a=track.points[i],b=track.points[j],ta=track.Tangent(i),tb=track.Tangent(j);
                 Vector3 ra=new Vector3(ta.z,0,-ta.x),rb=new Vector3(tb.z,0,-tb.x);
@@ -180,7 +185,7 @@ namespace CoastRacer
                 Shape("Pit glass",PrimitiveType.Cube,p-right*7.6f+Vector3.up*3,new Vector3(.1f,2.7f,7),glass,scenery);
             }
             // Bake scenery per material, keeping draw calls low without generating a separate prefab per object.
-            ExtraScenery(scenery);CreateBackdrop();CombineScenery(scenery);
+            ExtraScenery(scenery);CreateBridgeDecks();CreateBackdrop();CombineScenery(scenery);
             cars.Add(Simulation.Spawn(track));visuals.Add(BuildCar(0));
             Place(visuals[0],cars[0],0);
             CreateCoins();CameraFollow(true);Emit(true);
@@ -228,7 +233,7 @@ namespace CoastRacer
             CustomizeCar(car,vehicle,badge,body);return car;
         }
         [UnityEngine.Scripting.Preserve]
-        public void SetInput(string json){try{input=JsonUtility.FromJson<DriveInput>(json);}catch{}}
+        public void SetInput(string json){try{input=JsonUtility.FromJson<DriveInput>(json);lastWebInput=Time.realtimeSinceStartup;}catch{input=new DriveInput();}}
         [UnityEngine.Scripting.Preserve]
         public void CommandFromWeb(string json)
         {
@@ -267,6 +272,9 @@ namespace CoastRacer
         {
             if(cars.Count==0)return;
             float dt=Mathf.Min(Time.deltaTime,.05f);recoverCooldown-=dt;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            if(Time.realtimeSinceStartup-lastWebInput>.75f){input.throttle=input.steer=0;input.brake=1;}
+#endif
             if(showroom){UpdateShowroom(dt);sendTime-=dt;if(sendTime<=0){sendTime=.1f;Emit(false);}return;}
 #if !UNITY_WEBGL || UNITY_EDITOR
             input.steer=Input.GetAxisRaw("Horizontal");

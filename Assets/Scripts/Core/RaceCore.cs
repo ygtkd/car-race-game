@@ -71,12 +71,12 @@ namespace CoastRacer.Core
             return d*(1/Math.Max(.001f,d.Length));
         }
         public float Yaw(int i){Point d=Tangent(i);return (float)Math.Atan2(d.x,d.z);}
-        public int Nearest(Point p,int hint=-1)
+        public int Nearest(Point p,int hint=-1,int span=35)
         {
             float best=float.MaxValue;int found=0;
-            int count=hint<0?Samples:71;
+            int count=hint<0?Samples:span*2+1;
             for(int n=0;n<count;n++){
-                int i=hint<0?n:(hint+n-35+Samples)%Samples;
+                int i=hint<0?n:(hint+n-span+Samples)%Samples;
                 Point d=p-points[i];float score=d.x*d.x+d.z*d.z+d.y*d.y*4;
                 if(score<best){best=score;found=i;}
             }
@@ -93,6 +93,22 @@ namespace CoastRacer.Core
             float best=float.MaxValue,result=distance[hint];
             foreach(int i in new[]{(hint+Samples-1)%Samples,hint}){Point a=points[i],delta=points[(i+1)%Samples]-a,v=p-a;float f=Mathx.Clamp((v.x*delta.x+v.y*delta.y+v.z*delta.z)/Math.Max(.001f,delta.Length*delta.Length),0,1);float error=(p-(a+delta*f)).Length;if(error<best){best=error;result=distance[i]+f*delta.Length;}}
             return result%Length;
+        }
+        public bool SceneryClear(Point p,float radius){
+            float limit=GrassEdge+radius+2;
+            for(int i=0;i<Samples;i++)if(PlanDistanceSquared(p,points[i],points[(i+1)%Samples])<limit*limit)return false;
+            return true;
+        }
+        public static float PlanDistanceSquared(Point p,Point a,Point b){
+            float x=b.x-a.x,z=b.z-a.z,f=Mathx.Clamp(((p.x-a.x)*x+(p.z-a.z)*z)/Math.Max(.001f,x*x+z*z),0,1);
+            float dx=p.x-a.x-x*f,dz=p.z-a.z-z*f;return dx*dx+dz*dz;
+        }
+        public bool ForeignRoadBelow(int index,float radius,float clearance=3.5f){
+            for(int i=0;i<Samples;i++){
+                int separation=Math.Abs(i-index);separation=Math.Min(separation,Samples-separation);
+                if(separation<40||points[index].y-points[i].y<clearance)continue;
+                if(PlanDistanceSquared(points[index],points[i],points[(i+1)%Samples])<radius*radius)return true;
+            }return false;
         }
         public float TargetSpeed(int i)
         {
@@ -149,7 +165,7 @@ namespace CoastRacer.Core
             var spec=Vehicles.Get(c.vehicle);c.specialTime=Math.Max(0,c.specialTime-dt);c.jamTime=Math.Max(0,c.jamTime-dt);c.jamImmunity=Math.Max(0,c.jamImmunity-dt);
             bool boost=c.specialTime>0&&(spec.special=="boost"||spec.special=="dash"),gripActive=c.specialTime>0&&(spec.special=="grip"||spec.special=="surf");
             bool cadence=c.specialTime>0&&spec.special=="cadence",feast=c.specialTime>0&&spec.special=="feast";
-            c.index=t.Nearest(c.Position,c.index);
+            c.index=t.Nearest(c.Position,c.index,6);
             Point center=t.points[c.index],forward=t.Tangent(c.index);
             float lateral=(c.x-center.x)*forward.z-(c.z-center.z)*forward.x;
             bool grass=Math.Abs(lateral)>Track.GrassEdge,runoff=Math.Abs(lateral)>Track.RoadEdge&&!grass;
@@ -174,7 +190,7 @@ namespace CoastRacer.Core
             float response=Math.Min(1,dt*(grass?4:9+assist*7));
             c.vx+=(vx-c.vx)*response;c.vz+=(vz-c.vz)*response;
             c.x+=c.vx*dt;c.z+=c.vz*dt;
-            c.index=t.Nearest(c.Position,c.index);center=t.points[c.index];forward=t.Tangent(c.index);
+            c.index=t.Nearest(c.Position,c.index,6);center=t.points[c.index];forward=t.Tangent(c.index);
             c.y=center.y;
             lateral=(c.x-center.x)*forward.z-(c.z-center.z)*forward.x;
             c.onGrass=Math.Abs(lateral)>Track.GrassEdge;c.offroad=Math.Abs(lateral)>Track.RoadEdge?1:0;
@@ -191,7 +207,9 @@ namespace CoastRacer.Core
             int separation=Math.Abs(c.index-gateIndex);separation=Math.Min(separation,Track.Samples-separation);
             float crossFraction=1;
             bool crossed=CrossedFinish(previousFront,Front(c),t,out crossFraction);
-            if((c.gate==Track.Gates?crossed:separation<=6) && Math.Abs(lateral)<t.width*.5f && !c.wrongWay && c.speed>1){
+            // Intermediate gates cover the legal runoff corridor. Ordered gates still prevent shortcuts.
+            bool gatePassed=separation<=12 && Track.PlanDistanceSquared(c.Position,t.points[gateIndex],t.points[gateIndex])<=(Track.BarrierEdge+4)*(Track.BarrierEdge+4) && Math.Abs(c.y-t.points[gateIndex].y)<3 && Math.Abs(lateral)<=Track.BarrierEdge && !c.wrongWay && c.speed>0;
+            if(c.gate==Track.Gates?crossed:gatePassed){
                 c.gate++;
                 if(c.gate>Track.Gates){
                     c.lap++;

@@ -32,3 +32,5 @@ Console.WriteLine("All core checks passed.");
 }
 FlowTests.Run();
 ExpansionTests.Run();
+
+RevisionFourTests.Run();
