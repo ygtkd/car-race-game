@@ -145,7 +145,7 @@ namespace CoastRacer
             track=new Track(id);session=new RaceSession(track);displayedCoins=session.coins;world=new GameObject("Circuit "+track.id);
             TerrainSurface();
             Ribbon("Landscape ribbon",-45,45,-.3f,grass);
-            Ribbon("Runoff",-16,16,-.05f,Mat("Runoff",new Color(.34f,.36f,.33f)));
+            Ribbon("Runoff",-16,16,-.05f,grass);
             Ribbon("Racing surface",-7,7,0,road);
             foreach(int side in new[]{-1,1}){
                 float a=side<0?-8.1f:7.1f,b=side<0?-7.1f:8.1f;
@@ -172,7 +172,7 @@ namespace CoastRacer
             }
             Point start=track.points[0],tan=track.Tangent(0);Vector3 right=new Vector3(tan.z,0,-tan.x);
             for(int i=0;i<14;i++)for(int j=0;j<2;j++){
-                var tile=Shape("Finish chequer",PrimitiveType.Cube,V(start)+right*(i-6.5f)+V(tan)*j+Vector3.up*.05f,new Vector3(1,.05f,1),(i+j)%2==0?white:rubber,scenery);
+                var tile=Shape("Finish chequer",PrimitiveType.Cube,V(start)+right*(i-6.5f)+V(tan)*(j-.5f)+Vector3.up*.05f,new Vector3(1,.05f,1),(i+j)%2==0?white:rubber,scenery);
                 tile.transform.rotation=Quaternion.Euler(0,track.Yaw(0)*Mathf.Rad2Deg,0);
             }
             for(int i=0;i<8;i++){
@@ -181,7 +181,7 @@ namespace CoastRacer
                 Shape("Pit glass",PrimitiveType.Cube,p-right*7.6f+Vector3.up*3,new Vector3(.1f,2.7f,7),glass,scenery);
             }
             // Bake scenery per material, keeping draw calls low without generating a separate prefab per object.
-            ExtraScenery(scenery);CombineScenery(scenery);
+            ExtraScenery(scenery);CreateBackdrop();CombineScenery(scenery);
             cars.Add(Simulation.Spawn(track));visuals.Add(BuildCar(0));
             Place(visuals[0],cars[0],0);
             CreateCoins();CameraFollow(true);Emit(true);
@@ -241,7 +241,7 @@ namespace CoastRacer
             if(c.action=="preview"){online=false;phase="menu";SelectTrack(c.track);}
             if(c.action=="start"){
                 online=false;self="";SelectTrack(c.track);cars[0].name=string.IsNullOrWhiteSpace(c.name)?"ドライバー":c.name;cars[0].id="local";cars[0].vehicle=Vehicles.Get(c.vehicle).id;cars[0].badge=Vehicles.Badge(c.badge);raceId=Guid.NewGuid().ToString("N");
-                for(int i=1;i<4;i++){cars.Add(Simulation.Spawn(track,i));cars[i].name="GT "+i;cars[i].id="ai"+i;cars[i].vehicle=Vehicles.All[i%4].id;visuals.Add(BuildCar(i));}
+                for(int i=1;i<4;i++){cars.Add(Simulation.Spawn(track,i));cars[i].bot=true;cars[i].name="GT "+i;cars[i].id="ai"+i;cars[i].vehicle=Vehicles.All[i%4].id;visuals.Add(BuildCar(i));}
                 RefreshVisuals();paused=false;phase="loading";countdown=3;input=new DriveInput{assist=c.assist,sensitivity=c.sensitivity};accumulator=0;
             }
             if(c.action=="menu"){online=false;paused=false;phase="menu";SelectTrack(c.track??track.id);}
@@ -284,7 +284,7 @@ namespace CoastRacer
                     }
                     if(!online){
                         Simulation.Rank(cars,track);
-                        if(cars[0].finished){phase="finished";Debug.Log("COAST_RACER_FINISHED");}
+                        if(cars[0].finished){Simulation.EstimateBots(cars,track);phase="finished";Debug.Log("COAST_RACER_FINISHED");}
                     }
                 }
             }

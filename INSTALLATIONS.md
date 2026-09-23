@@ -39,3 +39,5 @@ Unityビルドの子プロセスには DOTNET_PROCESSOR_COUNT=2、EMCC_CORES=2 �
 GitHub Actions公開準備: 新規ローカルツールのインストールなし。既存.NET SDKによる復元・公開のみ。
 
 2026-09-23 モバイル改修: 新規インストールなし。Unity 6000.6.2f1/WebGLモジュールの残存を確認。旧Unityのアンインストールはユーザーが実施。
+
+2026-09-23 レース進行・8台オンライン改修: 新規インストールなし。既存Unity、.NET、Node、Edgeを使用。

@@ -31,3 +31,12 @@ header>.brand{margin-left:42px}.hudTop{left:58px}
 .vehicleChoices{flex-wrap:wrap;grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-height:620px){#wheel{--wheel-size:140px}#instruments{width:59px;height:59px;padding:4px}#instruments #speed{font-size:20px}}
 @media(max-width:720px){#wheel{--wheel-size:120px}}
+
+/* Race flow revision: right-aligned controls and result awards. */
+#settingsButton,#raceSettings{left:auto;right:max(8px,env(safe-area-inset-right))}
+header>.brand{margin-left:0}.hudTop{left:20px;right:60px}.hudTop #pauseButton{margin-left:auto}
+#roomList{display:grid;gap:8px;margin:12px 0}#roomList button{text-align:left;font-size:12px}
+#lobby label{margin:8px 0}#lobby .person{padding:6px 0}#lobby h2{margin-bottom:8px}#botCount{width:80px}
+#awardOverlay{position:fixed;inset:0;background:#000b;z-index:18;pointer-events:auto}.awardItem{display:flex;align-items:center;gap:18px;margin:14px}.awardIcon{color:#e8ba6a;font-size:32px}
+
+body:has(#menu:not([hidden])) #settingsButton{display:block}

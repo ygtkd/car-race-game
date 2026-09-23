@@ -17,7 +17,7 @@ main.bicepとコンパイル済みmain.jsonを用意しています。利用リ�
 
 ## 無料枠
 F1、Always On無効、SQL useFreeLimit=true、freeLimitExhaustionBehavior=AutoPauseを固定しています。無料枠を使い切った後の有料継続は設定しません。
-初期設定は全体2接続。FreeプランはCPU・接続数に制限があり、常時稼働は保証できません。
+初期設定は全体8接続。ホストは人間＋CPUで最大8台に設定できます。FreeプランはCPU・接続数に制限があり、常時稼働は保証できません。
 SQL接続はマネージドID認証で、Pooling=Falseを指定しています。秘密鍵をWebクライアントへ埋め込みません。
 SQLの初期設定権限をアプリ実行IDに与える必要はありません。
 

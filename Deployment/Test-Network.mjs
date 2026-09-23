@@ -14,8 +14,8 @@ try{
  a=await connect();a.send('create',{track:'ridge',name:'通信甲',vehicle:'swift',badge:'finish'});const ja=await a.wait(x=>x.type==='joined');
  b=await connect();b.send('join',{code:ja.code,name:'通信乙'});const jb=await b.wait(x=>x.type==='joined');
  let rejected=false;try{c=await connect();c.ws.close();}catch{rejected=true;}
- assert(rejected,'Free configuration caps active sockets at two');
- a.ws.send('[]');assert((await a.wait(x=>x.type==='error')).code==='INVALID_MESSAGE','Invalid message shape rejected');
+ assert(!rejected,'Expanded configuration accepts more than two sockets');
+ c=await connect();const invalidClosed=new Promise(r=>c.ws.onclose=r);c.ws.send('[]');await Promise.race([invalidClosed,delay(4000).then(()=>{throw Error('Malformed connection leaked')})]);assert(c.ws.readyState===3,'Invalid message connection is closed');
  a.send('ready',{ready:true});b.send('ready',{ready:true});await delay(100);a.send('start');
  const load=await a.wait(x=>x.type==='state'&&x.phase==='loading');await b.wait(x=>x.type==='state'&&x.phase==='loading');
  a.send('loaded',{raceId:'stale'});await delay(250);
@@ -33,14 +33,14 @@ try{
  assert(noSkill.coins.length===3,'Three shared coin states included in snapshots');
  a.messages.length=0;await delay(2500);state=await a.wait(x=>x.type==='state'&&x.cars.find(p=>p.id===ja.id)?.speed<.1);
  assert(state.cars.find(p=>p.id===ja.id).speed<.1,'Stale input is released and braking applied');
- a.ws.close();await b.wait(x=>x.type==='state'&&!x.cars.find(p=>p.id===ja.id).connected);
+ a.ws.close(4000,"Simulated link loss");await b.wait(x=>x.type==='state'&&!x.cars.find(p=>p.id===ja.id).connected);
  await delay(150);a=await connect();a.send('resume',{token:ja.token});const resumed=await a.wait(x=>x.type==='joined');
  assert(resumed.id===ja.id,'Reconnect within 20 seconds preserves player identity');
  a.messages.length=0;const beforeRecovery=await a.wait(x=>x.type==='state');a.send('recover');a.messages.length=0;state=await a.wait(x=>x.type==='state');
  assert(state.cars.find(p=>p.id===ja.id).elapsed-beforeRecovery.cars.find(p=>p.id===ja.id).elapsed<1,'Removed manual recovery cannot force teleport or penalty');
- a.ws.close();b.messages.length=0;await delay(21000);
+ a.ws.close(4000,"Simulated link loss");b.messages.length=0;await delay(21000);
  state=await b.wait(x=>x.type==='state'&&x.cars.find(p=>p.id===ja.id).dnf);
- assert(state.phase==='race','Remaining player continues after disconnect timeout');
+ assert(state.phase==='finished','Disconnect timeout settles final remaining driver without estimated human time');
  a=await connect();a.send('resume',{token:ja.token});assert((await a.wait(x=>x.type==='error')).code==='SESSION_EXPIRED','Expired session is rejected');
  a.ws.close();a=null;b.ws.close();b=null;
  fs.writeFileSync('Logs/protocol-checks.json',JSON.stringify({checks},null,2));

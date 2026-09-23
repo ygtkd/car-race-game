@@ -107,7 +107,7 @@ namespace CoastRacer.Core
                 foreach(float sa in new[]{-1f,1f})foreach(float sb in new[]{-1f,1f}){
                     float dx=b.x+(float)Math.Sin(b.yaw)*sb-a.x-(float)Math.Sin(a.yaw)*sa;
                     float dz=b.z+(float)Math.Cos(b.yaw)*sb-a.z-(float)Math.Cos(a.yaw)*sa;
-                    float d=(float)Math.Sqrt(dx*dx+dz*dz),overlap=1.95f-d;
+                    float d=(float)Math.Sqrt(dx*dx+dz*dz),overlap=(a.vehicle=="banana"?.55f:.975f)+(b.vehicle=="banana"?.55f:.975f)-d;
                     if(overlap>deepest){deepest=overlap;nx=d>.001f?dx/d:1;nz=d>.001f?dz/d:0;}
                 }
                 if(deepest<=0)continue;

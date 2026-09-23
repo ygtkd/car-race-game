@@ -5,7 +5,7 @@ namespace CoastRacer {
    bool bike=vehicle=="bicycle",boat=vehicle=="banana",van=vehicle=="kebab";
    var yellow=Mat("CarBanana",new Color(.95f,.73f,.08f));
    if(boat){
-    for(int side=-1;side<=1;side+=2){Shape("Inflatable hull",PrimitiveType.Capsule,new Vector3(side*.55f,.65f,0),new Vector3(.65f,2.1f,.65f),yellow,car).transform.localRotation=Quaternion.Euler(90,0,0);Shape("Raised bow",PrimitiveType.Sphere,new Vector3(side*.55f,.98f,1.8f),new Vector3(.65f,.85f,.8f),yellow,car);}
+    for(int side=0;side<=0;side++){Shape("Inflatable hull",PrimitiveType.Capsule,new Vector3(side*.55f,.65f,0),new Vector3(.65f,2.1f,.65f),yellow,car).transform.localRotation=Quaternion.Euler(90,0,0);Shape("Raised bow",PrimitiveType.Sphere,new Vector3(side*.55f,.98f,1.8f),new Vector3(.65f,.85f,.8f),yellow,car);}
     for(int i=0;i<3;i++){Shape("Saddle",PrimitiveType.Cube,new Vector3(0,.94f,-1+i),new Vector3(.7f,.17f,.45f),rubber,car);Shape("Handle",PrimitiveType.Cube,new Vector3(0,1.15f,-.7f+i),new Vector3(.7f,.08f,.08f),steel,car);}
    }else if(bike){
     Beam(car,new Vector3(0,.6f,-1.3f),new Vector3(0,1.3f,0),.09f,body);Beam(car,new Vector3(0,1.3f,0),new Vector3(0,.6f,1.3f),.09f,body);Beam(car,new Vector3(0,.6f,-1.3f),new Vector3(0,.6f,.1f),.09f,body);Beam(car,new Vector3(0,.6f,.1f),new Vector3(0,1.3f,0),.09f,body);Beam(car,new Vector3(0,1.3f,0),new Vector3(0,1.5f,.95f),.09f,body);
@@ -26,6 +26,7 @@ namespace CoastRacer {
    if(!string.IsNullOrEmpty(badge))Shape("Achievement badge",PrimitiveType.Sphere,new Vector3(0,boat?1.25f:bike?1.7f:2.15f,.9f),new Vector3(.25f,.08f,.25f),yellow,car);
   }
   void Beam(Transform parent,Vector3 from,Vector3 to,float width,Material material){var item=Shape("Frame",PrimitiveType.Cube,(from+to)*.5f,new Vector3(width,width,Vector3.Distance(from,to)),material,parent);item.transform.localRotation=Quaternion.LookRotation(to-from);}
+  void CreateBackdrop(){var sky=new Material(Resources.Load<Shader>("CoastBackdrop"));sky.SetFloat("_Mountain",track.id=="ridge"?1:0);if(RenderSettings.skybox!=null)Destroy(RenderSettings.skybox);RenderSettings.skybox=sky;cam.clearFlags=CameraClearFlags.Skybox;}
   void ExtraScenery(Transform scenery){
    var rock=Mat("Rock",new Color(.30f,.32f,.29f));
    for(int i=12;i<CoastRacer.Core.Track.Samples;i+=24){var p=track.points[i];var t=track.Tangent(i);var right=new Vector3(t.z,0,-t.x);var center=V(p);

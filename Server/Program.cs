@@ -40,6 +40,7 @@ app.Use(async(context,next)=>{
     await next();
 });
 app.UseStaticFiles(new StaticFileOptions{ContentTypeProvider=provider});
+app.MapGet("/api/rooms",(RaceHub hub)=>hub.ListRooms());
 app.MapGet("/health",()=>Results.Ok(new{status="ok",protocol=3}));
 app.MapGet("/api/courses",()=>new[]{new{id="ridge",name="山岳サーキット"},new{id="suzuka",name="鈴鹿サーキット"}});
 app.MapGet("/api/records/{track}",async(string track,ResultStore store,CancellationToken ct)=>{
@@ -65,24 +66,26 @@ public sealed class RaceHub:BackgroundService
     readonly int limit;
     readonly ILogger<RaceHub> logger;
     int connections;
-    public RaceHub(ResultStore s,IConfiguration config,ILogger<RaceHub> log){store=s;logger=log;limit=Math.Clamp(config.GetValue("Racer:MaxPlayers",2),2,4);}
+    public RaceHub(ResultStore s,IConfiguration config,ILogger<RaceHub> log){store=s;logger=log;limit=Math.Clamp(config.GetValue("Racer:MaxPlayers",8),2,32);}
+    public object ListRooms(){lock(gate)return rooms.Values.Where(r=>r.phase=="lobby"&&r.players.Count+r.botCount<8).Select(r=>new{code=r.code,track=r.track.id,players=r.players.Count,bots=r.botCount,capacity=8,phase=r.phase}).ToArray();}
     public bool TryConnect(){lock(gate){if(connections>=limit)return false;connections++;return true;}}
     public void DisconnectSlot(){lock(gate)connections--;}
     public async Task Handle(WebSocket socket,CancellationToken ct)
     {
         var peer=new Peer(socket);var sender=peer.SendLoop(ct);Player? player=null;Room? room=null;
-        var buffer=new byte[4096];int burst=0;long rateEpoch=Environment.TickCount64;
+        bool voluntaryLeave=false;var buffer=new byte[4096];int burst=0;long rateEpoch=Environment.TickCount64;
         try{
             while(socket.State==WebSocketState.Open&&!ct.IsCancellationRequested){
-                var result=await socket.ReceiveAsync(buffer,ct);
-                if(result.MessageType==WebSocketMessageType.Close)break;
+                using var receiveTimeout=CancellationTokenSource.CreateLinkedTokenSource(ct);receiveTimeout.CancelAfter(player==null?TimeSpan.FromSeconds(15):TimeSpan.FromSeconds(30));
+                var result=await socket.ReceiveAsync(buffer,receiveTimeout.Token);
+                if(result.MessageType==WebSocketMessageType.Close){voluntaryLeave=result.CloseStatus==WebSocketCloseStatus.NormalClosure;break;}
                 if(!result.EndOfMessage||result.MessageType!=WebSocketMessageType.Text){peer.Post(new{type="error",code="INVALID_MESSAGE"});break;}
                 if(Environment.TickCount64-rateEpoch>1000){burst=0;rateEpoch=Environment.TickCount64;}
                 if(++burst>60)break;
                 JsonDocument doc;
-                try{doc=JsonDocument.Parse(buffer.AsMemory(0,result.Count));}catch{peer.Post(new{type="error",code="INVALID_MESSAGE"});continue;}
+                try{doc=JsonDocument.Parse(buffer.AsMemory(0,result.Count));}catch{peer.Post(new{type="error",code="INVALID_MESSAGE"});break;}
                 using(doc){
-                    var root=doc.RootElement;if(root.ValueKind!=JsonValueKind.Object){peer.Post(new{type="error",code="INVALID_MESSAGE"});continue;}string action=GetString(root,"action");
+                    var root=doc.RootElement;if(root.ValueKind!=JsonValueKind.Object){peer.Post(new{type="error",code="INVALID_MESSAGE"});break;}string action=GetString(root,"action");
                     lock(gate){
                         if(player==null){
                             if(action=="resume"){
@@ -98,15 +101,15 @@ public sealed class RaceHub:BackgroundService
                                     room=new Room(code,GetString(root,"track")=="suzuka"?"suzuka":"ridge");rooms.Add(code,room);
                                 }else rooms.TryGetValue(GetString(root,"code").ToUpperInvariant(),out room);
                                 if(room==null){peer.Post(new{type="error",code="ROOM_NOT_FOUND"});continue;}
-                                if(room.phase!="lobby"&&room.phase!="finished"){peer.Post(new{type="error",code="RACE_RUNNING"});room=null;continue;}
-                                if(room.players.Count>=limit){peer.Post(new{type="error",code="ROOM_FULL"});room=null;continue;}
+                                if(room.phase!="lobby"){peer.Post(new{type="error",code="RACE_RUNNING"});room=null;continue;}
+                                if(room.players.Count+room.botCount>=8){peer.Post(new{type="error",code="ROOM_FULL"});room=null;continue;}
                                 string name=GetString(root,"name").Trim();if(name.Length==0)name="ドライバー";if(name.Length>16)name=name[..16];
                                 name=new string(name.Where(c=>!char.IsControl(c)).ToArray());
                                 player=new Player{token=Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(24)),peer=peer,state=Simulation.Spawn(room.track,room.players.Count)};
-                                player.state.id=Guid.NewGuid().ToString("N");player.state.name=name;player.state.vehicle=Vehicles.Get(GetString(root,"vehicle")).id;player.state.badge=Vehicles.Badge(GetString(root,"badge"));room.players.Add(player);
+                                player.state.id=Guid.NewGuid().ToString("N");player.state.name=name;player.state.vehicle=Vehicles.Get(GetString(root,"vehicle")).id;player.state.badge=Vehicles.Badge(GetString(root,"badge"));room.players.Add(player);foreach(var member in room.players)member.ready=false;
                                 if(room.owner=="")room.owner=player.state.id;
                             }else{peer.Post(new{type="error",code="JOIN_FIRST"});continue;}
-                            peer.Post(new{type="joined",code=room!.code,token=player.token,id=player.state.id,maxPlayers=limit});
+                            peer.Post(new{type="joined",code=room!.code,token=player.token,id=player.state.id,maxPlayers=8});
                             BroadcastLobby(room);continue;
                         }
                         if(room==null)continue;
@@ -118,17 +121,17 @@ public sealed class RaceHub:BackgroundService
                         }
                         else if(action=="loaded"&&room.phase=="loading"&&GetString(root,"raceId")==room.raceId){player.loaded=true;}
                         else if(action=="special"&&room.phase=="race"){room.session.Activate(player.state,room.players.Select(x=>x.state).ToList());}
-                        else if(action=="ready" && (room.phase=="lobby"||room.phase=="finished")){player.ready=root.TryGetProperty("ready",out var r)&&r.ValueKind==JsonValueKind.True;BroadcastLobby(room);}
+                        else if(action=="ready" && room.phase=="lobby"){player.ready=root.TryGetProperty("ready",out var r)&&r.ValueKind==JsonValueKind.True;TryStart(room);BroadcastLobby(room);}
+                        else if(action=="rematch"&&room.phase=="finished"){room.players.RemoveAll(p=>p.state.bot||!p.state.connected);room.phase="lobby";foreach(var p in room.players){p.ready=false;p.state.dnf=false;}BroadcastLobby(room);}
+                        else if(action=="configure"&&player.state.id==room.owner&&room.phase=="lobby"){
+                            if(!root.TryGetProperty("bots",out var bv)||bv.ValueKind!=JsonValueKind.Number||!bv.TryGetInt32(out int bots)||bots<0||bots+room.players.Count>8){peer.Post(new{type="error",code="ROOM_FULL"});continue;}
+                            room.botCount=bots;room.track=new Track(GetString(root,"track"));foreach(var p in room.players)p.ready=false;BroadcastLobby(room);
+                        }
                         else if(action=="track" && player.state.id==room.owner && room.phase=="lobby"){
                             room.track=new Track(GetString(root,"track"));foreach(var p in room.players)p.ready=false;BroadcastLobby(room);
                         }
                         else if(action=="start" && player.state.id==room.owner && (room.phase=="lobby"||room.phase=="finished")){
-                            var participants=room.players.Where(p=>p.state.connected).ToList();
-                            if(participants.Count<2||participants.Any(p=>!p.ready)){peer.Post(new{type="error",code="NOT_READY"});continue;}
-                            room.players.RemoveAll(p=>!p.state.connected);room.raceId=Guid.NewGuid().ToString("N");room.phase="loading";room.loadStarted=Environment.TickCount64;room.session=new RaceSession(room.track);room.countdown=3;room.firstFinish=0;room.time=0;room.recorded=false;
-                            for(int i=0;i<room.players.Count;i++){
-                                var p=room.players[i];string id=p.state.id,name=p.state.name,vehicle=p.state.vehicle,badge=p.state.badge;p.state=Simulation.Spawn(room.track,i);p.state.id=id;p.state.name=name;p.state.vehicle=vehicle;p.state.badge=badge;p.input=new DriveInput();p.ready=false;p.loaded=false;
-                            }
+                            TryStart(room);
                         }
                         else if(action=="input"){
                             DriveInput value;try{value=JsonSerializer.Deserialize<DriveInput>(root.GetRawText(),Json)??new DriveInput();}catch(JsonException){peer.Post(new{type="error",code="INVALID_MESSAGE"});continue;}
@@ -141,14 +144,21 @@ public sealed class RaceHub:BackgroundService
                 }
             }
         }catch(OperationCanceledException){}catch(WebSocketException){}finally{
-            lock(gate)if(player!=null&&player.peer==peer){player.state.connected=false;player.disconnectedAt=Environment.TickCount64;player.input=new DriveInput{brake=1};player.peer=null;if(room!=null)BroadcastLobby(room);}
+            lock(gate)if(player!=null&&player.peer==peer){player.state.connected=false;player.disconnectedAt=Environment.TickCount64;if(voluntaryLeave&&!player.state.finished)player.state.dnf=true;player.input=new DriveInput{brake=1};player.peer=null;if(room!=null){if(room.phase=="lobby"){room.players.Remove(player);foreach(var member in room.players)member.ready=false;room.owner=room.players.FirstOrDefault(p=>!p.state.bot&&p.state.connected)?.state.id??"";}BroadcastLobby(room);}}
+            if(socket.State==WebSocketState.CloseReceived){try{using var closeTimeout=new CancellationTokenSource(2000);await socket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure,"Closed",closeTimeout.Token);}catch{}}
             peer.Close();socket.Abort();try{await sender;}catch{}
         }
     }
     static string GetString(JsonElement root,string key)=>root.TryGetProperty(key,out var v)&&v.ValueKind==JsonValueKind.String?(v.GetString()??""):"";
+    void TryStart(Room room){
+        if(room.phase!="lobby"||room.players.Count+room.botCount<2||room.players.Any(p=>!p.ready||!p.state.connected))return;
+        room.raceId=Guid.NewGuid().ToString("N");room.phase="loading";room.loadStarted=Environment.TickCount64;room.session=new RaceSession(room.track);room.countdown=3;room.firstFinish=0;room.time=0;room.recorded=false;
+        for(int i=0;i<room.botCount;i++)room.players.Add(new Player{loaded=true,state=new CarState{id="bot"+i,name="GT "+(i+1),vehicle=Vehicles.All[i%Vehicles.All.Length].id,bot=true}});
+        for(int i=0;i<room.players.Count;i++){var p=room.players[i];var old=p.state;p.state=Simulation.Spawn(room.track,i);p.state.id=old.id;p.state.name=old.name;p.state.vehicle=old.vehicle;p.state.badge=old.badge;p.state.bot=old.bot;p.input=new DriveInput();p.ready=false;p.loaded=p.state.bot;}
+    }
     void BroadcastLobby(Room r)
     {
-        foreach(var p in r.players)p.peer?.Post(new{type="lobby",code=r.code,track=r.track.id,owner=r.owner,phase=r.phase,players=r.players.Select(x=>new{id=x.state.id,name=x.state.name,vehicle=x.state.vehicle,badge=x.state.badge,ready=x.ready,loaded=x.loaded,connected=x.state.connected}).ToArray()});
+        foreach(var p in r.players)p.peer?.Post(new{type="lobby",code=r.code,track=r.track.id,owner=r.owner,phase=r.phase,bots=r.botCount,players=r.players.Where(x=>!x.state.bot).Select(x=>new{id=x.state.id,name=x.state.name,vehicle=x.state.vehicle,badge=x.state.badge,ready=x.ready,loaded=x.loaded,connected=x.state.connected}).ToArray()});
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -157,31 +167,33 @@ public sealed class RaceHub:BackgroundService
             var saves=new List<RaceResult[]>();
             lock(gate){
                 foreach(var room in rooms.Values.ToArray()){
-                    if(room.players.All(p=>!p.state.connected)&&room.players.All(p=>Environment.TickCount64-p.disconnectedAt>20000)){rooms.Remove(room.code);continue;}
-                    foreach(var p in room.players){
-                        if(!p.state.connected&&Environment.TickCount64-p.disconnectedAt>20000)p.state.dnf=true;
+                    if(room.players.Where(p=>!p.state.bot).All(p=>!p.state.connected)&&room.players.Where(p=>!p.state.bot).All(p=>Environment.TickCount64-p.disconnectedAt>20000)){rooms.Remove(room.code);continue;}
+                    foreach(var p in room.players.Where(p=>!p.state.bot)){
+                        if(!p.state.finished&&!p.state.connected&&Environment.TickCount64-p.disconnectedAt>20000)p.state.dnf=true;
                         if(Environment.TickCount64-p.lastInput>750)p.input=new DriveInput{brake=1};
                     }
-                    if(!room.players.Any(p=>p.state.id==room.owner&&p.state.connected)){
-                        room.owner=room.players.FirstOrDefault(p=>p.state.connected)?.state.id??"";
+                    if(room.phase=="lobby"&&room.players.RemoveAll(p=>p.state.dnf)>0){foreach(var member in room.players)member.ready=false;BroadcastLobby(room);}
+                    if(!room.players.Any(p=>!p.state.bot&&p.state.id==room.owner&&p.state.connected)){
+                        room.owner=room.players.FirstOrDefault(p=>!p.state.bot&&p.state.connected)?.state.id??"";
                     }
                     if(room.phase=="loading"){
                         if(room.players.Any(p=>!p.state.connected)||Environment.TickCount64-room.loadStarted>30000){
-                            room.phase="lobby";foreach(var p in room.players){p.ready=false;p.loaded=false;p.peer?.Post(new{type="error",code="LOAD_CANCELLED"});}BroadcastLobby(room);
+                            room.phase="lobby";room.players.RemoveAll(p=>p.state.bot||p.state.dnf);foreach(var p in room.players){p.ready=false;p.loaded=false;p.peer?.Post(new{type="error",code="LOAD_CANCELLED"});}BroadcastLobby(room);
                         }else if(room.players.All(p=>p.loaded)){room.phase="countdown";room.countdown=3;}
                     }
                     else if(room.phase=="countdown"){room.countdown-=.05f;if(room.countdown<=0)room.phase="race";}
                     else if(room.phase=="race"){
                         room.time+=.05f;
-                        foreach(var p in room.players)Simulation.StepCar(p.state,p.input,room.track,.05f);
+                        var states=room.players.Select(p=>p.state).ToList();
+                        foreach(var p in room.players){if(p.state.bot)room.session.UseBotSpecial(p.state,states);Simulation.StepCar(p.state,p.state.bot?room.session.Bot(p.state,.9f):p.input,room.track,.05f);}
                         room.session.Resolve(room.players.Select(p=>p.state).ToList(),.05f);
                         Simulation.Rank(room.players.Select(p=>p.state).ToList(),room.track);
                         if(room.firstFinish==0 && room.players.Any(p=>p.state.finished))room.firstFinish=room.time;
                         bool deadline=room.time>900||(room.firstFinish>0&&room.time-room.firstFinish>90);
                         if(deadline)foreach(var p in room.players.Where(p=>!p.state.finished))p.state.dnf=true;
-                        if(room.players.All(p=>p.state.finished||p.state.dnf)){
+                        if(Simulation.SettleOnline(states,room.track)){
                             room.phase="finished";Simulation.Rank(room.players.Select(p=>p.state).ToList(),room.track);
-                            if(!room.recorded){room.recorded=true;saves.Add(room.players.Select(p=>new RaceResult(room.raceId,p.state.id,p.state.name,room.track.id+"-2lap",p.state.rank,p.state.finishTime,p.state.bestLap,p.state.dnf,DateTime.UtcNow)).ToArray());}
+                            if(!room.recorded){room.recorded=true;saves.Add(room.players.Where(p=>!p.state.bot&&!p.state.estimated&&p.state.finished&&!p.state.dnf).Select(p=>new RaceResult(room.raceId,p.state.id,p.state.name,room.track.id+"-2lap",p.state.rank,p.state.finishTime,p.state.bestLap,p.state.dnf,DateTime.UtcNow)).ToArray());}
                             BroadcastLobby(room);
                         }
                     }
@@ -189,7 +201,7 @@ public sealed class RaceHub:BackgroundService
                     foreach(var p in room.players)p.peer?.Post(new{type="state",track=room.track.id,phase=room.phase,raceId=room.raceId,time=room.session.time,coins=room.session.coins,countdown=room.countdown,self=p.state.id,cars=room.players.Select(x=>x.state).ToArray()});
                 }
             }
-            foreach(var result in saves)_=Persist(result,stoppingToken);
+            foreach(var result in saves)if(result.Length>0)_=Persist(result,stoppingToken);
         }
     }
     async Task Persist(RaceResult[] results,CancellationToken ct)
@@ -199,7 +211,7 @@ public sealed class RaceHub:BackgroundService
     sealed class Room
     {
         public string code,owner="",phase="lobby",raceId="";
-        public RaceSession session;public long loadStarted;public Track track;public List<Player> players=new();public float countdown,time,firstFinish;public bool recorded;public int lobbyTicks;
+        public RaceSession session;public long loadStarted;public Track track;public List<Player> players=new();public float countdown,time,firstFinish;public bool recorded;public int lobbyTicks,botCount;
         public Room(string c,string t){code=c;track=new Track(t);session=new RaceSession(track);}
     }
     sealed class Player
@@ -214,10 +226,10 @@ public sealed class RaceHub:BackgroundService
         public void Post(object data)=>output.Writer.TryWrite(JsonSerializer.Serialize(data,Json));
         public void Close()=>output.Writer.TryComplete();
         public async Task SendLoop(CancellationToken ct){
-            await foreach(var json in output.Reader.ReadAllAsync(ct)){
+            try{await foreach(var json in output.Reader.ReadAllAsync(ct)){
                 using var timeout=CancellationTokenSource.CreateLinkedTokenSource(ct);timeout.CancelAfter(3000);
                 await socket.SendAsync(Encoding.UTF8.GetBytes(json),WebSocketMessageType.Text,true,timeout.Token);
-            }
+            }}finally{socket.Abort();}
         }
     }
 }

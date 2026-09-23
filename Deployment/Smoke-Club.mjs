@@ -37,7 +37,7 @@ try{
  assert(await first.evaluate('getComputedStyle(document.querySelector("#singleMode")).touchAction==="manipulation"'),'Buttons suppress double tap zoom');
  for(const viewport of [{width:852,height:393},{width:915,height:412},{width:900,height:412}]){
   await first.call('Emulation.setDeviceMetricsOverride',{...viewport,deviceScaleFactor:1,mobile:true});await delay(150);
-  assert(await first.evaluate('(()=>{let b=document.querySelector("#settingsButton"),r=b.getBoundingClientRect();return r.x<30&&r.y<30&&getComputedStyle(b).borderTopWidth==="0px"})()'),'Top-left frameless gear '+viewport.width);
+  assert(await first.evaluate('(()=>{let b=document.querySelector("#settingsButton"),r=b.getBoundingClientRect();return r.right>innerWidth-30&&r.y<30&&getComputedStyle(b).borderTopWidth==="0px"})()'),'Top-right frameless gear '+viewport.width);
   assert(await first.evaluate('(()=>{let w=document.querySelector("#wheel"),f=document.querySelector("#wheelFace");return parseFloat(getComputedStyle(w).width)===2*parseFloat(getComputedStyle(f).width)})()'),'Rectangular double-width steering '+viewport.width);
   await screenshot(first,'mobile-menu-'+viewport.width+'.png');
  }
@@ -147,6 +147,11 @@ try{
  await screenshot(first,'club-records.png');
  // A deterministic completed-result fixture exercises local persistence, not driving physics.
  await first.evaluate('window.fixture={id:"local",name:"検証レーサー",vehicle:"swift",finished:true,dnf:false,rank:1,finishTime:240,bestLap:80,distance:5000,coins:25,specialUses:3};Club.record([fixture],{online:false,track:"ridge",raceId:"persistence-fixture"});Club.record([fixture],{online:false,track:"ridge",raceId:"persistence-fixture"})');
+ await first.evaluate('Club.showAwards(()=>window.awardsClosed=true)');
+ assert(await first.evaluate('!document.querySelector("#awardOverlay").hidden && document.querySelectorAll(".awardItem").length===2'),'New badges shown together before returning to menu');
+ await first.evaluate('document.querySelector("#awardClose").click()');
+ assert(await first.evaluate('window.awardsClosed && document.querySelector("#awardOverlay").hidden'),'Badge dismissal continues to menu');
+ await first.evaluate('Club.record([{...fixture,bot:true}],{online:false,track:"ridge",raceId:"cpu-fixture"})');
  assert(await first.evaluate('Club.profile.records.finished===1 && Club.profile.records.coins===25 && Club.profile.badges.includes("finish") && Club.profile.badges.includes("collector")'),'Result fixture awards records and badges only once');
  await first.evaluate('document.querySelector("#recordsBack").click()');await waitFor(first,'Racer.screen==="menu"');
  await first.evaluate('document.querySelector("#galleryButton").click()');await waitFor(first,'Racer.screen==="gallery"');
@@ -158,9 +163,7 @@ try{
  await first.evaluate('document.querySelector("#recordsButton").click()');await waitFor(first,'Racer.screen==="records"');
  await screenshot(first,'club-records-fixture.png');
  await first.evaluate('document.querySelector("#recordsBack").click()');await waitFor(first,'Racer.screen==="menu"');
- await first.evaluate('document.querySelector("#onlineMode").click()');await waitFor(first,'Racer.screen==="vehicles"');
- await first.evaluate('document.querySelector("#vehicleNext").click()');await waitFor(first,'Racer.screen==="courses"');
- await first.evaluate('document.querySelector("[data-track=ridge]").click();document.querySelector("#solo").click()');await waitFor(first,'Racer.screen==="connect"');
+ await first.evaluate('document.querySelector("#onlineMode").click()');assert(await waitFor(first,'Racer.screen==="connect"'),'Online opens room selection first');
  await first.evaluate('document.querySelector("#createRoom").click()');
  assert(await waitFor(first,'Racer.online && Racer.screen==="lobby"',15),'Browser creates room');
  assert(await first.evaluate('getComputedStyle(document.querySelector("#game")).visibility==="hidden"'),'Online lobby hides world');
@@ -168,19 +171,21 @@ try{
  const target=await first.call('Target.createTarget',{url:base+'/play/'});
  tabs=await(await fetch('http://127.0.0.1:9228/json/list')).json();second=await session(tabs.find(t=>t.id===target.targetId).webSocketDebuggerUrl);
  assert(await waitFor(second,'window.Racer && document.querySelector("#loading").hidden'),'Second game client loads');
- await second.evaluate('document.querySelector("#onlineMode").click()');await waitFor(second,'Racer.screen==="vehicles"');
- await second.evaluate('document.querySelector("#vehicleNext").click()');await waitFor(second,'Racer.screen==="courses"');
- await second.evaluate('document.querySelector("#solo").click()');await waitFor(second,'Racer.screen==="connect"');
+ await second.evaluate('document.querySelector("#onlineMode").click()');await waitFor(second,'Racer.screen==="connect"');
+ assert(await waitFor(second,'document.querySelectorAll("#roomList button").length>0',10),'Available rooms listed');
  await second.evaluate('document.querySelector("#roomCode").value='+JSON.stringify(code)+';document.querySelector("#joinRoom").click()');
  assert(await waitFor(second,'Racer.online && Racer.screen==="lobby"',15),'Second browser joins same room');
+ assert(await second.evaluate('document.querySelector("#hostOptions").hidden'),'Guest cannot choose course or CPU count');
+ await first.evaluate('document.querySelector("#botCount").value=6;document.querySelector("#botCount").dispatchEvent(new Event("change"))');await delay(300);
  await first.evaluate('document.querySelector("#ready").click()');await second.evaluate('document.querySelector("#ready").click()');
- assert(await waitFor(first,'!document.querySelector("#startOnline").disabled',10),'Both clients ready');
- await first.evaluate('document.querySelector("#startOnline").click()');
+
  await first.call('Page.bringToFront');
  assert(await waitFor(first,'!document.querySelector("#raceLoading").hidden',10),'Online displays shared loading stage');
  await second.call('Page.bringToFront');await delay(1400);
  await first.call('Page.bringToFront');
  assert(await waitFor(first,'Racer.telemetry?.phase==="race"',15),'Owner enters online race');
+ assert(await first.evaluate('Racer.telemetry.cars.length===8 && Racer.telemetry.cars.filter(c=>c.bot).length===6'),'Host selected six CPUs with two humans');
+ assert(await first.evaluate('document.querySelector("#centerMessage").textContent===""'),'No start text overlapping lights');
  await second.call('Page.bringToFront');
  assert(await waitFor(second,'Racer.telemetry?.phase==="race"',15),'Guest enters same online race');
  await first.call('Page.bringToFront');
@@ -190,6 +195,17 @@ try{
  await first.evaluate('document.querySelector("#closeSettings").click()');
  await screenshot(first,'club-online.png');await screenshot(second,'club-online-guest.png');
  await first.evaluate('document.querySelector("#pauseButton").click();document.querySelector("#acceptExit").click()');await second.evaluate('document.querySelector("#pauseButton").click();document.querySelector("#acceptExit").click()');
+ await waitFor(first,'Racer.screen==="menu"');
+ await first.evaluate('window.OriginalWebSocket=WebSocket;window.WebSocket=class extends OriginalWebSocket{constructor(url){super(url);window.testSocket=this;}};document.querySelector("#onlineMode").click()');await waitFor(first,'Racer.screen==="connect"');
+ await first.evaluate('document.querySelector("#createRoom").click()');assert(await waitFor(first,'Racer.online && Racer.screen==="lobby"',10),'Reconnect after explicit exit works');
+ await first.evaluate('window.oldSocketHandler=testSocket.onmessage;testSocket.onmessage({data:"not json"})');
+ assert(await waitFor(first,'!Racer.online && Racer.screen==="connect" && testSocket.readyState===3',10),'Malformed server data closes socket and clears online state');
+ await first.evaluate('document.querySelector("#createRoom").click()');assert(await waitFor(first,'Racer.online && Racer.screen==="lobby"',10),'Fresh connection works after protocol error');
+ await first.evaluate('oldSocketHandler({data:JSON.stringify({type:"joined",id:"stale",token:"stale",code:"STALE"})})');
+ assert(await first.evaluate('document.querySelector("#codeDisplay").textContent!=="STALE"'),'Messages from old socket cannot mutate current room');
+ await first.evaluate('testSocket.onmessage=null');
+ assert(await waitFor(first,'!Racer.online && Racer.screen==="connect" && testSocket.readyState===3',20),'Silent connection timeout closes socket');
+ await first.evaluate('window.WebSocket=OriginalWebSocket');
  assert(errors.length===0,'No browser runtime errors');
  fs.writeFileSync(path.join(logs,'club-browser-checks.json'),JSON.stringify({checks,errors,note:'Desktop Edge with mobile emulation; not physical iPhone/Android testing.'},null,2));
 }catch(e){console.error(e);fs.writeFileSync(path.join(logs,'club-browser-failure.json'),JSON.stringify({error:String(e),checks,errors},null,2));if(first)try{await screenshot(first,'club-browser-failure.png')}catch{}process.exitCode=1;}

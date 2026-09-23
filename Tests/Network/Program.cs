@@ -46,12 +46,13 @@ foreach(string trackId in new[]{"ridge","suzuka"}){
  }
  var results=await Task.WhenAll(Drive(a,aid),Drive(b,bid));
  foreach(var result in results){
-  if(result.Any(c=>!c.finished||c.dnf||c.lap!=Simulation.Laps))throw new Exception("Race incomplete "+JsonSerializer.Serialize(result,options));
+  if(result.Count(c=>c.finished&&c.lap==Simulation.Laps)!=1||result.Count(c=>c.dnf&&c.finishTime==0)!=1)throw new Exception("Race incomplete "+JsonSerializer.Serialize(result,options));
  }
  var one=results[0].OrderBy(c=>c.rank).Select(c=>(c.id,c.rank,c.finishTime)).ToArray();
  var two=results[1].OrderBy(c=>c.rank).Select(c=>(c.id,c.rank,c.finishTime)).ToArray();
  if(!one.SequenceEqual(two))throw new Exception("Clients disagree on result");
- Console.WriteLine("PASS "+trackId+" two clients complete race and share identical standings");
+ Console.WriteLine("PASS "+trackId+" winner completes two laps; last place has no time; both clients share standings");
+ await Send(a,new{action="rematch"});await Task.Delay(150,ct);
  await Send(a,new{action="ready",ready=true});await Send(b,new{action="ready",ready=true});
  await Task.Delay(100,ct);await Send(a,new{action="start"});
  async Task<JsonDocument> Phase(ClientWebSocket socket,string expected){while(true){var doc=await Until(socket,"state");if(doc.RootElement.GetProperty("phase").GetString()==expected)return doc;doc.Dispose();}}
