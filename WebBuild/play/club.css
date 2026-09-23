@@ -12,3 +12,22 @@ body[data-screen=menu] header .brand{visibility:hidden}body[data-screen=menu] he
 @media(max-height:620px){.gameTitle{font-size:48px;margin-bottom:10px}.home{gap:5px}.home button{min-height:35px;padding:7px 14px}.titleStripe{margin-bottom:4px}.showroomPanel{top:60px;padding:15px;bottom:10px}.showroomPanel h2{margin:0 0 10px;font-size:18px}.showroomPanel h3{margin:12px 0 8px;font-size:18px}.statRow{margin:9px 0}.vehicleChoices button{min-height:33px;padding:6px}.specialDescription{margin:8px 0;min-height:20px}.showroomPanel .actions{margin-top:10px}.showroomPanel .actions button{min-height:35px;padding:6px}.recordsPanel{top:65px}#specialHUD{top:80px;width:175px}#specialButton{bottom:172px;left:25px}#instruments{width:118px;height:118px}#speed{font-size:29px}#settings label{margin:12px 0}}
 @media(max-width:760px){.home{width:32vw;left:6%}.home button{font-size:12px}.gameTitle{font-size:40px}.showroomPanel{left:14px;width:43vw;padding:12px}.statRow{grid-template-columns:53px 1fr;gap:5px;font-size:10px}.statRow small{display:none}.vehicleChoices button{font-size:10px}.specialDescription{font-size:10px}#recordStats{grid-template-columns:repeat(3,1fr)}#specialHUD{width:145px}.recordColumns{gap:15px}#specialButton{bottom:160px}.hudTop{gap:12px}}
 @media(prefers-reduced-motion:reduce){button{transition:none}.loaderMark{animation-duration:2s}}.nameplate.effect-boost{border-color:#f9ad59;color:#ffca8e}.nameplate.effect-grip{border-color:#6fe3ae;color:#aff8d5}.nameplate.effect-shield{border-color:#78b7ff;color:#b8d9ff}.nameplate.effect-pulse{border-color:#d895ff;color:#eccbff}.nameplate.effect-jam{border-color:#ef786e;color:#ffc3bd}
+
+/* Mobile input and compact instruments. */
+html,body,button,canvas,div,span,p,h1,h2,h3{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+input,textarea{user-select:text;-webkit-user-select:text}
+button,a,select,label{touch-action:manipulation}
+#wheel,#pedals,#specialButton,#orbitSurface{touch-action:none}
+.cornerBack{position:absolute;top:6px;left:6px;width:44px;height:44px;padding:0;border:0;background:transparent;font-size:24px;z-index:2}
+.panel:has(.cornerBack)>h2,.panel:has(.cornerBack)>.eyebrow{margin-left:38px}
+#settingsButton,#raceSettings{position:fixed;left:max(8px,env(safe-area-inset-left));top:max(8px,env(safe-area-inset-top));width:44px;height:44px;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;font-size:26px!important;z-index:5}
+header>.brand{margin-left:42px}.hudTop{left:58px}
+#instruments{width:71px;height:71px;padding:6px;gap:3px}#instruments #speed{font-size:23px}#instruments #gear{font-size:13px;padding-right:3px}#instruments small{font-size:8px}#instruments .at{display:none}
+#wheel{--wheel-size:158px;width:calc(var(--wheel-size)*2);height:var(--wheel-size);left:0;border-radius:0;display:flex;align-items:center;justify-content:center;border:0;background:transparent}
+#wheelFace{width:var(--wheel-size);height:var(--wheel-size);flex:none;pointer-events:none}
+#startLights{position:absolute;top:28%;left:50%;transform:translateX(-50%);display:flex;gap:12px;background:#090b0fee;border:2px solid #555;padding:15px;border-radius:12px;pointer-events:none}
+#startLights i{width:40px;height:40px;border-radius:50%;background:#252525;box-shadow:inset 0 0 10px #000}
+#startLights i.red{background:#ff3434;box-shadow:0 0 20px #fa2222}#startLights i.green{background:#43ee83;box-shadow:0 0 20px #43ee83}
+.vehicleChoices{flex-wrap:wrap;grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-height:620px){#wheel{--wheel-size:140px}#instruments{width:59px;height:59px;padding:4px}#instruments #speed{font-size:20px}}
+@media(max-width:720px){#wheel{--wheel-size:120px}}

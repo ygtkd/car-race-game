@@ -18,9 +18,9 @@ foreach(string trackId in new[]{"ridge","suzuka"}){
  async Task<JsonDocument> Until(ClientWebSocket ws,string type){
   while(true){var d=await Read(ws);if(d.RootElement.GetProperty("type").GetString()==type)return d;d.Dispose();}
  }
- await Send(a,new{action="create",track=trackId,name="検証ドライバー甲",vehicle="apex"});
+ await Send(a,new{action="create",track=trackId,name="検証ドライバー甲",vehicle="kebab"});
  using var ja=await Until(a,"joined");string code=ja.RootElement.GetProperty("code").GetString();string aid=ja.RootElement.GetProperty("id").GetString();
- await Send(b,new{action="join",code,name="検証ドライバー乙",vehicle="swift"});
+ await Send(b,new{action="join",code,name="検証ドライバー乙",vehicle="bicycle"});
  using var jb=await Until(b,"joined");string bid=jb.RootElement.GetProperty("id").GetString();
  await Send(a,new{action="ready",ready=true});await Send(b,new{action="ready",ready=true});
  await Task.Delay(150,ct);await Send(a,new{action="start"});
@@ -46,7 +46,7 @@ foreach(string trackId in new[]{"ridge","suzuka"}){
  }
  var results=await Task.WhenAll(Drive(a,aid),Drive(b,bid));
  foreach(var result in results){
-  if(result.Any(c=>!c.finished||c.dnf||c.lap!=3))throw new Exception("Race incomplete "+JsonSerializer.Serialize(result,options));
+  if(result.Any(c=>!c.finished||c.dnf||c.lap!=Simulation.Laps))throw new Exception("Race incomplete "+JsonSerializer.Serialize(result,options));
  }
  var one=results[0].OrderBy(c=>c.rank).Select(c=>(c.id,c.rank,c.finishTime)).ToArray();
  var two=results[1].OrderBy(c=>c.rank).Select(c=>(c.id,c.rank,c.finishTime)).ToArray();

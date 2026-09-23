@@ -36,8 +36,8 @@ try{
  a.ws.close();await b.wait(x=>x.type==='state'&&!x.cars.find(p=>p.id===ja.id).connected);
  await delay(150);a=await connect();a.send('resume',{token:ja.token});const resumed=await a.wait(x=>x.type==='joined');
  assert(resumed.id===ja.id,'Reconnect within 20 seconds preserves player identity');
- a.messages.length=0;a.send('recover');state=await a.wait(x=>x.type==='state'&&x.cars.find(p=>p.id===ja.id).elapsed>me.elapsed+3);
- assert(state.cars.find(p=>p.id===ja.id).gate===1,'Recovery does not award checkpoints');
+ a.messages.length=0;const beforeRecovery=await a.wait(x=>x.type==='state');a.send('recover');a.messages.length=0;state=await a.wait(x=>x.type==='state');
+ assert(state.cars.find(p=>p.id===ja.id).elapsed-beforeRecovery.cars.find(p=>p.id===ja.id).elapsed<1,'Removed manual recovery cannot force teleport or penalty');
  a.ws.close();b.messages.length=0;await delay(21000);
  state=await b.wait(x=>x.type==='state'&&x.cars.find(p=>p.id===ja.id).dnf);
  assert(state.phase==='race','Remaining player continues after disconnect timeout');

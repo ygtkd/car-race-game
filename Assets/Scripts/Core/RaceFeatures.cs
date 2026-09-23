@@ -14,7 +14,11 @@ namespace CoastRacer.Core
             new VehicleSpec("apex","APEX GT","boost",1240,54,10.1f,10.0f),
             new VehicleSpec("swift","SWIFT R","grip",1040,51,10.2f,10.2f),
             new VehicleSpec("vortex","VORTEX S","shield",1450,59,9.0f,9.5f),
-            new VehicleSpec("atlas","ATLAS X","pulse",1590,52,9.8f,10.0f)
+            new VehicleSpec("atlas","ATLAS X","pulse",1590,52,9.8f,10.0f),
+            new VehicleSpec("kebab","KEBAB VAN","feast",1700,51,10.0f,10.1f),
+            new VehicleSpec("banana","BANANA BOAT","surf",1150,55,9.6f,10.0f),
+            new VehicleSpec("tuktuk","TUK TUK","dash",980,52,10.3f,10.1f),
+            new VehicleSpec("bicycle","BICYCLE","cadence",820,50,10.6f,10.5f)
         };
         public static VehicleSpec Get(string id){foreach(var v in All)if(v.id==id)return v;return All[0];}
         public static string Badge(string value){return value=="finish"||value=="explorer"||value=="collector"||value=="winner"||value=="garage"||value=="veteran"?value:"";}
@@ -45,6 +49,7 @@ namespace CoastRacer.Core
         {
             if(c.finished||c.dnf||c.gauge<.9999f||c.specialTime>0)return false;
             c.gauge=0;c.specialUses++;c.specialTime=Vehicles.Get(c.vehicle).special=="boost"?3.5f:4;
+            if(Vehicles.Get(c.vehicle).special=="feast"){c.jamTime=0;c.jamImmunity=4;}
             if(Vehicles.Get(c.vehicle).special=="pulse")foreach(var other in cars){
                 if(other==c||other.finished||other.dnf||other.jamImmunity>0||Math.Abs(other.y-c.y)>3)continue;
                 float dx=other.x-c.x,dz=other.z-c.z;
@@ -73,7 +78,7 @@ namespace CoastRacer.Core
         public void UseBotSpecial(CarState c,IList<CarState> cars)
         {
             if(c.gauge<1||c.speed<10)return;string special=Vehicles.Get(c.vehicle).special;
-            bool use=special=="boost"?track.TargetSpeed(c.index)>35:special=="grip"?track.TargetSpeed(c.index)<30:false;
+            bool use=(special=="boost"||special=="dash"||special=="cadence"||special=="feast")?track.TargetSpeed(c.index)>35:(special=="grip"||special=="surf")?track.TargetSpeed(c.index)<30:false;
             if(special=="pulse"||special=="shield")foreach(var other in cars){float dx=other.x-c.x,dz=other.z-c.z;if(other!=c&&!other.finished&&dx*dx+dz*dz<144)use=true;}
             if(use)Activate(c,cars);
         }
@@ -97,7 +102,7 @@ namespace CoastRacer.Core
         public static void Collisions(IList<CarState> cars)
         {
             for(int i=0;i<cars.Count;i++)for(int j=i+1;j<cars.Count;j++){
-                var a=cars[i];var b=cars[j];if(a.finished||b.finished||a.dnf||b.dnf||Math.Abs(a.y-b.y)>2)continue;
+                var a=cars[i];var b=cars[j];if(a.recoveryProtection>0||b.recoveryProtection>0||a.finished||b.finished||a.dnf||b.dnf||Math.Abs(a.y-b.y)>2)continue;
                 float deepest=0,nx=0,nz=0;
                 foreach(float sa in new[]{-1f,1f})foreach(float sb in new[]{-1f,1f}){
                     float dx=b.x+(float)Math.Sin(b.yaw)*sb-a.x-(float)Math.Sin(a.yaw)*sa;

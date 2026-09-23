@@ -37,3 +37,5 @@ Unityビルドの子プロセスには DOTNET_PROCESSOR_COUNT=2、EMCC_CORES=2 �
 新規アプリ・依存パッケージのインストールはありません。音源は既存Node.jsで生成しました。容量不足を避けるため、Unityビルド時のみDOTNET_PROCESSOR_COUNT=1、DOTNET_gcServer=0、EMCC_CORES=1、BEE_BUILD_THREADS=1、BINARYEN_CORES=1を指定します。恒久的なシステム設定変更はありません。Deployment/Build-Guarded.ps1は残り1GiBで停止します。
 
 GitHub Actions公開準備: 新規ローカルツールのインストールなし。既存.NET SDKによる復元・公開のみ。
+
+2026-09-23 モバイル改修: 新規インストールなし。Unity 6000.6.2f1/WebGLモジュールの残存を確認。旧Unityのアンインストールはユーザーが実施。

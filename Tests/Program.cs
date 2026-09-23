@@ -14,9 +14,20 @@ foreach(string id in new[]{"ridge","suzuka"}){
   if(i%15000==0)Console.WriteLine(id+" tick "+i+" lap "+c.lap+" gate "+c.gate+" index "+c.index+" speed "+c.speed);
  }
  Console.WriteLine(id+" time "+c.elapsed+" laps "+c.lap+" gate "+c.gate+" offroadSeconds "+maxOffroad);
- Check(c.finished,id+" AI can complete three laps");
+ Check(c.finished,id+" AI can complete two laps");
  float before=c.elapsed;c.finished=false;int gate=c.gate;Simulation.Recover(c,t);
  Check(c.gate==gate&&c.elapsed>=before+2.99f,id+" recovery penalty and gate preservation");
 }
 Console.WriteLine("All core checks passed.");
+// Automatic recovery uses elapsed simulation time, cancels in range, and preserves gates.
+{
+ var t=new Track("ridge");var c=Simulation.Spawn(t);var tangent=t.Tangent(0);var centre=t.points[0];
+ void Outside(){c.x=centre.x+tangent.z*15;c.z=centre.z-tangent.x*15;c.index=0;c.speed=c.vx=c.vz=0;}
+ Outside();for(int i=0;i<100;i++)Simulation.StepCar(c,new DriveInput(),t,.02f);
+ Check(c.recoveryRemaining>0&&c.recoveryProtection==0,"automatic recovery waits three seconds");
+ c.x=centre.x;c.z=centre.z;Simulation.StepCar(c,new DriveInput(),t,.02f);Check(c.recoveryRemaining==0,"returning in range cancels countdown");
+ Outside();int gate=c.gate;for(int i=0;i<152;i++)Simulation.StepCar(c,new DriveInput(),t,.02f);
+ Check(c.recoveryProtection>0&&c.gate==gate&&c.lap==0,"automatic recovery preserves progress and protects spawn");
+ Check(Simulation.Laps==2,"race length is two laps");
+}
 ExpansionTests.Run();

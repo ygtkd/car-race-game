@@ -181,7 +181,7 @@ namespace CoastRacer
                 Shape("Pit glass",PrimitiveType.Cube,p-right*7.6f+Vector3.up*3,new Vector3(.1f,2.7f,7),glass,scenery);
             }
             // Bake scenery per material, keeping draw calls low without generating a separate prefab per object.
-            CombineScenery(scenery);
+            ExtraScenery(scenery);CombineScenery(scenery);
             cars.Add(Simulation.Spawn(track));visuals.Add(BuildCar(0));
             Place(visuals[0],cars[0],0);
             CreateCoins();CameraFollow(true);Emit(true);
@@ -207,8 +207,8 @@ namespace CoastRacer
             var car=new GameObject(vehicle+"/"+badge).transform;
             Color[] colors={new Color(.68f,.71f,.73f),new Color(.55f,.13f,.1f),new Color(.12f,.25f,.38f),new Color(.61f,.50f,.19f)};
             int vehicleIndex=Array.FindIndex(Vehicles.All,x=>x.id==vehicle);
-            Material body=Mat("Car"+vehicle,colors[vehicleIndex]);
-            SculptedBody(car,body);
+            Material body=Mat("Car"+vehicle,colors[vehicleIndex%colors.Length]);
+            if(vehicleIndex>=4){NoveltyBody(car,vehicle,badge,body);return car;}SculptedBody(car,body);
             bool hatch=vehicle=="swift",touring=vehicle=="atlas";
             Shape("Roof",PrimitiveType.Cube,new Vector3(0,1.425f,hatch?-.42f:touring?-.36f:-.215f),new Vector3(1.31f,.04f,hatch?1.48f:touring?1.34f:.96f),body,car);
             Shape("Front splitter",PrimitiveType.Cube,new Vector3(0,.30f,2.12f),new Vector3(1.95f,.1f,.32f),rubber,car);
@@ -246,7 +246,6 @@ namespace CoastRacer
             }
             if(c.action=="menu"){online=false;paused=false;phase="menu";SelectTrack(c.track??track.id);}
             if(c.action=="pause" && !online){paused=c.paused;input.throttle=input.brake=input.steer=0;}
-            if(c.action=="recover" && !online && recoverCooldown<=0){Simulation.Recover(cars[0],track);recoverCooldown=4;}
             if(c.action=="quality"){cam.farClipPlane=c.quality==0?500:850;QualitySettings.antiAliasing=c.quality==0?0:2;Application.targetFrameRate=c.quality==0?30:60;}
             Emit(true);
         }
@@ -273,7 +272,6 @@ namespace CoastRacer
             input.steer=Input.GetAxisRaw("Horizontal");
             input.throttle=Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)?1:0;
             input.brake=Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)||Input.GetKey(KeyCode.Space)?1:0;
-            if(Input.GetKeyDown(KeyCode.R)&&recoverCooldown<=0){Simulation.Recover(cars[0],track);recoverCooldown=4;}
 #endif
             if(!paused){
                 if(!online && phase=="countdown"){countdown-=dt;if(countdown<=0){phase="race";Debug.Log("COAST_RACER_GO");}}

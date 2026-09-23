@@ -41,10 +41,10 @@ app.Use(async(context,next)=>{
 });
 app.UseStaticFiles(new StaticFileOptions{ContentTypeProvider=provider});
 app.MapGet("/health",()=>Results.Ok(new{status="ok",protocol=3}));
-app.MapGet("/api/courses",()=>new[]{new{id="ridge",name="山岳サーキット"},new{id="suzuka",name="鈴鹿風"}});
+app.MapGet("/api/courses",()=>new[]{new{id="ridge",name="山岳サーキット"},new{id="suzuka",name="鈴鹿サーキット"}});
 app.MapGet("/api/records/{track}",async(string track,ResultStore store,CancellationToken ct)=>{
     if(track!="ridge"&&track!="suzuka")return Results.BadRequest();
-    try{return Results.Ok(await store.Read(track,ct));}catch(Exception ex){if(ex is Microsoft.Data.SqlClient.SqlException firewall && firewall.Number==40615){var ip=System.Text.RegularExpressions.Regex.Match(firewall.Message,@"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b").Value;app.Logger.LogError("SQL_RECORDS_FAILURE type=Firewall clientIp={ClientIp}",ip);}app.Logger.LogError("SQL_RECORDS_FAILURE type={Type} sqlNumber={Number} innerType={InnerType}",ex.GetType().Name,ex is Microsoft.Data.SqlClient.SqlException sql?sql.Number:0,ex.InnerException?.GetType().Name);return Results.Json(new{error="RECORDS_UNAVAILABLE"},statusCode:503);}
+    try{return Results.Ok(await store.Read(track+"-2lap",ct));}catch(Exception ex){if(ex is Microsoft.Data.SqlClient.SqlException firewall && firewall.Number==40615){var ip=System.Text.RegularExpressions.Regex.Match(firewall.Message,@"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b").Value;app.Logger.LogError("SQL_RECORDS_FAILURE type=Firewall clientIp={ClientIp}",ip);}app.Logger.LogError("SQL_RECORDS_FAILURE type={Type} sqlNumber={Number} innerType={InnerType}",ex.GetType().Name,ex is Microsoft.Data.SqlClient.SqlException sql?sql.Number:0,ex.InnerException?.GetType().Name);return Results.Json(new{error="RECORDS_UNAVAILABLE"},statusCode:503);}
 });
 app.Map("/ws",async(HttpContext context,RaceHub hub)=>{
     if(!context.WebSockets.IsWebSocketRequest){context.Response.StatusCode=400;return;}
@@ -137,7 +137,6 @@ public sealed class RaceHub:BackgroundService
                             value.assist=Math.Clamp(value.assist,0,1);value.sensitivity=Math.Clamp(value.sensitivity,.5f,1.6f);
                             player.input=value;player.lastInput=Environment.TickCount64;
                         }
-                        else if(action=="recover"&&room.phase=="race"&&room.time-player.lastRecovery>=4){Simulation.Recover(player.state,room.track);player.lastRecovery=room.time;}
                     }
                 }
             }
@@ -182,7 +181,7 @@ public sealed class RaceHub:BackgroundService
                         if(deadline)foreach(var p in room.players.Where(p=>!p.state.finished))p.state.dnf=true;
                         if(room.players.All(p=>p.state.finished||p.state.dnf)){
                             room.phase="finished";Simulation.Rank(room.players.Select(p=>p.state).ToList(),room.track);
-                            if(!room.recorded){room.recorded=true;saves.Add(room.players.Select(p=>new RaceResult(room.raceId,p.state.id,p.state.name,room.track.id,p.state.rank,p.state.finishTime,p.state.bestLap,p.state.dnf,DateTime.UtcNow)).ToArray());}
+                            if(!room.recorded){room.recorded=true;saves.Add(room.players.Select(p=>new RaceResult(room.raceId,p.state.id,p.state.name,room.track.id+"-2lap",p.state.rank,p.state.finishTime,p.state.bestLap,p.state.dnf,DateTime.UtcNow)).ToArray());}
                             BroadcastLobby(room);
                         }
                     }

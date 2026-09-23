@@ -108,6 +108,7 @@ namespace CoastRacer.Core
     [Serializable] public sealed class CarState
     {
         public string id="",name="",vehicle="apex",badge="";
+        public float recoveryRemaining,recoveryElapsed,recoveryProtection;
         public float gauge,specialTime,jamTime,jamImmunity,distance,furthestDistance;public int coins,specialUses;
         public float x,y,z,yaw,speed,vx,vz,steering,elapsed,lapStart,bestLap,finishTime,offroad,slip;
         public int index,lap,gate=1,rank,gear=1;
@@ -117,7 +118,7 @@ namespace CoastRacer.Core
     public static class Simulation
     {
         public const float Step=0.02f;
-        public const int Laps=3;
+        public const int Laps=2;
         public static CarState Spawn(Track track,int slot=0)
         {
             Point p=track.points[0],t=track.Tangent(0);
@@ -130,15 +131,16 @@ namespace CoastRacer.Core
             int index=(car.gate-1)*Track.Samples/Track.Gates;
             // A penalty makes recovery slower than driving. Returning behind the next gate never awards progress.
             Point p=t.points[index];car.x=p.x;car.y=p.y;car.z=p.z;car.yaw=t.Yaw(index);
-            car.speed=car.vx=car.vz=0;car.index=index;car.elapsed+=3;car.offroad=0;
+            car.speed=car.vx=car.vz=0;car.index=index;car.elapsed+=3;car.offroad=0;car.recoveryRemaining=car.recoveryElapsed=0;car.recoveryProtection=2;
         }
         public static void StepCar(CarState c,DriveInput input,Track t,float dt)
         {
             if(c.finished||c.dnf)return;
-            dt=Mathx.Clamp(dt,0,.05f);c.elapsed+=dt;
+            dt=Mathx.Clamp(dt,0,.05f);c.elapsed+=dt;c.recoveryProtection=Math.Max(0,c.recoveryProtection-dt);
             float assist=Mathx.Clamp(input.assist,0,1);
             var spec=Vehicles.Get(c.vehicle);c.specialTime=Math.Max(0,c.specialTime-dt);c.jamTime=Math.Max(0,c.jamTime-dt);c.jamImmunity=Math.Max(0,c.jamImmunity-dt);
-            bool boost=c.specialTime>0&&spec.special=="boost",gripActive=c.specialTime>0&&spec.special=="grip";
+            bool boost=c.specialTime>0&&(spec.special=="boost"||spec.special=="dash"),gripActive=c.specialTime>0&&(spec.special=="grip"||spec.special=="surf");
+            bool cadence=c.specialTime>0&&spec.special=="cadence",feast=c.specialTime>0&&spec.special=="feast";
             c.index=t.Nearest(c.Position,c.index);
             Point center=t.points[c.index],forward=t.Tangent(c.index);
             float lateral=(c.x-center.x)*forward.z-(c.z-center.z)*forward.x;
@@ -149,9 +151,9 @@ namespace CoastRacer.Core
             // Brake assist limits corner entry speed, but never drives or steers for the player.
             if(assist>0 && !grass && c.speed>t.TargetSpeed(c.index)+3)brake=Math.Max(brake,.45f*assist);
             float slope=forward.y*(float)Math.Cos(Mathx.Angle(c.yaw-t.Yaw(c.index)));
-            float acceleration=throttle*spec.acceleration*(1-.35f*c.speed/spec.maxSpeed)*(boost?1.35f:gripActive?1.12f:1)-brake*15-.32f-c.speed*c.speed*.0015f-slope*9.81f;
+            float acceleration=throttle*spec.acceleration*(1-.35f*c.speed/spec.maxSpeed)*(boost?1.35f:cadence?1.30f:feast?1.20f:gripActive?1.12f:1)-brake*15-.32f-c.speed*c.speed*.0015f-slope*9.81f;
             if(c.jamTime>0)acceleration-=2;
-            if(grass)acceleration-=3+c.speed*.18f;
+            if(grass)acceleration-=(3+c.speed*.18f)*(gripActive?.5f:1);
             c.speed=Mathx.Clamp(c.speed+acceleration*dt,0,spec.maxSpeed*(boost?1.12f:1));
             float maxAngle=.58f/(1+c.speed*.04f);
             float wantedYaw=c.speed/2.7f*(float)Math.Tan(c.steering*maxAngle);
@@ -167,6 +169,7 @@ namespace CoastRacer.Core
             c.y=center.y;
             lateral=(c.x-center.x)*forward.z-(c.z-center.z)*forward.x;
             c.offroad=Math.Abs(lateral)>t.width*.5f?1:0;
+            if(Math.Abs(lateral)>t.width*.5f+7){c.recoveryElapsed+=dt;c.recoveryRemaining=Math.Max(0,3-c.recoveryElapsed);if(c.recoveryElapsed>=3){Recover(c,t);return;}}else{c.recoveryElapsed=c.recoveryRemaining=0;}
             c.wrongWay=c.speed>3 && Math.Cos(Mathx.Angle(c.yaw-t.Yaw(c.index)))<-.25;
             // Barrier at the outer runoff edge. Vertical layers are selected using local track continuity.
             if(Math.Abs(lateral)>t.width*.5f+9){

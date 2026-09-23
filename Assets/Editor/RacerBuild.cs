@@ -11,7 +11,7 @@ public static class RacerBuild
     static void Configure()
     {
         PlayerSettings.companyName = "Coast Racer Studio";
-        PlayerSettings.productName = "Coast Racer";
+        PlayerSettings.productName = "COAST RACER";
         PlayerSettings.bundleVersion = "1.0.0";
         PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.coastracer.game");
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;

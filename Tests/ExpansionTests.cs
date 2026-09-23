@@ -15,16 +15,16 @@ static class ExpansionTests
   a=Simulation.Spawn(t);b=Simulation.Spawn(t);a.vehicle="swift";b.vehicle="atlas";a.x=0;b.x=1;a.z=b.z=0;a.y=b.y=0;a.yaw=b.yaw=0;RaceSession.Collisions(new[]{a,b});Check(Math.Abs(a.x)>Math.Abs(b.x-1),"lighter car moves farther in contact");
   a=Simulation.Spawn(t);a.furthestDistance=400;a.gauge=.3f;a.gate=3;Simulation.Recover(a,t);for(int i=0;i<50;i++)Simulation.StepCar(a,new DriveInput(),t,.02f);Check(a.gauge<=.3001f,"recovery does not charge gauge");
   var report=new List<object>();
-  foreach(string trackId in new[]{"ridge","suzuka"})foreach(bool specials in new[]{false,true})for(int rotation=0;rotation<4;rotation++){
+  foreach(string trackId in new[]{"ridge","suzuka"})foreach(bool specials in new[]{false,true})for(int rotation=0;rotation<Vehicles.All.Length;rotation++){
    var track=new Track(trackId);var session=new RaceSession(track);var cars=new List<CarState>();
-   for(int slot=0;slot<4;slot++){var c=Simulation.Spawn(track,slot);c.vehicle=Vehicles.All[(slot+rotation)%4].id;c.id=c.vehicle;cars.Add(c);}
+   for(int slot=0;slot<4;slot++){var c=Simulation.Spawn(track,slot);c.vehicle=Vehicles.All[(slot+rotation)%Vehicles.All.Length].id;c.id=c.vehicle;cars.Add(c);}
    for(int step=0;step<45000&&cars.Any(c=>!c.finished);step++){
     foreach(var car in cars){if(specials)session.UseBotSpecial(car,cars);Simulation.StepCar(car,session.Bot(car,.92f),track,.02f);}
     session.Resolve(cars,.02f);
    }
-   Simulation.Rank(cars,track);foreach(var car in cars){Check(float.IsFinite(car.x)&&float.IsFinite(car.speed),trackId+" "+car.vehicle+" finite physics");report.Add(new{track=trackId,specials,rotation,car.vehicle,car.finished,car.finishTime,car.rank,car.coins,car.specialUses,car.distance});}
+   Simulation.Rank(cars,track);foreach(var car in cars){Check(car.finished&&float.IsFinite(car.x)&&float.IsFinite(car.speed),trackId+" "+car.vehicle+" finite physics");report.Add(new{track=trackId,specials,rotation,car.vehicle,car.finished,car.finishTime,car.rank,car.coins,car.specialUses,car.distance});}
   }
   Directory.CreateDirectory("Logs");File.WriteAllText("Logs/vehicle-balance.json",JsonSerializer.Serialize(report,new JsonSerializerOptions{WriteIndented=true}));
-  Console.WriteLine("Balance report: "+report.Count+" car-race samples, 16 races, both tracks and all starting positions");
+  Console.WriteLine("Balance report: "+report.Count+" car-race samples, 32 races, both tracks and all starting positions");
  }
 }

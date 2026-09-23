@@ -24,11 +24,24 @@ try{
  first=await session(tabs.find(t=>t.type==='page').webSocketDebuggerUrl);
  await first.call('Page.navigate',{url:base+'/play/'});
  assert(await waitFor(first,'window.Racer && document.querySelector("#loading").hidden'),'Web game loads');
+ await first.evaluate('localStorage.setItem("cr.profile",JSON.stringify({version:3,name:"移行確認",badges:["finish"],audio:{bgm:.2,se:.3},records:{finished:9,history:[{time:999,track:"ridge"}],byTrack:{ridge:{best:999}}}}));localStorage.setItem("cr.best.ridge","999")');
+ await first.call('Page.reload');assert(await waitFor(first,'window.Racer && document.querySelector("#loading").hidden'),'Migration session loads');
+ assert(await first.evaluate('Club.profile.version===4 && Club.profile.records.finished===0 && Club.profile.records.history.length===0 && Club.profile.name==="移行確認" && Club.profile.badges.includes("finish") && Club.profile.audio.bgm===.2 && localStorage.getItem("cr.best.ridge")===null'),'Three-lap records reset while profile and badges survive');
  await first.evaluate('localStorage.removeItem("cr.lang");localStorage.removeItem("cr.profile")');await first.call('Page.reload');
  assert(await waitFor(first,'window.Racer && document.querySelector("#loading").hidden'),'Fresh Japanese session loads');
  assert(await first.evaluate('document.documentElement.lang==="ja" && document.querySelector("#singleMode").textContent==="シングルプレイ"'),'Japanese is default');
  await delay(600);await screenshot(first,'club-menu.png');
  assert(await first.evaluate('Racer.telemetry?.showroom===true'),'Menu displays showroom rather than circuit');
+  assert(await first.evaluate('document.title==="COAST RACER" && !document.getElementById("recover")'),'Unified title and manual recovery removed');
+ assert(await first.evaluate('getComputedStyle(document.body).userSelect==="none" && getComputedStyle(document.querySelector("#name")).userSelect==="text"'),'Long press selection disabled except editable fields');
+ assert(await first.evaluate('getComputedStyle(document.querySelector("#singleMode")).touchAction==="manipulation"'),'Buttons suppress double tap zoom');
+ for(const viewport of [{width:852,height:393},{width:915,height:412},{width:900,height:412}]){
+  await first.call('Emulation.setDeviceMetricsOverride',{...viewport,deviceScaleFactor:1,mobile:true});await delay(150);
+  assert(await first.evaluate('(()=>{let b=document.querySelector("#settingsButton"),r=b.getBoundingClientRect();return r.x<30&&r.y<30&&getComputedStyle(b).borderTopWidth==="0px"})()'),'Top-left frameless gear '+viewport.width);
+  assert(await first.evaluate('(()=>{let w=document.querySelector("#wheel"),f=document.querySelector("#wheelFace");return parseFloat(getComputedStyle(w).width)===2*parseFloat(getComputedStyle(f).width)})()'),'Rectangular double-width steering '+viewport.width);
+  await screenshot(first,'mobile-menu-'+viewport.width+'.png');
+ }
+ await first.call('Emulation.setDeviceMetricsOverride',{width:1100,height:650,deviceScaleFactor:1,mobile:true});
  const settingsRect=await first.evaluate('(()=>{let r=document.querySelector("#menuSettings").getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()');
  await first.call('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:10,...settingsRect}]});
  await first.call('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await delay(250);
@@ -58,8 +71,14 @@ try{
  assert(await first.evaluate('Club.profile.name==="検証レーサー" && Club.profile.audio.bgm===.27 && Club.profile.audio.se===.63'),'Name and both volumes persist after reload');
  await first.evaluate('document.querySelector("#language").value="ja";document.querySelector("#language").dispatchEvent(new Event("change"));document.querySelector("#closeSettings").click();document.querySelector("#singleMode").click()');
 
- assert(await waitFor(first,'Racer.screen==="vehicles" && Club.catalog.length===4'),'Four-car selection before courses');
+ assert(await waitFor(first,'Racer.screen==="vehicles" && Club.catalog.length===8'),'Eight-car selection before courses');
  await delay(500);await screenshot(first,'club-vehicles.png');
+ for(const id of ['kebab','banana','tuktuk','bicycle']){
+  await first.evaluate('document.querySelector("#vehicleChoices [data-vehicle='+id+']").click()');
+  assert(await waitFor(first,'Racer.telemetry?.cars[0].vehicle==="'+id+'"'),'New vehicle preview '+id);
+  await delay(250);await screenshot(first,'mobile-car-'+id+'.png');
+ }
+ assert(await first.evaluate('document.querySelector("#vehicleBack").textContent==="＜"'),'Corner back control');
  await first.evaluate('document.querySelector("#vehicleChoices [data-vehicle=swift]").click()');
  assert(await waitFor(first,'Racer.telemetry?.cars[0].vehicle==="swift"'),'Selected vehicle previews in Unity');
  await first.evaluate('document.querySelector("#vehicleNext").click()');
@@ -70,7 +89,10 @@ try{
  await screenshot(first,'pro-suzuka-menu.png');
  await first.evaluate('document.querySelector("#solo").click()');
  assert(await first.evaluate('!document.querySelector("#raceLoading").hidden'),'Loading overlay is shown before race');
+ assert(await waitFor(first,'Racer.telemetry?.phase==="countdown" && document.querySelectorAll("#startLights .red").length>0',8),'Signal lamps display before start');
+ await screenshot(first,'mobile-start-lights.png');
  assert(await waitFor(first,'Racer.telemetry?.phase==="race"'),'Countdown starts solo race');
+ assert(await first.evaluate('document.querySelector("#lap").textContent.endsWith("/ 2")'),'HUD uses two laps');
  assert(await first.evaluate('getComputedStyle(document.querySelector("#game")).visibility==="visible"'),'Race reveals world');
  assert(await first.evaluate('Racer.telemetry.cars[0].name==="検証レーサー" && Racer.telemetry.cars[0].vehicle==="swift"'),'Solo uses saved name and selected vehicle');
  assert(await first.evaluate('document.querySelectorAll("#nameplates .nameplate").length>0'),'Car nameplates render');
