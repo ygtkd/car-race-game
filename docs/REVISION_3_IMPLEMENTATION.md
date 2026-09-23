@@ -57,3 +57,13 @@
 
 ## 現在の状態
 ローカル実装・WebGLビルド・上記ローカル検証・公開用パッケージ作成は完了。WebBuildは8d6b44e43f67。push・Azure公開・物理端末検証は未実施。公開後はゲーム設定のBuildが一致することを確認して、灰色／芝生の境界、連打、一時停止復帰を実機で再確認する。
+
+## 2026-09-23 Azure公開完了
+ユーザーの公開指示を受け、実装コミットf209459d1e6327aafcf1b801c0baf3a0bff6d464をmainへpush。GitHub Actionsの実行35839454546はsuccessで完了。
+- Actions: https://github.com/ygtkd/car-race-game/actions/runs/35839454546
+- 公開URL: https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/
+- 公開Build: 8d6b44e43f67。release.jsonの一致とhealth=okを確認。
+- 公開URLをPC Edgeで開き、読み込み、Build表示、全スクリプトの版統一、メニューでの更新操作、コース選択中の更新抑止、鈴鹿レース開始、開始文字非表示を確認。8項目成功、実行時エラー0。
+- 証拠: Logs/revision3-public.log、Logs/revision3-public-release-checks.json。
+- 物理端末、ホーム画面起動、Azure上の8人継続負荷は未確認のまま。上記の「公開未実施」は公開前の検証時点の記録。
+- CarController.csのユーザー既存変更は公開コミットに含めていない。追加インストールなし。

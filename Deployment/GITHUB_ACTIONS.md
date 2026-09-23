@@ -1,5 +1,5 @@
 # GitHub ActionsでAzureに公開
-現在はローカルにワークフローを用意した段階です。GitHubへのpush、Actions実行、Azure公開は未実施です。
+GitHub ActionsによるAzure公開を運用しています。改修2・3の公開記録は docs/REVISION_3_IMPLEMENTATION.md を参照してください。
 
 ## 公開先設定
 GitHubリポジトリの Settings > Environments に production を作成し、Environment variables に以下を設定します。

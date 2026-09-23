@@ -196,3 +196,6 @@ Unityビルド中に1GiB閾値を下回りBuild-Guarded.ps1が停止。最後の
 実装と最終WebGLビルド8d6b44e43f67をWebBuildへ反映。操作68項目・演出21項目・既存回帰118項目・通信13項目成功。公開用ZIP作成成功。現在は実走行での特殊技発動中の停止復帰を追加検証中。詳細はdocs/REVISION_3_IMPLEMENTATION.md。push・公開未実施。新規インストールなし。容量約10.9GiB空き。
 
 改修3の最終検証完了: 8d6b44e43f67で実走行によるゲージ蓄積→特殊技発動→停止中の残時間保持→再開・効果終了→再充填→2周完走→バッジ→メニュー復帰が成功。実行時エラー0。実装・ビルド・ローカル検証・公開用ZIP完了。push・Azure公開・実機確認は未実施。空き容量約10.6GiB。証拠と未確認範囲はdocs/REVISION_3_IMPLEMENTATION.md。
+
+## 改修2・3 公開完了
+mainへf209459をpush。GitHub Actions 35839454546 success。Azure公開Buildは8d6b44e43f67。health=ok、公開ブラウザー8項目成功・実行時エラー0。実機・8人継続負荷は未確認。詳細はdocs/REVISION_3_IMPLEMENTATION.md。
