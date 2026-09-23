@@ -204,3 +204,6 @@ mainへf209459をpush。GitHub Actions 35839454546 success。Azure公開Buildは
 プロンプト4作成・実装・ビルドc99d23daba52まで完了。操作77項目、交差上下10地点、共通走行、鈴鹿オンライン2周と再戦成功。鈴鹿ソロのブラウザー実走行と回帰再確認を実施中。公開用ZIP作成中、まだpush・公開していない。CarController.csは除外。詳細docs/REVISION_4_IMPLEMENTATION.md。
 改修4のソロ鈴鹿2周完走・記録・バッジ・メニュー復帰まで成功。公開ZIPも作成成功。既存回帰を単独再実行中。その後、版別パッケージ起動確認→commit/push→Actions公開→公開URL確認を行う。新規インストールなし。
 改修4のローカル検証完了: 既存回帰118項目・版別起動8項目成功、エラー0。Build c99d23daba52をpush・Azure公開へ進める。
+
+## 改修4 公開完了（2026-09-23）
+mainへ0c6d1beをpush。Actions 35855242252 success。公開Build c99d23daba52、health=ok、公開ブラウザー8項目成功・エラー0、記録API再確認HTTP 200（初回503）。ソロとオンラインの鈴鹿2周完走確認済み。実機・8人継続負荷は未確認。新規インストールなし。空き容量約8.5GiB。詳細はdocs/REVISION_4_IMPLEMENTATION.md。

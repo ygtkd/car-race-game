@@ -29,3 +29,12 @@ Unity 6000.6.2f1の最終ビルド成功。版別パッケージc99d23daba52をW
 - Deployment/Prepare-CI.ps1による公開ZIP作成成功。ソースと梱包したJSの差分は末尾改行のみで、実装内容は一致。
 - 既存回帰の単独再実行は118項目すべて成功、実行時エラー0（Logs/revision4-smoke-final.log、Logs/club-browser-checks.json）。通信異常時の切断・古い接続の無効化・再接続も成功。
 - 版別パッケージのブラウザー起動8項目成功、実行時エラー0（Logs/revision4-release-checks.json）。Build c99d23daba52、全スクリプト同一版、更新通知、鈴鹿レース開始、スタート文字非表示を確認。
+
+## Azure公開完了（2026-09-23）
+- 実装コミット: 0c6d1be9560bafffd7b74052191d6544bc395708（mainへpush済み）。
+- GitHub Actions: https://github.com/ygtkd/car-race-game/actions/runs/35855242252 。success、無料枠確認・デプロイ・公開アプリ確認の全ステップ成功。
+- 公開URL: https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/ 。release.jsonのBuildはc99d23daba52、healthはok（protocol 3）。
+- 公開URLのブラウザー検証8項目成功、実行時エラー0（Logs/revision4-public-checks.json）。全スクリプトの版一致、設定のBuild表示、更新通知、鈴鹿レース開始、スタート文字非表示を確認。
+- 記録API /api/records/ridge は初回503、再確認はHTTP 200。初回失敗の原因までは特定していない。
+- 新規インストールなし。最終空き容量約8.5GiB。実機iPhone/Galaxy/Pixelおよび8人本番継続負荷は未確認。
+- CarController.csのユーザー既存変更は未変更・未コミットで保持。
