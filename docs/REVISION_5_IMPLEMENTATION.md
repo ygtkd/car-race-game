@@ -32,3 +32,12 @@
 - 最終版の版別パッケージ起動8項目成功・エラー0（Logs/revision5-release-checks.json）。全スクリプトの同一版、更新案内、鈴鹿レース開始を確認。
 - 共通走行・ソロ2周・オンライン2周・既存回帰118項目は、同じ走行ロジックとUIで成功済み。最後の追加変更は地形メッシュの配置だけで、上記の画像・起動確認を再実行した。
 - WebBuildへ最終版を反映。新規インストールなし。実機iPhone/Galaxy/Pixel、ホーム画面起動、8人の本番継続負荷は未確認。
+
+## Azure公開完了（2026-09-24）
+- 実装コミット89ac0c52ef2748e280762f29aeebd38a2e011a1eをmainへpush済み。
+- Actions https://github.com/ygtkd/car-race-game/actions/runs/35993094386 はsuccess。無料枠確認・デプロイ・公開アプリ確認の全ステップ成功。
+- 公開URL: https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/ 。公開Build 5eb6ff04bcd7、health=ok（protocol 3）。
+- 公開ブラウザー11項目成功、実行時エラー0（Logs/revision5-public-checks.json）。版一致、更新通知、鈴鹿開始、後方視点切替と前方復帰、名前背景削除を確認。
+- 記録API /api/records/ridge は初回応答エラー、再試行でHTTP 200。初回失敗原因までは特定していない。
+- 新規インストールなし。空き容量約10.2GiB。実機iPhone/Galaxy/Pixel、ホーム画面起動、8人の本番継続負荷は未確認。
+- CarController.csのユーザー既存変更は変更・コミットせず保持。

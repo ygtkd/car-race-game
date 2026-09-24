@@ -213,3 +213,6 @@ mainへ0c6d1beをpush。Actions 35855242252 success。公開Build c99d23daba52�
 
 ## 改修5 ローカル検証完了
 Build 5eb6ff04bcd7。最終地形の上下10地点、追加ブラウザー35項目、版別起動8項目成功・エラー0。ソロ/オンライン鈴鹿2周、スペシャルの実走行停止復帰、既存回帰118項目も成功。WebBuild反映済み。公開ZIP作成後にcommit/pushとActions公開へ進める。詳細docs/REVISION_5_IMPLEMENTATION.md。CarController.csは対象外。
+
+## 改修5 公開完了（2026-09-24）
+mainへ89ac0c5をpush。Actions 35993094386 success。公開Build 5eb6ff04bcd7、health=ok、公開ブラウザー11項目成功・エラー0、記録API再試行HTTP 200（初回応答エラー）。プロンプト作成・実装・検証・push・Azure公開まで完了。新規インストールなし、空き約10.2GiB。実機・8人本番継続負荷は未確認。詳細docs/REVISION_5_IMPLEMENTATION.md。
