@@ -1,0 +1,26 @@
+{
+  "checks": [
+    "Game loads",
+    "Fixture loads",
+    "Badge editor opens",
+    "Legacy badge preserved",
+    "Custom badge reaches Unity",
+    "Touch placement moves badge",
+    "Reload completes",
+    "Design survives reload",
+    "Gallery renders apex",
+    "Gallery renders swift",
+    "Gallery renders vortex",
+    "Gallery renders atlas",
+    "Gallery renders kebab",
+    "Gallery renders banana",
+    "Gallery renders tuktuk",
+    "Gallery renders bicycle",
+    "Vehicle-specific design retained",
+    "Race begins",
+    "Race uses customized badge",
+    "No browser runtime errors"
+  ],
+  "errors": [],
+  "note": "Desktop Edge touch emulation; isolated unlocked badge fixture."
+}

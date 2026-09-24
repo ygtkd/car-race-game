@@ -1,0 +1,789 @@
+{
+  "races": [
+    {
+      "race": 1,
+      "track": "ridge",
+      "cars": [
+        {
+          "vehicle": "apex",
+          "rank": 2,
+          "finishTime": 187.45372,
+          "specialUses": 2,
+          "coins": 4,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "swift",
+          "rank": 1,
+          "finishTime": 187.41577,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "vortex",
+          "rank": 4,
+          "finishTime": 187.7414,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "atlas",
+          "rank": 3,
+          "finishTime": 187.592,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "kebab",
+          "rank": 6,
+          "finishTime": 192.43468,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "banana",
+          "rank": 5,
+          "finishTime": 192.38042,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "rank": 8,
+          "finishTime": 194.98712,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "rank": 7,
+          "finishTime": 194.94576,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    },
+    {
+      "race": 2,
+      "track": "suzuka",
+      "cars": [
+        {
+          "vehicle": "swift",
+          "rank": 1,
+          "finishTime": 301.83685,
+          "specialUses": 3,
+          "coins": 6,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "vortex",
+          "rank": 3,
+          "finishTime": 305.26175,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "atlas",
+          "rank": 4,
+          "finishTime": 314.1089,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "kebab",
+          "rank": 5,
+          "finishTime": 323.75244,
+          "specialUses": 3,
+          "coins": 4,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "banana",
+          "rank": 8,
+          "finishTime": 347.8579,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "rank": 7,
+          "finishTime": 347.83902,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "rank": 2,
+          "finishTime": 304.52182,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "apex",
+          "rank": 6,
+          "finishTime": 347.79028,
+          "specialUses": 2,
+          "coins": 3,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    },
+    {
+      "race": 3,
+      "track": "ridge",
+      "cars": [
+        {
+          "vehicle": "vortex",
+          "rank": 2,
+          "finishTime": 175.82068,
+          "specialUses": 3,
+          "coins": 6,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "atlas",
+          "rank": 1,
+          "finishTime": 168.49312,
+          "specialUses": 3,
+          "coins": 6,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "kebab",
+          "rank": 4,
+          "finishTime": 185.93585,
+          "specialUses": 2,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "banana",
+          "rank": 3,
+          "finishTime": 185.88637,
+          "specialUses": 3,
+          "coins": 4,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "rank": 6,
+          "finishTime": 188.60062,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "rank": 5,
+          "finishTime": 188.56349,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "apex",
+          "rank": 8,
+          "finishTime": 188.72945,
+          "specialUses": 2,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "swift",
+          "rank": 7,
+          "finishTime": 188.69286,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    },
+    {
+      "race": 4,
+      "track": "suzuka",
+      "cars": [
+        {
+          "vehicle": "atlas",
+          "rank": 1,
+          "finishTime": 317.28616,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "kebab",
+          "rank": 2,
+          "finishTime": 327.82632,
+          "specialUses": 3,
+          "coins": 6,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "banana",
+          "rank": 6,
+          "finishTime": 341.305,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "rank": 5,
+          "finishTime": 341.28598,
+          "specialUses": 2,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "rank": 3,
+          "finishTime": 331.2695,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "apex",
+          "rank": 7,
+          "finishTime": 341.30612,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "swift",
+          "rank": 4,
+          "finishTime": 332.61093,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "vortex",
+          "rank": 8,
+          "finishTime": 341.39838,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    },
+    {
+      "race": 5,
+      "track": "ridge",
+      "cars": [
+        {
+          "vehicle": "kebab",
+          "rank": 1,
+          "finishTime": 179.7927,
+          "specialUses": 3,
+          "coins": 6,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "banana",
+          "rank": 2,
+          "finishTime": 179.81499,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "rank": 3,
+          "finishTime": 179.95126,
+          "specialUses": 2,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "rank": 5,
+          "finishTime": 184.64156,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "apex",
+          "rank": 7,
+          "finishTime": 184.8005,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "swift",
+          "rank": 6,
+          "finishTime": 184.66513,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "vortex",
+          "rank": 8,
+          "finishTime": 184.94543,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "atlas",
+          "rank": 4,
+          "finishTime": 180.32745,
+          "specialUses": 1,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    },
+    {
+      "race": 6,
+      "track": "suzuka",
+      "cars": [
+        {
+          "vehicle": "banana",
+          "rank": 5,
+          "finishTime": 316.09567,
+          "specialUses": 2,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 4.4799967
+        },
+        {
+          "vehicle": "tuktuk",
+          "rank": 3,
+          "finishTime": 315.96902,
+          "specialUses": 3,
+          "coins": 5,
+          "recoveries": 0,
+          "grassSeconds": 4.8599963
+        },
+        {
+          "vehicle": "bicycle",
+          "rank": 1,
+          "finishTime": 297.75995,
+          "specialUses": 2,
+          "coins": 3,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "apex",
+          "rank": 2,
+          "finishTime": 299.1619,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "swift",
+          "rank": 4,
+          "finishTime": 315.9924,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "vortex",
+          "rank": 7,
+          "finishTime": 319.43256,
+          "specialUses": 2,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 1.8999988
+        },
+        {
+          "vehicle": "atlas",
+          "rank": 6,
+          "finishTime": 316.13153,
+          "specialUses": 2,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "kebab",
+          "rank": 8,
+          "finishTime": 320.84152,
+          "specialUses": 2,
+          "coins": 3,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    },
+    {
+      "race": 7,
+      "track": "ridge",
+      "cars": [
+        {
+          "vehicle": "tuktuk",
+          "rank": 1,
+          "finishTime": 181.60057,
+          "specialUses": 2,
+          "coins": 3,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "rank": 2,
+          "finishTime": 181.92998,
+          "specialUses": 2,
+          "coins": 3,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "apex",
+          "rank": 3,
+          "finishTime": 182.28387,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "swift",
+          "rank": 4,
+          "finishTime": 182.62607,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "vortex",
+          "rank": 6,
+          "finishTime": 187.07901,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "atlas",
+          "rank": 5,
+          "finishTime": 183.02829,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "kebab",
+          "rank": 7,
+          "finishTime": 193.36728,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "banana",
+          "rank": 8,
+          "finishTime": 193.39171,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    },
+    {
+      "race": 8,
+      "track": "suzuka",
+      "cars": [
+        {
+          "vehicle": "bicycle",
+          "rank": 8,
+          "finishTime": 329.0226,
+          "specialUses": 2,
+          "coins": 3,
+          "recoveries": 0,
+          "grassSeconds": 6.6199946
+        },
+        {
+          "vehicle": "apex",
+          "rank": 1,
+          "finishTime": 300.1949,
+          "specialUses": 3,
+          "coins": 4,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "swift",
+          "rank": 2,
+          "finishTime": 304.6257,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "vortex",
+          "rank": 3,
+          "finishTime": 306.90225,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "atlas",
+          "rank": 4,
+          "finishTime": 310.67175,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "kebab",
+          "rank": 5,
+          "finishTime": 320.53583,
+          "specialUses": 3,
+          "coins": 4,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "banana",
+          "rank": 7,
+          "finishTime": 328.69986,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "rank": 6,
+          "finishTime": 328.68073,
+          "specialUses": 2,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    },
+    {
+      "race": 9,
+      "track": "ridge",
+      "cars": [
+        {
+          "vehicle": "apex",
+          "rank": 2,
+          "finishTime": 179.84448,
+          "specialUses": 2,
+          "coins": 4,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "swift",
+          "rank": 1,
+          "finishTime": 179.80826,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "vortex",
+          "rank": 4,
+          "finishTime": 180.11722,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "atlas",
+          "rank": 3,
+          "finishTime": 179.97543,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "kebab",
+          "rank": 6,
+          "finishTime": 184.7756,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "banana",
+          "rank": 5,
+          "finishTime": 184.72325,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "rank": 8,
+          "finishTime": 187.01143,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "rank": 7,
+          "finishTime": 186.97122,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    },
+    {
+      "race": 10,
+      "track": "suzuka",
+      "cars": [
+        {
+          "vehicle": "swift",
+          "rank": 1,
+          "finishTime": 308.70706,
+          "specialUses": 3,
+          "coins": 6,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "vortex",
+          "rank": 2,
+          "finishTime": 312.24146,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "atlas",
+          "rank": 3,
+          "finishTime": 331.59692,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "kebab",
+          "rank": 5,
+          "finishTime": 340.97086,
+          "specialUses": 3,
+          "coins": 4,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "banana",
+          "rank": 7,
+          "finishTime": 362.43225,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "rank": 6,
+          "finishTime": 362.41196,
+          "specialUses": 2,
+          "coins": 2,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "rank": 4,
+          "finishTime": 339.1686,
+          "specialUses": 2,
+          "coins": 1,
+          "recoveries": 0,
+          "grassSeconds": 0
+        },
+        {
+          "vehicle": "apex",
+          "rank": 8,
+          "finishTime": 362.43375,
+          "specialUses": 1,
+          "coins": 0,
+          "recoveries": 0,
+          "grassSeconds": 0
+        }
+      ]
+    }
+  ],
+  "acceleration": {
+    "normal": 9.476727,
+    "boosted": 38.496246
+  },
+  "note": "Ten automated races in the shared production driving engine. Not physical-device testing."
+}

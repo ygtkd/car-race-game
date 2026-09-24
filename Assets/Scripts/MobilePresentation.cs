@@ -23,7 +23,7 @@ namespace CoastRacer {
     var wheel=Shape("Tyre",PrimitiveType.Cylinder,new Vector3(x,bike?.6f:.38f,z),new Vector3(bike?1.15f:.72f,bike?.055f:.13f,bike?1.15f:.72f),rubber,car);wheel.transform.localRotation=Quaternion.Euler(0,0,90);
     var hub=Shape("Hub",PrimitiveType.Cylinder,new Vector3(x,bike?.6f:.38f,z),new Vector3(bike?.95f:.45f,bike?.06f:.135f,bike?.95f:.45f),steel,car);hub.transform.localRotation=Quaternion.Euler(0,0,90);
    }
-   if(!string.IsNullOrEmpty(badge))Shape("Achievement badge",PrimitiveType.Sphere,new Vector3(0,boat?1.25f:bike?1.7f:2.15f,.9f),new Vector3(.25f,.08f,.25f),yellow,car);
+   BuildCustomBadge(car,badge);
   }
   void Beam(Transform parent,Vector3 from,Vector3 to,float width,Material material){var item=Shape("Frame",PrimitiveType.Cube,(from+to)*.5f,new Vector3(width,width,Vector3.Distance(from,to)),material,parent);item.transform.localRotation=Quaternion.LookRotation(to-from);}
   void CreateBackdrop(){var sky=new Material(Resources.Load<Shader>("CoastBackdrop"));sky.SetFloat("_Mountain",track.id=="ridge"?1:0);if(RenderSettings.skybox!=null)Destroy(RenderSettings.skybox);RenderSettings.skybox=sky;cam.clearFlags=CameraClearFlags.Skybox;}
@@ -37,7 +37,7 @@ namespace CoastRacer {
    var rock=Mat("Rock",new Color(.30f,.32f,.29f));
    for(int i=12;i<CoastRacer.Core.Track.Samples;i+=24){var p=track.points[i];var t=track.Tangent(i);var right=new Vector3(t.z,0,-t.x);var center=V(p);
     if(track.id=="ridge"){
-     for(int side=-1;side<=1;side+=2){Shape("Mountain rock",PrimitiveType.Sphere,center+right*side*42+Vector3.up*3,new Vector3(12,10+(i%5),16),rock,scenery);for(int n=0;n<3;n++){var pos=center+right*side*(23+n*6)+new Vector3(n*2,0,-n*2);NaturalTree(scenery,pos,i*7+n+side*13,true);}}
+     for(int side=-1;side<=1;side+=2){MountainRock(scenery,center+right*side*42,i+side*31);for(int n=0;n<3;n++){var pos=center+right*side*(23+n*6)+new Vector3(n*2,0,-n*2);NaturalTree(scenery,pos,i*7+n+side*13,true);}}
     }else{
      for(int row=0;row<4;row++){var seat=Shape("Grandstand tier",PrimitiveType.Cube,center+right*(24+row*2)+Vector3.up*(1+row),new Vector3(2,1,12),row%2==0?white:red,scenery);seat.transform.rotation=Quaternion.Euler(0,track.Yaw(i)*Mathf.Rad2Deg,0);}
      Shape("Light mast",PrimitiveType.Cylinder,center-right*21+Vector3.up*5,new Vector3(.15f,5,.15f),steel,scenery);Shape("Floodlight",PrimitiveType.Cube,center-right*21+Vector3.up*10,new Vector3(2,.45f,.45f),white,scenery);

@@ -204,7 +204,7 @@ namespace CoastRacer
                 var mesh=new Mesh{indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};mesh.CombineMeshes(pair.Value.ToArray());
                 go.GetComponent<MeshFilter>().sharedMesh=mesh;go.GetComponent<MeshRenderer>().sharedMaterial=pair.Key;
             }
-            foreach(var mf in parent.GetComponentsInChildren<MeshFilter>())if(mf.sharedMesh.name=="Coast tree mesh")Destroy(mf.sharedMesh);
+            foreach(var mf in parent.GetComponentsInChildren<MeshFilter>())if((mf.sharedMesh.name=="Coast tree mesh"||mf.sharedMesh.name=="Coast rock mesh"))Destroy(mf.sharedMesh);
             Destroy(parent.gameObject);
         }
         Transform BuildCar(int n,string vehicle=null,string badge="")
@@ -240,6 +240,7 @@ namespace CoastRacer
         {
             var c=JsonUtility.FromJson<Command>(json);
             if(c.action=="showcar"){ShowCar(c.vehicle,c.badge);return;}
+            if(c.action=="badgeView"){SetBadgeView(c.id);return;}
             if(c.action=="orbit"){showroomAngle+=c.orbit;return;}
             if(c.action=="rearView")rearView=c.rearView;
             if(c.action=="profile"&&cars.Count>0&&!online){cars[0].name=c.name;cars[0].badge=Vehicles.Badge(c.badge);}

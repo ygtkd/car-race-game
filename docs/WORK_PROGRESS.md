@@ -216,3 +216,10 @@ Build 5eb6ff04bcd7。最終地形の上下10地点、追加ブラウザー35項�
 
 ## 改修5 公開完了（2026-09-24）
 mainへ89ac0c5をpush。Actions 35993094386 success。公開Build 5eb6ff04bcd7、health=ok、公開ブラウザー11項目成功・エラー0、記録API再試行HTTP 200（初回応答エラー）。プロンプト作成・実装・検証・push・Azure公開まで完了。新規インストールなし、空き約10.2GiB。実機・8人本番継続負荷は未確認。詳細docs/REVISION_5_IMPLEMENTATION.md。
+
+螳ｹ驥冗屮隕悶↓繧医ｋ荳ｭ譁ｭ: 2026-09-24T23:10:15 Stopped build 32956 below free-space threshold. Log: revision6-final-unity.log
+
+## 改修6 再開（2026-09-25）
+ユーザーの再開指示を受け、空き容量約12GiBを確認。前回は容量ガードで最終ビルドを停止。プロンプト・実装・10レース80台完走結果は保存済み。最終ビルド、ブラウザー検証、pushを再開。
+
+改修6ローカル検証完了: Build c2a380677f40。自動10レース80台完走・復帰0、バッジ追加ブラウザー20項目、既存回帰118項目成功・実行時エラー0。オンラインのバッジ共有確認済み。WebBuild反映済み、commit/pushへ進める。新規インストールなし。詳細docs/REVISION_6_IMPLEMENTATION.md。

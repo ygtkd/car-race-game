@@ -52,3 +52,6 @@ body:has(#menu:not([hidden])) #settingsButton{display:block}
 #rearView{position:absolute;right:25px;bottom:162px;width:84px;min-height:36px;padding:5px;font-size:11px;background:#10151acc;border:1px solid #8995a3;touch-action:manipulation}
 #rearView[aria-pressed="true"]{border-color:#d6a966;color:#f0d7b1;background:#574325dd}
 @media(max-width:720px){#rearView{width:65px;bottom:135px}}
+
+/* Revision 6: editable badge surfaces and styling. */
+#badgeEditor{margin-top:16px;border-top:1px solid #ffffff22;padding-top:12px}#badgeEditor label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0;font-size:12px}#badgeEditor select{width:58%;min-height:32px;padding:5px}#badgeEditor input[type=range]{width:58%;padding:0;min-height:30px}#badgePlacement{position:relative;height:105px;margin:14px 16px;background:linear-gradient(0deg,#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px),#202935;background-size:20px 20px;border:1px solid #8c9bad;border-radius:12px;touch-action:none;cursor:crosshair}#badgeMarker{position:absolute;display:grid;place-items:center;width:32px;height:36px;color:#13202b;font-size:23px;pointer-events:none;box-shadow:0 2px 5px #0008}

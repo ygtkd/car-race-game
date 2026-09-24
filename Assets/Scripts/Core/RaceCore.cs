@@ -175,15 +175,16 @@ namespace CoastRacer.Core
             float throttle=Mathx.Clamp(input.throttle,0,1),brake=Mathx.Clamp(input.brake,0,1);
             // Brake assist limits corner entry speed, but never drives or steers for the player.
             if(assist>0 && !grass && c.speed>t.TargetSpeed(c.index)+3)brake=Math.Max(brake,.45f*assist);
+            throttle*=1-brake; // Braking takes priority even while a high-power special is active.
             float slope=forward.y*(float)Math.Cos(Mathx.Angle(c.yaw-t.Yaw(c.index)));
-            float acceleration=throttle*spec.acceleration*(1-.35f*c.speed/spec.maxSpeed)*(boost?1.70f:cadence?1.60f:feast?1.40f:gripActive?1.24f:1)-brake*15-.32f-c.speed*c.speed*.0015f-slope*9.81f;
-            if(c.jamTime>0)acceleration-=4;
+            float acceleration=throttle*spec.acceleration*(1-.35f*c.speed/spec.maxSpeed)*(boost?SpecialPower.BoostAcceleration:cadence?SpecialPower.CadenceAcceleration:feast?SpecialPower.FeastAcceleration:gripActive?SpecialPower.GripAcceleration:1)-brake*15-.32f-c.speed*c.speed*.0015f-slope*9.81f;
+            if(c.jamTime>0)acceleration-=SpecialPower.PulseDrag;
             if(runoff)acceleration-=2.5f+c.speed*.22f;
             if(grass)acceleration-=(3+c.speed*.18f)*(gripActive?0:1);
-            c.speed=Mathx.Clamp(c.speed+acceleration*dt,0,spec.maxSpeed*(boost?1.24f:1));
+            c.speed=Mathx.Clamp(c.speed+acceleration*dt,0,spec.maxSpeed*(boost?SpecialPower.BoostSpeed:1));
             float maxAngle=.58f/(1+c.speed*.04f);
             float wantedYaw=c.speed/2.7f*(float)Math.Tan(c.steering*maxAngle);
-            float grip=(grass?4.2f:spec.grip)*(gripActive?1.6f:1);
+            float grip=(grass?4.2f:spec.grip)*(gripActive?SpecialPower.Grip:1);
             float actualYaw=Mathx.Clamp(wantedYaw,-grip/Math.Max(3,c.speed),grip/Math.Max(3,c.speed));
             c.slip=Math.Abs(wantedYaw-actualYaw);
             c.yaw=Mathx.Angle(c.yaw+actualYaw*dt);

@@ -72,7 +72,7 @@ namespace CoastRacer {
     for(int k=0;k<25;k++){
      float f=k/24f,a=f*Mathf.PI*2;Vector3 point;
      if(jam)point=new Vector3(Mathf.Cos(a)*1.5f,1.2f+n*.13f,Mathf.Sin(a)*1.5f);
-     else if(type=="pulse"){line.SetPosition(k,transform.position+Vector3.up*.25f+new Vector3(Mathf.Cos(a),0,Mathf.Sin(a))*((pulseAge+n*.12f)%1.2f)*20);continue;}
+     else if(type=="pulse"){line.SetPosition(k,transform.position+Vector3.up*.25f+new Vector3(Mathf.Cos(a),0,Mathf.Sin(a))*((pulseAge+n*.12f)%1.2f)*(SpecialPower.PulseRadius/1.2f));continue;}
      else if(type=="shield")point=n%2==0?new Vector3(Mathf.Cos(a)*1.5f,1+Mathf.Sin(a)*1.6f,n*.1f):new Vector3(Mathf.Cos(a)*1.5f,1+(n-3)*.25f,Mathf.Sin(a)*2.6f);
      else if(type=="grip")point=new Vector3((n%2==0?-1:1)*1.1f+Mathf.Cos(a)*.24f,.18f,Mathf.Sin(a)*2.4f);
      else if(type=="surf")point=new Vector3(Mathf.Sin(a+age*4)*(.8f+n*.12f),.25f+Mathf.Cos(a+age*4)*.15f,2-f*7);

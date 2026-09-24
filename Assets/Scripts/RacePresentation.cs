@@ -13,6 +13,11 @@ namespace CoastRacer
         void LeaveShowroom(){showroom=false;if(showroomFloor)Destroy(showroomFloor);cam.rect=new Rect(0,0,1,1);cam.backgroundColor=new Color(.67f,.72f,.76f);RenderSettings.fog=true;}
         void ShowCar(string vehicle,string badge)
         {
+            vehicle=Vehicles.Get(vehicle).id;badge=Vehicles.Badge(badge);
+            if(showroom&&cars.Count==1&&visuals.Count==1&&cars[0].vehicle==vehicle){
+                cars[0].badge=badge;var old=visuals[0].Find("Achievement badge");if(old){old.gameObject.SetActive(false);Destroy(old.gameObject);}
+                BuildCustomBadge(visuals[0],badge);visuals[0].name=vehicle+"/"+badge;Emit(false);return;
+            }
             foreach(var v in visuals)if(v)Destroy(v.gameObject);visuals.Clear();cars.Clear();
             if(showroomFloor)Destroy(showroomFloor);world.SetActive(false);online=false;paused=false;phase="menu";showroom=true;
             cars.Add(new CarState{vehicle=Vehicles.Get(vehicle).id,badge=Vehicles.Badge(badge)});visuals.Add(BuildCar(0,cars[0].vehicle,cars[0].badge));
@@ -22,7 +27,7 @@ namespace CoastRacer
         }
         void UpdateShowroom(float dt)
         {
-            float a=showroomAngle*Mathf.Deg2Rad;cam.transform.position=new Vector3(Mathf.Sin(a)*8.7f,3.4f,Mathf.Cos(a)*8.7f);cam.transform.LookAt(new Vector3(0,.65f,0));Vector3 offset=cam.transform.right*2.2f;cam.transform.position-=offset;cam.transform.LookAt(new Vector3(0,.65f,0)-offset);cam.fieldOfView=38;
+            float a=showroomAngle*Mathf.Deg2Rad;cam.transform.position=new Vector3(Mathf.Sin(a)*8.7f,badgeViewHeight,Mathf.Cos(a)*8.7f);cam.transform.LookAt(new Vector3(0,.65f,0));Vector3 offset=cam.transform.right*2.2f;cam.transform.position-=offset;cam.transform.LookAt(new Vector3(0,.65f,0)-offset);cam.fieldOfView=38;
         }
         void RefreshVisuals()
         {
@@ -61,14 +66,7 @@ namespace CoastRacer
                 car.localScale=new Vector3(1.04f,1.12f,1.03f);
                 Shape("Wide bumper",PrimitiveType.Cube,new Vector3(0,.43f,2.14f),new Vector3(2.02f,.22f,.18f),body,car);
             }
-            if(!string.IsNullOrEmpty(badge)){
-                Color color=badge=="winner"?new Color(.92f,.69f,.25f):badge=="collector"?new Color(.2f,.7f,.8f):new Color(.85f,.87f,.90f);
-                var emblem=Mat("Badge"+badge,color);
-                var seal=Shape("Achievement badge",PrimitiveType.Cylinder,new Vector3(0,.943f,1.13f),new Vector3(.48f,.006f,.48f),emblem,car);
-                seal.transform.localRotation=Quaternion.Euler(5,0,0);
-                int marks=badge=="finish"?1:badge=="explorer"?2:badge=="collector"?3:badge=="winner"?4:badge=="garage"?5:6;
-                for(int mark=0;mark<marks;mark++){float angle=mark*Mathf.PI*2/marks;Shape("Badge mark",PrimitiveType.Cube,new Vector3(Mathf.Sin(angle)*.14f,.968f,1.13f+Mathf.Cos(angle)*.14f),new Vector3(.05f,.01f,.05f),dark,car);}
-            }
+            BuildCustomBadge(car,badge);
             Shape("Contact shadow",PrimitiveType.Sphere,new Vector3(0,.015f,0),new Vector3(2.2f,.025f,4.6f),Mat("Shadow",new Color(.075f,.078f,.075f)),car);
         }
         void CreateCoins()
