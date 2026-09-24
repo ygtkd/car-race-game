@@ -15,3 +15,10 @@
 最終WebGLビルド: c2a380677f40。ブラウザーでバッジ編集・タッチ配置・車種別保存・再読込・全8車体表示・レース反映を確認（20項目、実行時エラー0）。山岳岩とバッジの描画をスクリーンショットで確認。ネットワークのバッジ共有・異常切断検証も再実行成功。
 
 既存ブラウザー回帰118項目成功、実行時エラー0。25秒のCDP待機では2回時間切れになったため60秒に延長して再検証し、ソロ・オンライン・入力解除・設定・記録保存・異常通信復旧まで成功。実機テストは未実施。
+
+## Azure公開完了（2026-09-25）
+- 公開コミット: 05bb13c9ef10807b9391f73b1e9ef5e60c79b58e。
+- GitHub Actions: https://github.com/ygtkd/car-race-game/actions/runs/36024381713 。全ステップsuccess。
+- 公開URL: https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/ 。公開Build c2a380677f40、health=ok（protocol 3）。
+- 公開ブラウザーの版一致・鈴鹿起動など9項目、バッジ編集・保存・全車種・レース反映20項目が成功、実行時エラー0。Logs/revision6-public-checks.json、revision6-public-badge-checks.json。
+- 新規インストールなし。実機での操作確認は未実施。CarController.csの既存ユーザー変更は保持。
