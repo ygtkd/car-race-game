@@ -46,3 +46,9 @@ body:has(#menu:not([hidden])) #settingsButton{display:block}
 .awardIcon{width:48px;height:48px}
 
 #specialButton.available{box-shadow:0 0 12px #ecc274;border-color:#ffe3a2}#specialButton.effectActive{box-shadow:0 0 15px currentColor;border-color:currentColor}#specialButton[data-effect=boost]{color:#77c9ff}#specialButton[data-effect=grip]{color:#a0ff80}#specialButton[data-effect=shield]{color:#ba9dff}#specialButton[data-effect=pulse]{color:#ff8bda}#specialButton[data-effect=feast]{color:#ffb86c}#specialButton[data-effect=surf]{color:#73ffe8}#specialButton[data-effect=dash]{color:#ffe87b}
+
+/* Revision 5: unobstructed driver labels and a rear camera toggle above the accelerator. */
+.nameplate{background:transparent;border:0;box-shadow:none;padding:0 3px;text-shadow:0 1px 3px #000,0 0 2px #000}
+#rearView{position:absolute;right:25px;bottom:162px;width:84px;min-height:36px;padding:5px;font-size:11px;background:#10151acc;border:1px solid #8995a3;touch-action:manipulation}
+#rearView[aria-pressed="true"]{border-color:#d6a966;color:#f0d7b1;background:#574325dd}
+@media(max-width:720px){#rearView{width:65px;bottom:135px}}

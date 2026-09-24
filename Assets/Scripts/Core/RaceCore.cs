@@ -161,6 +161,7 @@ namespace CoastRacer.Core
             if(c.finished||c.dnf)return;
             dt=Mathx.Clamp(dt,0,.05f);c.elapsed+=dt;c.recoveryProtection=Math.Max(0,c.recoveryProtection-dt);
             Point previousFront=c.hasFront?c.lastFront:Front(c);
+            float previousDistance=t.RoadDistance(c.Position,c.index);
             float assist=Mathx.Clamp(input.assist,0,1);
             var spec=Vehicles.Get(c.vehicle);c.specialTime=Math.Max(0,c.specialTime-dt);c.jamTime=Math.Max(0,c.jamTime-dt);c.jamImmunity=Math.Max(0,c.jamImmunity-dt);
             bool boost=c.specialTime>0&&(spec.special=="boost"||spec.special=="dash"),gripActive=c.specialTime>0&&(spec.special=="grip"||spec.special=="surf");
@@ -175,14 +176,14 @@ namespace CoastRacer.Core
             // Brake assist limits corner entry speed, but never drives or steers for the player.
             if(assist>0 && !grass && c.speed>t.TargetSpeed(c.index)+3)brake=Math.Max(brake,.45f*assist);
             float slope=forward.y*(float)Math.Cos(Mathx.Angle(c.yaw-t.Yaw(c.index)));
-            float acceleration=throttle*spec.acceleration*(1-.35f*c.speed/spec.maxSpeed)*(boost?1.35f:cadence?1.30f:feast?1.20f:gripActive?1.12f:1)-brake*15-.32f-c.speed*c.speed*.0015f-slope*9.81f;
-            if(c.jamTime>0)acceleration-=2;
+            float acceleration=throttle*spec.acceleration*(1-.35f*c.speed/spec.maxSpeed)*(boost?1.70f:cadence?1.60f:feast?1.40f:gripActive?1.24f:1)-brake*15-.32f-c.speed*c.speed*.0015f-slope*9.81f;
+            if(c.jamTime>0)acceleration-=4;
             if(runoff)acceleration-=2.5f+c.speed*.22f;
-            if(grass)acceleration-=(3+c.speed*.18f)*(gripActive?.5f:1);
-            c.speed=Mathx.Clamp(c.speed+acceleration*dt,0,spec.maxSpeed*(boost?1.12f:1));
+            if(grass)acceleration-=(3+c.speed*.18f)*(gripActive?0:1);
+            c.speed=Mathx.Clamp(c.speed+acceleration*dt,0,spec.maxSpeed*(boost?1.24f:1));
             float maxAngle=.58f/(1+c.speed*.04f);
             float wantedYaw=c.speed/2.7f*(float)Math.Tan(c.steering*maxAngle);
-            float grip=(grass?4.2f:spec.grip)*(gripActive?1.3f:1);
+            float grip=(grass?4.2f:spec.grip)*(gripActive?1.6f:1);
             float actualYaw=Mathx.Clamp(wantedYaw,-grip/Math.Max(3,c.speed),grip/Math.Max(3,c.speed));
             c.slip=Math.Abs(wantedYaw-actualYaw);
             c.yaw=Mathx.Angle(c.yaw+actualYaw*dt);
@@ -209,7 +210,9 @@ namespace CoastRacer.Core
             bool crossed=CrossedFinish(previousFront,Front(c),t,out crossFraction);
             // Intermediate gates cover the legal runoff corridor. Ordered gates still prevent shortcuts.
             bool gatePassed=separation<=12 && Track.PlanDistanceSquared(c.Position,t.points[gateIndex],t.points[gateIndex])<=(Track.BarrierEdge+4)*(Track.BarrierEdge+4) && Math.Abs(c.y-t.points[gateIndex].y)<3 && Math.Abs(lateral)<=Track.BarrierEdge && !c.wrongWay && c.speed>0;
-            if(c.gate==Track.Gates?crossed:gatePassed){
+            float currentDistance=t.RoadDistance(c.Position,c.index);
+            bool sweptGate=c.gate<Track.Gates && currentDistance>=previousDistance && currentDistance-previousDistance<15 && previousDistance<=t.distance[gateIndex] && currentDistance>=t.distance[gateIndex] && separation<=12 && Math.Abs(lateral)<=Track.BarrierEdge && !c.wrongWay;
+            if(c.gate==Track.Gates?crossed:(gatePassed||sweptGate)){
                 c.gate++;
                 if(c.gate>Track.Gates){
                     c.lap++;
@@ -235,7 +238,7 @@ namespace CoastRacer.Core
             float da=a.x*axis.x+a.z*axis.z,db=b.x*axis.x+b.z*axis.z;
             fraction=1;if(da>=0||db<0||db<=da)return false;
             fraction=-da/(db-da);Point cross=a+(b-a)*fraction;
-            return Math.Abs(cross.x*axis.z-cross.z*axis.x)<=t.width*.5f&&Math.Abs(cross.y)<3;
+            return Math.Abs(cross.x*axis.z-cross.z*axis.x)<=Track.GrassEdge&&Math.Abs(cross.y)<3;
         }
         public static void EstimateBots(IList<CarState> cars,Track t){
             float now=0;foreach(var c in cars)now=Math.Max(now,c.elapsed);

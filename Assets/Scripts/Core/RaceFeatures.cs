@@ -48,13 +48,13 @@ namespace CoastRacer.Core
         public bool Activate(CarState c,IList<CarState> cars)
         {
             if(c.finished||c.dnf||c.gauge<.9999f||c.specialTime>0)return false;
-            c.gauge=0;c.specialUses++;c.specialTime=Vehicles.Get(c.vehicle).special=="boost"?3.5f:4;
-            if(Vehicles.Get(c.vehicle).special=="feast"){c.jamTime=0;c.jamImmunity=4;}
+            c.gauge=0;c.specialUses++;c.specialTime=5;
+            if(Vehicles.Get(c.vehicle).special=="feast"){c.jamTime=0;c.jamImmunity=5;}
             if(Vehicles.Get(c.vehicle).special=="pulse")foreach(var other in cars){
                 if(other==c||other.finished||other.dnf||other.jamImmunity>0||Math.Abs(other.y-c.y)>3)continue;
                 float dx=other.x-c.x,dz=other.z-c.z;
-                if(dx*dx+dz*dz<144 && !(Vehicles.Get(other.vehicle).special=="shield"&&other.specialTime>0)){
-                    other.speed*=.82f;other.vx*=.82f;other.vz*=.82f;other.jamTime=.8f;other.jamImmunity=5;
+                if(dx*dx+dz*dz<576 && !(Vehicles.Get(other.vehicle).special=="shield"&&other.specialTime>0)){
+                    other.speed*=.64f;other.vx*=.64f;other.vz*=.64f;other.jamTime=5;other.jamImmunity=5;
                 }
             }
             return true;
@@ -79,7 +79,7 @@ namespace CoastRacer.Core
         {
             if(c.gauge<1||c.speed<10)return;string special=Vehicles.Get(c.vehicle).special;
             bool use=(special=="boost"||special=="dash"||special=="cadence"||special=="feast")?track.TargetSpeed(c.index)>35:(special=="grip"||special=="surf")?track.TargetSpeed(c.index)<30:false;
-            if(special=="pulse"||special=="shield")foreach(var other in cars){float dx=other.x-c.x,dz=other.z-c.z;if(other!=c&&!other.finished&&dx*dx+dz*dz<144)use=true;}
+            if(special=="pulse"||special=="shield")foreach(var other in cars){float dx=other.x-c.x,dz=other.z-c.z;if(other!=c&&!other.finished&&dx*dx+dz*dz<576)use=true;}
             if(use)Activate(c,cars);
         }
         public DriveInput Bot(CarState c,float aggression=1)
@@ -112,14 +112,14 @@ namespace CoastRacer.Core
                 }
                 if(deepest<=0)continue;
                 float ma=Vehicles.Get(a.vehicle).mass,mb=Vehicles.Get(b.vehicle).mass;
-                if(a.specialTime>0&&Vehicles.Get(a.vehicle).special=="shield")ma*=1.8f;
-                if(b.specialTime>0&&Vehicles.Get(b.vehicle).special=="shield")mb*=1.8f;
+                if(a.specialTime>0&&Vehicles.Get(a.vehicle).special=="shield")ma*=2.6f;
+                if(b.specialTime>0&&Vehicles.Get(b.vehicle).special=="shield")mb*=2.6f;
                 float wa=mb/(ma+mb),wb=ma/(ma+mb),correction=Math.Min(deepest+.005f,1.0f);
                 a.x-=nx*correction*wa;a.z-=nz*correction*wa;b.x+=nx*correction*wb;b.z+=nz*correction*wb;
                 float closing=(a.vx-b.vx)*nx+(a.vz-b.vz)*nz;
                 if(closing>0){float impulse=Math.Min(closing*1.05f,25);a.vx-=nx*impulse*wa;a.vz-=nz*impulse*wa;b.vx+=nx*impulse*wb;b.vz+=nz*impulse*wb;
-                    a.speed=Mathx.Clamp(a.vx*(float)Math.Sin(a.yaw)+a.vz*(float)Math.Cos(a.yaw),0,Vehicles.Get(a.vehicle).maxSpeed*1.12f);
-                    b.speed=Mathx.Clamp(b.vx*(float)Math.Sin(b.yaw)+b.vz*(float)Math.Cos(b.yaw),0,Vehicles.Get(b.vehicle).maxSpeed*1.12f);
+                    a.speed=Mathx.Clamp(a.vx*(float)Math.Sin(a.yaw)+a.vz*(float)Math.Cos(a.yaw),0,Vehicles.Get(a.vehicle).maxSpeed*1.24f);
+                    b.speed=Mathx.Clamp(b.vx*(float)Math.Sin(b.yaw)+b.vz*(float)Math.Cos(b.yaw),0,Vehicles.Get(b.vehicle).maxSpeed*1.24f);
                 }
             }
         }

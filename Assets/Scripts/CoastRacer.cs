@@ -11,9 +11,9 @@ namespace CoastRacer
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")] static extern void RacerEmit(string json);
 #endif
-        [Serializable] public sealed class Command { public string action,track,id,vehicle,name,badge;public float orbit;public float assist=1,sensitivity=1;public int quality=1;public bool paused; }
+        [Serializable] public sealed class Command { public string action,track,id,vehicle,name,badge;public float orbit;public float assist=1,sensitivity=1;public int quality=1;public bool paused,rearView; }
         [Serializable] public sealed class Snapshot { public string type,track,phase,self,raceId;public float countdown,time;public CarState[] cars;public CoinState[] coins; }
-        [Serializable] public sealed class Telemetry { public string type="telemetry",track,phase;public float countdown;public CarState[] cars;public Point[] map;public float length;public string raceId;public bool showroom,ready;public VehicleSpec[] vehicles;public CoinState[] coins;public NameLabel[] labels; }
+        [Serializable] public sealed class Telemetry { public string type="telemetry",track,phase;public float countdown;public CarState[] cars;public Point[] map;public float length;public string raceId;public bool showroom,ready,rearView;public VehicleSpec[] vehicles;public CoinState[] coins;public NameLabel[] labels; }
         Track track;
         GameObject world;
         Camera cam;
@@ -26,7 +26,7 @@ namespace CoastRacer
         float countdown=3,sendTime,accumulator,recoverCooldown;
         Font editorFont;
         Vector3 correction;
-        float cameraAngle,lastWebInput;
+        float cameraAngle,lastWebInput;bool rearView,lastRearView;
         Material road,white,red,grass,steel,glass,rubber,paint;
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Boot(){if(FindAnyObjectByType<RaceGame>()==null)new GameObject("RaceGame").AddComponent<RaceGame>();}
@@ -65,7 +65,7 @@ namespace CoastRacer
         static Vector3 V(Point p)=>new Vector3(p.x,p.y,p.z);
         GameObject Shape(string name,PrimitiveType type,Vector3 p,Vector3 size,Material material,Transform parent)
         {
-            if(parent.name=="Track furniture"&&!track.SceneryClear(new Point(p.x,p.y,p.z),Mathf.Sqrt(size.x*size.x+size.z*size.z)*.5f)){
+            if(parent.name=="Track furniture"&&name!="Finish chequer"&&!track.SceneryClear(new Point(p.x,p.y,p.z),Mathf.Sqrt(size.x*size.x+size.z*size.z)*.5f)){
                 var omitted=new GameObject("Omitted overlapping "+name);omitted.transform.SetParent(parent,false);return omitted;
             }
             var obj=GameObject.CreatePrimitive(type);obj.name=name;obj.transform.SetParent(parent,false);
@@ -78,8 +78,8 @@ namespace CoastRacer
             var verts=new List<Vector3>();var uv=new List<Vector2>();var tris=new List<int>();
             for(int i=0;i<Track.Samples;i++){
                 if(alternating && i%8>=4)continue;
-                // Ground shoulders must not become a broad roof over the lower road.
-                if(name=="Landscape ribbon"&&track.ForeignRoadBelow(i,65,.2f))continue;
+                // Wide landscape strips must not intersect another road or its terrain, at either elevation.
+                if(name=="Landscape ribbon"&&track.ForeignRoadBelow(i,65,float.NegativeInfinity))continue;
                 int j=(i+1)%Track.Samples;int start=verts.Count;
                 Point a=track.points[i],b=track.points[j],ta=track.Tangent(i),tb=track.Tangent(j);
                 Vector3 ra=new Vector3(ta.z,0,-ta.x),rb=new Vector3(tb.z,0,-tb.x);
@@ -90,7 +90,7 @@ namespace CoastRacer
                 tris.AddRange(new[]{start,start+2,start+1,start+1,start+2,start+3});
             }
             var go=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(world.transform);
-            var mesh=new Mesh();mesh.SetVertices(verts);mesh.SetUVs(0,uv);mesh.SetTriangles(tris,0);mesh.RecalculateNormals();
+            var mesh=new Mesh();mesh.SetVertices(verts);mesh.SetUVs(0,uv);mesh.SetTriangles(tris,0);mesh.RecalculateNormals();MakeTwoSided(mesh);
             go.GetComponent<MeshFilter>().sharedMesh=mesh;go.GetComponent<MeshRenderer>().sharedMaterial=m;
         }
         void TerrainSurface()
@@ -112,7 +112,7 @@ namespace CoastRacer
                 if(x<nx&&z<nz){int a=z*(nx+1)+x;tris.AddRange(new[]{a,a+nx+1,a+1,a+1,a+nx+1,a+nx+2});}
             }
             var go=new GameObject("Rolling landscape",typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(world.transform);
-            var mesh=new Mesh{vertices=vertices,triangles=tris.ToArray()};mesh.RecalculateNormals();
+            var mesh=new Mesh{vertices=vertices,triangles=tris.ToArray()};mesh.RecalculateNormals();MakeTwoSided(mesh);
             go.GetComponent<MeshFilter>().sharedMesh=mesh;go.GetComponent<MeshRenderer>().sharedMaterial=grass;
         }
         void SculptedBody(Transform parent,Material body)
@@ -149,8 +149,9 @@ namespace CoastRacer
             foreach(var v in visuals)if(v)Destroy(v.gameObject);visuals.Clear();cars.Clear();
             track=new Track(id);session=new RaceSession(track);displayedCoins=session.coins;world=new GameObject("Circuit "+track.id);
             TerrainSurface();
-            Ribbon("Landscape ribbon",-45,45,-.3f,grass);
-            Ribbon("Runoff",-Track.GrassEdge,Track.GrassEdge,-.05f,Mat("Runoff",new Color(.34f,.36f,.33f)));
+            Ribbon("Landscape ribbon",-45,-Track.GrassEdge,-.3f,grass);Ribbon("Landscape ribbon",Track.GrassEdge,45,-.3f,grass);
+            var runoff=Mat("Runoff",new Color(.34f,.36f,.33f));
+            Ribbon("Runoff left",-Track.GrassEdge,-Track.RoadEdge,-.05f,runoff);Ribbon("Runoff right",Track.RoadEdge,Track.GrassEdge,-.05f,runoff);
             Ribbon("Racing surface",-7,7,0,road);
             foreach(int side in new[]{-1,1}){
                 float a=side<0?-Track.RoadEdge:7f,b=side<0?-7f:Track.RoadEdge;
@@ -175,8 +176,8 @@ namespace CoastRacer
                 }
             }
             Point start=track.points[0],tan=track.Tangent(0);Vector3 right=new Vector3(tan.z,0,-tan.x);
-            for(int i=0;i<14;i++)for(int j=0;j<2;j++){
-                var tile=Shape("Finish chequer",PrimitiveType.Cube,V(start)+right*(i-6.5f)+V(tan)*(j-.5f)+Vector3.up*.05f,new Vector3(1,.05f,1),(i+j)%2==0?white:rubber,scenery);
+            for(int i=0;i<(int)Track.GrassEdge*2;i++)for(int j=0;j<2;j++){
+                var tile=Shape("Finish chequer",PrimitiveType.Cube,V(start)+right*(i-Track.GrassEdge+.5f)+V(tan)*(j-.5f)+Vector3.up*.05f,new Vector3(1,.05f,1),(i+j)%2==0?white:rubber,scenery);
                 tile.transform.rotation=Quaternion.Euler(0,track.Yaw(0)*Mathf.Rad2Deg,0);
             }
             for(int i=0;i<8;i++){
@@ -185,7 +186,7 @@ namespace CoastRacer
                 Shape("Pit glass",PrimitiveType.Cube,p-right*7.6f+Vector3.up*3,new Vector3(.1f,2.7f,7),glass,scenery);
             }
             // Bake scenery per material, keeping draw calls low without generating a separate prefab per object.
-            ExtraScenery(scenery);CreateBridgeDecks();CreateBackdrop();CombineScenery(scenery);
+            ExtraScenery(scenery);CreateBridgeDecks();CreateFinishBannerAndGround();CreateBackdrop();CombineScenery(scenery);
             cars.Add(Simulation.Spawn(track));visuals.Add(BuildCar(0));
             Place(visuals[0],cars[0],0);
             CreateCoins();CameraFollow(true);Emit(true);
@@ -240,6 +241,7 @@ namespace CoastRacer
             var c=JsonUtility.FromJson<Command>(json);
             if(c.action=="showcar"){ShowCar(c.vehicle,c.badge);return;}
             if(c.action=="orbit"){showroomAngle+=c.orbit;return;}
+            if(c.action=="rearView")rearView=c.rearView;
             if(c.action=="profile"&&cars.Count>0&&!online){cars[0].name=c.name;cars[0].badge=Vehicles.Badge(c.badge);}
             if(c.action=="special"&&!online&&phase=="race"&&!paused){session.Activate(cars[0],cars);}
             if(c.action=="begin"&&!online&&phase=="loading"){phase="countdown";countdown=3;}
@@ -315,16 +317,18 @@ namespace CoastRacer
         {
             if(visuals.Count==0)return;
             Transform car=visuals[0];
-            Vector3 target=car.position-car.forward*9+Vector3.up*4;
+            float direction=rearView?-1:1;
+            snap|=lastRearView!=rearView;lastRearView=rearView;
+            Vector3 target=car.position-car.forward*(9*direction)+Vector3.up*4;
             cam.transform.position=snap?target:Vector3.Lerp(cam.transform.position,target,1-Mathf.Exp(-6*Time.deltaTime));
-            cam.transform.LookAt(car.position+car.forward*10+Vector3.up*1.1f);
+            cam.transform.LookAt(car.position+car.forward*(10*direction)+Vector3.up*1.1f);
             cam.fieldOfView=Mathf.Lerp(cam.fieldOfView,58+cars[0].speed*.10f,Time.deltaTime*2);
         }
         void Emit(bool includeMap)
         {
             if(track==null)return;
             Point[] map=null;if(includeMap){map=new Point[160];for(int i=0;i<map.Length;i++)map[i]=track.points[i*4];}
-            string json=JsonUtility.ToJson(new Telemetry{track=track.id,phase=paused?"paused":phase,countdown=countdown,cars=cars.ToArray(),map=map,length=track.Length,raceId=raceId,showroom=showroom,ready=UnityEngine.Rendering.SplashScreen.isFinished,vehicles=includeMap?Vehicles.All:null,coins=displayedCoins,labels=Labels()});
+            string json=JsonUtility.ToJson(new Telemetry{track=track.id,phase=paused?"paused":phase,countdown=countdown,cars=cars.ToArray(),map=map,length=track.Length,raceId=raceId,showroom=showroom,rearView=rearView,ready=UnityEngine.Rendering.SplashScreen.isFinished,vehicles=includeMap?Vehicles.All:null,coins=displayedCoins,labels=Labels()});
 #if UNITY_WEBGL && !UNITY_EDITOR
             RacerEmit(json);
 #endif

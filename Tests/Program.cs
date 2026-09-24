@@ -34,3 +34,4 @@ FlowTests.Run();
 ExpansionTests.Run();
 
 RevisionFourTests.Run();
+RevisionFiveTests.Run();

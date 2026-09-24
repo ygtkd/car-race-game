@@ -207,3 +207,9 @@ mainへf209459をpush。GitHub Actions 35839454546 success。Azure公開Buildは
 
 ## 改修4 公開完了（2026-09-23）
 mainへ0c6d1beをpush。Actions 35855242252 success。公開Build c99d23daba52、health=ok、公開ブラウザー8項目成功・エラー0、記録API再確認HTTP 200（初回503）。ソロとオンラインの鈴鹿2周完走確認済み。実機・8人継続負荷は未確認。新規インストールなし。空き容量約8.5GiB。詳細はdocs/REVISION_4_IMPLEMENTATION.md。
+
+## 改修5 再開（2026-09-24）
+改修プロンプト5作成、共通ロジックとUI/地形/後方視点を実装。共通走行テスト成功、WebGLビルドとオンライン鈴鹿2周検証中。裏面法線と複数指ミラー操作の最終変更をビルドへ反映し、ブラウザー確認後にpush・公開する。詳細docs/REVISION_5_IMPLEMENTATION.md。新規インストールなし、空き10.8GiB。CarController.csは対象外。
+
+## 改修5 ローカル検証完了
+Build 5eb6ff04bcd7。最終地形の上下10地点、追加ブラウザー35項目、版別起動8項目成功・エラー0。ソロ/オンライン鈴鹿2周、スペシャルの実走行停止復帰、既存回帰118項目も成功。WebBuild反映済み。公開ZIP作成後にcommit/pushとActions公開へ進める。詳細docs/REVISION_5_IMPLEMENTATION.md。CarController.csは対象外。
