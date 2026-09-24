@@ -223,3 +223,5 @@ mainへ89ac0c5をpush。Actions 35993094386 success。公開Build 5eb6ff04bcd7�
 ユーザーの再開指示を受け、空き容量約12GiBを確認。前回は容量ガードで最終ビルドを停止。プロンプト・実装・10レース80台完走結果は保存済み。最終ビルド、ブラウザー検証、pushを再開。
 
 改修6ローカル検証完了: Build c2a380677f40。自動10レース80台完走・復帰0、バッジ追加ブラウザー20項目、既存回帰118項目成功・実行時エラー0。オンラインのバッジ共有確認済み。WebBuild反映済み、commit/pushへ進める。新規インストールなし。詳細docs/REVISION_6_IMPLEMENTATION.md。
+
+改修6 push完了（2026-09-25）: mainへ64554c9をpush。Build c2a380677f40、検証結果はdocs/REVISION_6_IMPLEMENTATION.md。今回の依頼範囲はpushまで。Azure公開は未実施。
