@@ -78,3 +78,6 @@
 
 
 描画負荷の再確認（2026-09-26）: 上記のrequestAnimationFrame簡易測定と性能判定には制限がある。WebGL描画命令を数えた56サンプルとPCのAMD GPUによる再確認を追加した。軽量設定の目標は30 fps。詳しくは[描画負荷の再確認](REVISION_9_PERFORMANCE_AUDIT.md)を参照。
+
+
+改修9 Azure公開完了（2026-09-27）。mainへ4da8cb9をpushし、GitHub Actions 36259699336が成功。公開Build 44db0ee151c0、health=ok、公開ブラウザー8項目成功・エラー0。湘南記録APIは初回503の後、再試行でHTTP 200を確認。スマホ実機と本番8人の継続負荷は未確認。新規インストールなし。CarController.csの既存ユーザー変更と中間ビルド31d84f229152は未コミット。公開URL: https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/ 。詳細 docs/REVISION_9_PUBLIC_VALIDATION.json。

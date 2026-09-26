@@ -1,0 +1,31 @@
+{
+  "id": "44db0ee151c0",
+  "checks": [
+    "Release loads",
+    "Settings identifies running build",
+    "All executable scripts belong to one release",
+    "New release offered on menu",
+    "Update unavailable during selection",
+    "Final build race begins",
+    "Start text remains hidden",
+    "No errors in release verification"
+  ],
+  "errors": [],
+  "actions": {
+    "conclusion": "success",
+    "headSha": "4da8cb906bbd87a7e2f740a6e0c7e6019d051b40",
+    "status": "completed",
+    "url": "https://github.com/ygtkd/car-race-game/actions/runs/36259699336"
+  },
+  "health": {
+    "status": "ok",
+    "protocol": 3
+  },
+  "publicUrl": "https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/",
+  "records": {
+    "endpoint": "/api/records/shonan",
+    "initialStatus": 503,
+    "status": 200,
+    "note": "Initial request returned HTTP 503; retry returned HTTP 200."
+  }
+}

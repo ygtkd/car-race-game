@@ -250,3 +250,6 @@ mainへ89ac0c5をpush。Actions 35993094386 success。公開Build 5eb6ff04bcd7�
 
 
 描画負荷の確認を区切りとして終了（2026-09-26）。ソフトウェア40サンプル＋AMD GPU16サンプル、実行時エラー0。PC GPUでは軽量設定で約30回/秒の描画更新を確認。湘南モデルの三角形は17.8%増。夜間照明、解像度、広域メッシュに軽量化の余地あり。スマホ実機・走行中の最悪条件は未確認。ゲーム本体の追加変更、最適化、push、Azure公開は行っていない。再開時は docs/REVISION_9_PERFORMANCE_AUDIT.md を参照。ユーザー指示により結果を保存して終了。
+
+
+改修9 Azure公開完了（2026-09-27）。mainへ4da8cb9をpushし、GitHub Actions 36259699336が成功。公開Build 44db0ee151c0、health=ok、公開ブラウザー8項目成功・エラー0。湘南記録APIは初回503の後、再試行でHTTP 200を確認。スマホ実機と本番8人の継続負荷は未確認。新規インストールなし。CarController.csの既存ユーザー変更と中間ビルド31d84f229152は未コミット。公開URL: https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/ 。詳細 docs/REVISION_9_PUBLIC_VALIDATION.json。
