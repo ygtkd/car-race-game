@@ -51,11 +51,12 @@ namespace CoastRacer.Core
         {
             if(c.finished||c.dnf||c.gauge<.9999f||c.specialTime>0)return false;
             c.gauge=0;c.specialUses++;c.specialTime=SpecialPower.Duration;
-            if(Vehicles.Get(c.vehicle).special=="feast"||Vehicles.Get(c.vehicle).special=="shield"){c.jamTime=0;c.jamImmunity=Math.Max(c.jamImmunity,12);}
+            if(Vehicles.Get(c.vehicle).special=="feast"||Vehicles.Get(c.vehicle).special=="shield"){c.jamTime=0;c.jamImmunity=Math.Max(c.jamImmunity,12);c.abilityImmunity=12;c.guardTriggered=false;}
             if(Vehicles.Get(c.vehicle).special=="pulse"||Vehicles.Get(c.vehicle).special=="shock")foreach(var other in cars){
-                if(other==c||other.finished||other.dnf||other.jamImmunity>0||Math.Abs(other.y-c.y)>3)continue;
+                if(other==c||other.finished||other.dnf||Math.Abs(other.y-c.y)>3)continue;
                 float dx=other.x-c.x,dz=other.z-c.z;
-                if(dx*dx+dz*dz<=SpecialPower.PulseRadius*SpecialPower.PulseRadius && !(Vehicles.Get(other.vehicle).special=="shield"&&other.specialTime>0)){
+                if(dx*dx+dz*dz<=SpecialPower.PulseRadius*SpecialPower.PulseRadius){
+                    if(other.jamImmunity>0||(Vehicles.Get(other.vehicle).special=="shield"&&other.specialTime>0)){RacingExtras.Block(other);continue;}
                     other.speed*=SpecialPower.PulseSpeedRetained;other.vx*=SpecialPower.PulseSpeedRetained;other.vz*=SpecialPower.PulseSpeedRetained;other.jamTime=5;other.jamImmunity=12;c.disruptions++;
                 }
             }
@@ -63,7 +64,7 @@ namespace CoastRacer.Core
         }
         public void Resolve(IList<CarState> cars,float dt)
         {
-            time+=dt;Collisions(cars);
+            time+=dt;Collisions(cars);RacingExtras.Drafting(cars,track,dt);
             foreach(var coin in coins){
                 if(!coin.active&&time+0.00001f>=coin.respawnAt)coin.active=true;
                 if(!coin.active)continue;
@@ -79,9 +80,13 @@ namespace CoastRacer.Core
         }
         public void UseBotSpecial(CarState c,IList<CarState> cars)
         {
-            if(c.gauge<1||c.speed<10)return;string special=Vehicles.Get(c.vehicle).special;
+            if(c.gauge<1||c.speed<10||c.finished||c.dnf)return;string special=Vehicles.Get(c.vehicle).special;
+            if(c.cpuLevel>=3){
+                float next=track.TargetSpeed(track.Nearest(track.At(track.distance[c.index]+c.speed*1.4f),c.index,30));
+                if((special=="boost"||special=="dash"||special=="aero"||special=="cadence")&&next<32)return;
+            }
             bool use=(special=="boost"||special=="dash"||special=="aero"||special=="cadence"||special=="feast")?track.TargetSpeed(c.index)>35:(special=="grip"||special=="surf")?track.TargetSpeed(c.index)<30:false;
-            if(special=="pulse"||special=="shock"||special=="shield")foreach(var other in cars){float dx=other.x-c.x,dz=other.z-c.z;if(other!=c&&!other.finished&&dx*dx+dz*dz<=SpecialPower.PulseRadius*SpecialPower.PulseRadius)use=true;}
+            if(special=="pulse"||special=="shock"||special=="shield")foreach(var other in cars){float dx=other.x-c.x,dz=other.z-c.z;if(other!=c&&!other.finished&&!other.dnf&&Math.Abs(other.y-c.y)<3&&(special=="shield"||other.jamImmunity<=0)&&dx*dx+dz*dz<=SpecialPower.PulseRadius*SpecialPower.PulseRadius)use=true;}
             if(use)Activate(c,cars);
         }
         public DriveInput Bot(CarState c,float aggression=1)
@@ -89,7 +94,7 @@ namespace CoastRacer.Core
             var input=Simulation.Bot(c,track,aggression);
             foreach(var coin in coins){
                 float ahead=(track.distance[coin.index]-track.distance[c.index]+track.Length)%track.Length;
-                if(!coin.active||ahead>65||ahead<2)continue;
+                if(!coin.active||ahead>65||ahead<2||track.IsSeaBridge(c.index)||(c.cpuLevel>=3&&track.TargetSpeed(c.index)<30))continue;
                 float look=7+c.speed*.30f;Point goal=track.At(track.distance[c.index]+look);int index=track.Nearest(goal,c.index);Point tangent=track.Tangent(index);
                 Point centre=track.points[coin.index],ct=track.Tangent(coin.index);
                 float side=(coin.x-centre.x)*ct.z-(coin.z-centre.z)*ct.x;
@@ -100,6 +105,23 @@ namespace CoastRacer.Core
                 if(c.speed>track.TargetSpeed(c.index)*.76f){input.brake=.7f;input.throttle=0;}
             }
             return input;
+        }
+        public DriveInput TrafficBot(CarState c,IList<CarState> cars,float aggression){
+            var tangent=track.Tangent(c.index);var centre=track.points[c.index];float lateral=(c.x-centre.x)*tangent.z-(c.z-centre.z)*tangent.x;
+            bool unsettled=Math.Abs(lateral)>4.5f||Math.Abs(Mathx.Angle(c.yaw-track.Yaw(c.index)))>.5f;
+            var input=Bot(c,unsettled?Math.Min(.85f,aggression):aggression);if(unsettled){input=Simulation.Bot(c,track,.75f);if(c.speed>track.TargetSpeed(c.index)*.75f){input.throttle=0;input.brake=1;}return input;}if(c.cpuLevel<3)return input;
+            foreach(var other in cars){
+                if(other==c||other.finished||other.dnf||Math.Abs(other.y-c.y)>2)continue;
+                float ahead=(track.RoadDistance(other.Position,other.index)-track.RoadDistance(c.Position,c.index)+track.Length)%track.Length;
+                if(ahead<3||ahead>16||Math.Abs(Mathx.Angle(other.yaw-c.yaw))>.5f)continue;
+                var right=track.Tangent(c.index);float side=(other.x-c.x)*right.z-(other.z-c.z)*right.x;
+                if(Math.Abs(side)>2.8f)continue;
+                if(track.TargetSpeed(c.index)<28){input.throttle=0;if(c.speed>other.speed)input.brake=.7f;continue;}
+                var goal=track.At(track.RoadDistance(c.Position,c.index)+8+c.speed*.65f);
+                float pass=side>=0?-3.2f:3.2f;goal+=new Point(right.z,0,-right.x)*pass;
+                float delta=Mathx.Angle((float)Math.Atan2(goal.x-c.x,goal.z-c.z)-c.yaw);input.steer=Mathx.Clamp(delta*2.8f,-1,1);
+                if(ahead<7&&c.speed>other.speed+2){input.throttle=0;input.brake=.7f;}break;
+            }return input;
         }
         public static void Collisions(IList<CarState> cars)
         {
@@ -112,7 +134,7 @@ namespace CoastRacer.Core
                     float d=(float)Math.Sqrt(dx*dx+dz*dz),overlap=(a.vehicle=="banana"?.55f:.975f)+(b.vehicle=="banana"?.55f:.975f)-d;
                     if(overlap>deepest){deepest=overlap;nx=d>.001f?dx/d:1;nz=d>.001f?dz/d:0;}
                 }
-                if(deepest<=0)continue;
+                if(deepest<=0)continue;a.cornerClean=b.cornerClean=false;
                 float ma=(float)Math.Pow(Vehicles.Get(a.vehicle).mass/1000,2)*1000,mb=(float)Math.Pow(Vehicles.Get(b.vehicle).mass/1000,2)*1000;
                 if(a.specialTime>0&&Vehicles.Get(a.vehicle).special=="shield")ma*=SpecialPower.ShieldMass;
                 if(b.specialTime>0&&Vehicles.Get(b.vehicle).special=="shield")mb*=SpecialPower.ShieldMass;

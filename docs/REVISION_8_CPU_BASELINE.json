@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ridge",
+    "vehicle": "apex",
+    "finished": true,
+    "finishTime": 151.047
+  },
+  {
+    "id": "ridge",
+    "vehicle": "atlas",
+    "finished": true,
+    "finishTime": 151.6169
+  },
+  {
+    "id": "ridge",
+    "vehicle": "aerobike",
+    "finished": true,
+    "finishTime": 150.30737
+  },
+  {
+    "id": "suzuka",
+    "vehicle": "apex",
+    "finished": true,
+    "finishTime": 277.47916
+  },
+  {
+    "id": "suzuka",
+    "vehicle": "atlas",
+    "finished": true,
+    "finishTime": 277.1504
+  },
+  {
+    "id": "suzuka",
+    "vehicle": "aerobike",
+    "finished": true,
+    "finishTime": 274.13647
+  }
+]

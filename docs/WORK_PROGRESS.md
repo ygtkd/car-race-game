@@ -236,3 +236,6 @@ mainへ89ac0c5をpush。Actions 35993094386 success。公開Build 5eb6ff04bcd7�
 改修7＋Blender全面改修 ローカル実装完了: Build a3f899d6c14bをWebBuildへ反映。44個の編集用Blenderモデル、10車種・3コース昼夜・30報酬。自動10レース80台完走、追加10レース回帰、ブラウザー36項目、フロー55項目、ミッション93項目、通信16項目、リリース8項目を確認。実際のオンライン2周完走・最後の人間の継続・再戦を検証。新規インストールなし、CarController.csのユーザー変更は未編集。未push・未公開。詳細docs/REVISION_7_IMPLEMENTATION.mdとREVISION_7_VALIDATION.json。
 
 改修7 Azure公開完了（2026-09-26）：mainへ5556b3fをpush。Actions 36209184366 success。公開Build a3f899d6c14b、health=ok、公開ブラウザー8項目成功・エラー0。実機および本番8人継続負荷は未確認。新規インストールなし、空き7.21GiB。CarController.csの既存変更は未編集・未コミット。詳細docs/REVISION_7_IMPLEMENTATION.md、公開検証docs/REVISION_7_PUBLIC_VALIDATION.json。
+
+
+改修8 ローカル実装・最終検証完了（2026-09-26）：Build b89280ee95e6をWebBuildへ反映。湘南3,695.68m、順位別ファンファーレ、ゴールカメラ、妨害30m・耐性演出、CPU強化、スリップストリーム・コーナーボーナス、Blender車体・景観とUIを改修。共通ロジック63項目、既存回帰392項目、自動10レース80台2周完走（山岳Lv5混走で復帰1回）、オンライン2クライアント2周完走を確認。ブラウザー57項目、最適化後35項目、リリース8項目成功・実行時エラー0。地形5,760点で路面被覆0。湘南67,432三角形、同条件ソフトウェア描画中央値33.2ms。新規インストールなし、空き約9.8GiB、CarController.csのユーザー変更は未編集・未取り込み。実機と聴感評価は未確認。今回の依頼は実装までで、未push・未公開。詳細docs/REVISION_8_IMPLEMENTATION.md、REVISION_8_VALIDATION.json。

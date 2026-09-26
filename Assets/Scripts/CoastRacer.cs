@@ -203,7 +203,7 @@ namespace CoastRacer
         {
             var snapshot=JsonUtility.FromJson<Snapshot>(json);
             if(snapshot==null||snapshot.cars==null||snapshot.cars.Length==0)return;
-            nightMode=snapshot.night;cpuDifficulty=snapshot.difficulty;ApplyTimeOfDay();if(!online||showroom||track.id!=snapshot.track){SelectTrack(snapshot.track);cars.Clear();foreach(var v in visuals)Destroy(v.gameObject);visuals.Clear();}
+            onlineSceneTime=snapshot.time;nightMode=snapshot.night;cpuDifficulty=snapshot.difficulty;ApplyTimeOfDay();if(!online||showroom||track.id!=snapshot.track){SelectTrack(snapshot.track);cars.Clear();foreach(var v in visuals)Destroy(v.gameObject);visuals.Clear();}
             raceId=snapshot.raceId;displayedCoins=snapshot.coins??session.coins;online=true;self=snapshot.self;phase=snapshot.phase;countdown=snapshot.countdown;paused=false;
             var ordered=new List<CarState>(snapshot.cars);
             ordered.Sort((a,b)=>a.id==self?-1:b.id==self?1:string.CompareOrdinal(a.id,b.id));
@@ -232,7 +232,7 @@ namespace CoastRacer
                     while(accumulator>=Simulation.Step){
                         accumulator-=Simulation.Step;
                         Simulation.StepCar(cars[0],input,track,Simulation.Step);
-                        if(!online){for(int i=1;i<cars.Count;i++){session.UseBotSpecial(cars[i],cars);Simulation.StepCar(cars[i],session.Bot(cars[i],Simulation.Difficulty(cpuDifficulty)),track,Simulation.Step);}session.Resolve(cars,Simulation.Step);}
+                        if(!online){for(int i=1;i<cars.Count;i++){session.UseBotSpecial(cars[i],cars);Simulation.StepCar(cars[i],session.TrafficBot(cars[i],cars,Simulation.Difficulty(cpuDifficulty)),track,Simulation.Step);}session.Resolve(cars,Simulation.Step);}
                     }
                     if(!online){
                         Simulation.Rank(cars,track);
@@ -243,7 +243,7 @@ namespace CoastRacer
             if(!paused&&phase=="finished")foreach(var c in cars)Simulation.StepCar(c,new DriveInput(),track,dt);
             ApplyTimeOfDay();RefreshVisuals();UpdateCoins();UpdateSpecialVisuals();
             for(int i=0;i<cars.Count;i++)Place(visuals[i],cars[i],dt);
-            CameraFollow(false);
+            UpdateRevisionEightScenery(dt);CameraFollow(false);
             sendTime-=dt;if(sendTime<=0){sendTime=.1f;Emit(false);}
         }
         void Place(Transform model,CarState c,float dt)
@@ -256,16 +256,21 @@ namespace CoastRacer
             Quaternion rotation=Quaternion.Euler(pitch,c.yaw*Mathf.Rad2Deg,-c.steering*Mathf.Min(2,c.speed*.06f));
             model.rotation=dt<=0?rotation:Quaternion.Slerp(model.rotation,rotation,1-Mathf.Exp(-12*dt));
         }
+        string finishCameraRace="";float finishCameraStarted=-1;
         void CameraFollow(bool snap)
         {
-            if(visuals.Count==0)return;
-            Transform car=visuals[0];
-            float direction=rearView?-1:1;
-            snap|=lastRearView!=rearView;lastRearView=rearView;
+            if(visuals.Count==0)return;Transform car=visuals[0];
+            if(finishCameraRace!=raceId||!cars[0].finished){finishCameraRace=raceId;finishCameraStarted=-1;}
+            if(cars[0].finished&&finishCameraStarted<0){finishCameraStarted=Time.unscaledTime;rearView=false;}
+            float direction=rearView?-1:1;snap|=lastRearView!=rearView;lastRearView=rearView;
             Vector3 target=car.position-car.forward*(9*direction)+Vector3.up*4;
+            Vector3 aim=car.position+car.forward*(10*direction)+Vector3.up*1.1f;
+            float blend=finishCameraStarted<0?0:Mathf.SmoothStep(0,1,(Time.unscaledTime-finishCameraStarted-.6f)/1.4f);
+            if(blend>0){float angle=Mathf.Lerp(180,45,blend)*Mathf.Deg2Rad;float radius=Mathf.Lerp(9,7,blend);target=car.position+(car.right*Mathf.Sin(angle)+car.forward*Mathf.Cos(angle))*radius+Vector3.up*Mathf.Lerp(4,2.8f,blend);aim=Vector3.Lerp(aim,car.position+Vector3.up*.9f,blend);}
+            var origin=car.position+Vector3.up*1.2f;var ray=target-origin;
+            if(Physics.SphereCast(origin,.3f,ray.normalized,out var hit,ray.magnitude,1<<8,QueryTriggerInteraction.Ignore))target=origin+ray.normalized*Mathf.Max(1,hit.distance-.2f);
             cam.transform.position=snap?target:Vector3.Lerp(cam.transform.position,target,1-Mathf.Exp(-6*Time.deltaTime));
-            cam.transform.LookAt(car.position+car.forward*(10*direction)+Vector3.up*1.1f);
-            cam.fieldOfView=Mathf.Lerp(cam.fieldOfView,58+cars[0].speed*.10f,Time.deltaTime*2);
+            cam.transform.LookAt(aim);cam.fieldOfView=Mathf.Lerp(cam.fieldOfView,Mathf.Lerp(58+cars[0].speed*.10f,53,blend),Time.deltaTime*2);
         }
         void Emit(bool includeMap)
         {

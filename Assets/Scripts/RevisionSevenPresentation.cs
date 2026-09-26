@@ -26,6 +26,7 @@ namespace CoastRacer {
      var mesh=new Mesh{name=resource+"/"+index,indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};mesh.vertices=v;mesh.triangles=p.t;mesh.normals=n;mesh.RecalculateBounds();
      var mat=Mat("Blender "+resource+index,new Color(p.color[0],p.color[1],p.color[2],1));mat.SetFloat("_Metallic",p.metal);mat.SetFloat("_Smoothness",p.smooth);
      if(resource.StartsWith("vehicle_")&&((p.color[0]>.9f&&p.color[2]>.9f)||(p.color[0]>.65f&&p.color[1]<.04f)))mat.SetFloat("_Emission",1);
+     if(resource.StartsWith("course_")&&((p.color[0]>.9f&&p.color[2]>.9f)||(p.color[0]>.9f&&p.color[1]>.5f&&p.color[2]<.15f)))mat.SetFloat("_Emission",.7f);
      parts.Add(new ModelPart{name=p.name,pivot=new Vector3(p.pivot[0],p.pivot[1],p.pivot[2]),mesh=mesh,material=mat});index++;
     }}blenderCache[resource]=parts;Resources.UnloadAsset(asset);
    }
@@ -33,6 +34,7 @@ namespace CoastRacer {
    foreach(var part in parts){
     if(!pivots.TryGetValue(part.name,out var pivot)){pivot=new GameObject(part.name).transform;pivot.SetParent(root,false);pivot.localPosition=part.pivot;pivots[part.name]=pivot;}
     var child=new GameObject("Mesh",typeof(MeshFilter),typeof(MeshRenderer));child.transform.SetParent(pivot,false);child.GetComponent<MeshFilter>().sharedMesh=part.mesh;child.GetComponent<MeshRenderer>().sharedMaterial=part.material;
+     if(resource.StartsWith("course_")&&part.name!="train"){child.layer=8;child.AddComponent<MeshCollider>().sharedMesh=part.mesh;}
    }
    return root;
   }

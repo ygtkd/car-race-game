@@ -45,7 +45,7 @@ app.MapGet("/health",()=>Results.Ok(new{status="ok",protocol=3}));
 app.MapGet("/api/courses",()=>new[]{new{id="ridge",name="山岳サーキット"},new{id="suzuka",name="鈴鹿サーキット"},new{id="shonan",name="湘南海岸"}});
 app.MapGet("/api/records/{track}",async(string track,ResultStore store,CancellationToken ct)=>{
     if(track!="ridge"&&track!="suzuka"&&track!="shonan")return Results.BadRequest();
-    try{return Results.Ok(await store.Read(track+"-2lap",ct));}catch(Exception ex){if(ex is Microsoft.Data.SqlClient.SqlException firewall && firewall.Number==40615){var ip=System.Text.RegularExpressions.Regex.Match(firewall.Message,@"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b").Value;app.Logger.LogError("SQL_RECORDS_FAILURE type=Firewall clientIp={ClientIp}",ip);}app.Logger.LogError("SQL_RECORDS_FAILURE type={Type} sqlNumber={Number} innerType={InnerType}",ex.GetType().Name,ex is Microsoft.Data.SqlClient.SqlException sql?sql.Number:0,ex.InnerException?.GetType().Name);return Results.Json(new{error="RECORDS_UNAVAILABLE"},statusCode:503);}
+    try{return Results.Ok(await store.Read(new Track(track).RecordKey+"-2lap",ct));}catch(Exception ex){if(ex is Microsoft.Data.SqlClient.SqlException firewall && firewall.Number==40615){var ip=System.Text.RegularExpressions.Regex.Match(firewall.Message,@"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b").Value;app.Logger.LogError("SQL_RECORDS_FAILURE type=Firewall clientIp={ClientIp}",ip);}app.Logger.LogError("SQL_RECORDS_FAILURE type={Type} sqlNumber={Number} innerType={InnerType}",ex.GetType().Name,ex is Microsoft.Data.SqlClient.SqlException sql?sql.Number:0,ex.InnerException?.GetType().Name);return Results.Json(new{error="RECORDS_UNAVAILABLE"},statusCode:503);}
 });
 app.Map("/ws",async(HttpContext context,RaceHub hub)=>{
     if(!context.WebSockets.IsWebSocketRequest){context.Response.StatusCode=400;return;}
@@ -186,16 +186,16 @@ public sealed class RaceHub:BackgroundService
                     else if(room.phase=="race"){
                         room.time+=.05f;
                         var states=room.players.Select(p=>p.state).ToList();
-                        foreach(var p in room.players){if(p.state.bot)room.session.UseBotSpecial(p.state,states);Simulation.StepCar(p.state,p.state.bot?room.session.Bot(p.state,Simulation.Difficulty(room.difficulty)):p.input,room.track,.05f);}
+                        foreach(var p in room.players){if(p.state.bot)room.session.UseBotSpecial(p.state,states);Simulation.StepCar(p.state,p.state.bot?room.session.TrafficBot(p.state,states,Simulation.Difficulty(room.difficulty)):p.input,room.track,.05f);}
                         room.session.Resolve(room.players.Select(p=>p.state).ToList(),.05f);
                         Simulation.Rank(room.players.Select(p=>p.state).ToList(),room.track);
                         if(room.firstFinish==0 && room.players.Any(p=>p.state.finished))room.firstFinish=room.time;
-                        foreach(var p in room.players)if(!p.recorded&&!p.state.bot&&p.state.finished&&!p.state.estimated&&!p.state.dnf){p.recorded=true;saves.Add(new[]{new RaceResult(room.raceId,p.state.id,p.state.name,room.track.id+"-2lap",p.state.rank,p.state.finishTime,p.state.bestLap,false,DateTime.UtcNow)});}
+                        foreach(var p in room.players)if(!p.recorded&&!p.state.bot&&p.state.finished&&!p.state.estimated&&!p.state.dnf){p.recorded=true;saves.Add(new[]{new RaceResult(room.raceId,p.state.id,p.state.name,room.track.RecordKey+"-2lap",p.state.rank,p.state.finishTime,p.state.bestLap,false,DateTime.UtcNow)});}
 
 
                         if(Simulation.SettleOnline(states,room.track)){
                             room.phase="finished";Simulation.Rank(room.players.Select(p=>p.state).ToList(),room.track);
-                            if(!room.recorded){room.recorded=true;saves.Add(room.players.Where(p=>!p.recorded&&!p.state.bot&&!p.state.estimated&&p.state.finished&&!p.state.dnf).Select(p=>new RaceResult(room.raceId,p.state.id,p.state.name,room.track.id+"-2lap",p.state.rank,p.state.finishTime,p.state.bestLap,p.state.dnf,DateTime.UtcNow)).ToArray());}
+                            if(!room.recorded){room.recorded=true;saves.Add(room.players.Where(p=>!p.recorded&&!p.state.bot&&!p.state.estimated&&p.state.finished&&!p.state.dnf).Select(p=>new RaceResult(room.raceId,p.state.id,p.state.name,room.track.RecordKey+"-2lap",p.state.rank,p.state.finishTime,p.state.bestLap,p.state.dnf,DateTime.UtcNow)).ToArray());}
                             BroadcastLobby(room);
                         }
                     }

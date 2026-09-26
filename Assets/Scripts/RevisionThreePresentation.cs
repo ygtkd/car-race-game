@@ -7,7 +7,7 @@ namespace CoastRacer {
    for(int i=0;i<cars.Count;i++){
     var fx=visuals[i].GetComponent<SpecialVisual>();
     if(!fx)fx=visuals[i].gameObject.AddComponent<SpecialVisual>();
-    fx.Render(cars[i],phase=="race"&&!showroom,effectQuality);
+    fx.Render(cars[i],phase=="race"&&!showroom,effectQuality,i==0);
    }
   }
   // Deterministic low-poly crowns and tapered branches are baked with the scenery.
@@ -52,19 +52,20 @@ namespace CoastRacer {
  }
  // Fixed renderer pool per car; snapshots drive effects, never local collision guesses.
  public sealed class SpecialVisual:MonoBehaviour {
-  LineRenderer[] lines;Material material;int uses=-1;Vector3 pulseOrigin;float pulseAge=10;
+  LineRenderer[] lines;LineRenderer ownRing;Material material;int uses=-1;Vector3 pulseOrigin;float pulseAge=10;
   void Init(){
-   material=new Material(Resources.Load<Shader>("CoastEffect"));lines=new LineRenderer[8];
+   material=new Material(Resources.Load<Shader>("CoastEffect"));var ringObject=new GameObject("Local immunity ring");ringObject.transform.SetParent(transform,false);ownRing=ringObject.AddComponent<LineRenderer>();ownRing.sharedMaterial=material;ownRing.useWorldSpace=false;ownRing.positionCount=49;ownRing.widthMultiplier=.045f;ownRing.enabled=false;lines=new LineRenderer[8];
    for(int i=0;i<lines.Length;i++){var obj=new GameObject("Special ribbon "+i);obj.transform.SetParent(transform,false);var line=obj.AddComponent<LineRenderer>();line.sharedMaterial=material;line.useWorldSpace=true;line.positionCount=25;line.numCapVertices=0;line.widthMultiplier=.09f;line.enabled=false;lines[i]=line;}
   }
-  public void Render(CarState car,bool racing,int quality){
-   if(lines==null)Init();foreach(var line in lines)line.enabled=false;
+  public void Render(CarState car,bool racing,int quality,bool local=false){
+   if(lines==null)Init();foreach(var line in lines)line.enabled=false;ownRing.enabled=racing&&local&&!car.finished&&!car.dnf&&car.abilityImmunity>0;
+   if(ownRing.enabled)for(int k=0;k<49;k++){float a=k*Mathf.PI*2/48;ownRing.SetPosition(k,new Vector3(Mathf.Cos(a)*1.7f,.45f,Mathf.Sin(a)*2.7f));}
    if(!racing||car.finished||car.dnf||!car.connected){uses=car.specialUses;pulseAge=10;return;}
    if(car.specialUses!=uses){if(uses>=0&&car.specialUses>uses){pulseOrigin=new Vector3(car.x,car.y+.25f,car.z);pulseAge=0;}uses=car.specialUses;}
    pulseAge=5-car.specialTime;
    bool jam=car.jamTime>0;string type=Vehicles.Get(car.vehicle).special;
-   if(car.specialTime<=0&&!jam&&car.jamImmunity<=0)return;if(car.specialTime<=0&&car.jamImmunity>0)type="shield";
-   Color color=jam?new Color(1,.25f,.25f):type=="boost"?new Color(.25f,.7f,1):type=="grip"?new Color(.4f,1,.25f):type=="shield"?new Color(.6f,.45f,1):type=="shock"?new Color(.45f,.7f,1):type=="aero"?new Color(.4f,1,1):type=="pulse"?new Color(1,.35f,.8f):type=="feast"?new Color(1,.55f,.1f):type=="surf"?new Color(.15f,1,.9f):type=="dash"?new Color(1,.85f,.15f):Color.white;
+   if(car.guardFx>0)type="guard";else if(car.draftPower>.1f&&car.specialTime<=0)type="aero";else if((car.specialTime<=0&&!jam)||type=="shield"){material.color=new Color(.45f,.75f,1);return;}
+   Color color=type=="guard"?new Color(1,.82f,.28f):jam?new Color(1,.25f,.25f):type=="boost"?new Color(.25f,.7f,1):type=="grip"?new Color(.4f,1,.25f):type=="shield"?new Color(.6f,.45f,1):type=="shock"?new Color(.45f,.7f,1):type=="aero"?new Color(.4f,1,1):type=="pulse"?new Color(1,.35f,.8f):type=="feast"?new Color(1,.55f,.1f):type=="surf"?new Color(.15f,1,.9f):type=="dash"?new Color(1,.85f,.15f):Color.white;
    material.color=color;int count=quality==0?4:8;float age=car.elapsed;
    for(int n=0;n<count;n++){
 
@@ -74,7 +75,7 @@ namespace CoastRacer {
      if(jam)point=new Vector3(Mathf.Cos(a)*1.5f,1.2f+n*.13f,Mathf.Sin(a)*1.5f);
      else if((type=="pulse"||type=="shock")){line.SetPosition(k,transform.position+Vector3.up*.25f+new Vector3(Mathf.Cos(a),0,Mathf.Sin(a))*((pulseAge+n*.12f)%1.2f)*(SpecialPower.PulseRadius/1.2f));continue;}
      else if(type=="aero")point=new Vector3(Mathf.Cos(a+age*6)*(.8f+n*.10f),.8f+Mathf.Sin(a+age*6)*.65f,-.6f-f*8);
-     else if(type=="shield")point=n%2==0?new Vector3(Mathf.Cos(a)*1.5f,1+Mathf.Sin(a)*1.6f,n*.1f):new Vector3(Mathf.Cos(a)*1.5f,1+(n-3)*.25f,Mathf.Sin(a)*2.6f);
+     else if(type=="shield"||type=="guard")point=n%2==0?new Vector3(Mathf.Cos(a)*1.5f,1+Mathf.Sin(a)*1.6f,n*.1f):new Vector3(Mathf.Cos(a)*1.5f,1+(n-3)*.25f,Mathf.Sin(a)*2.6f);
      else if(type=="grip")point=new Vector3((n%2==0?-1:1)*1.1f+Mathf.Cos(a)*.24f,.18f,Mathf.Sin(a)*2.4f);
      else if(type=="surf")point=new Vector3(Mathf.Sin(a+age*4)*(.8f+n*.12f),.25f+Mathf.Cos(a+age*4)*.15f,2-f*7);
      else if(type=="feast")point=new Vector3(Mathf.Cos(a+age)*(.8f+n*.06f),.5f+f*2.5f,Mathf.Sin(a+age)*1.4f-1);

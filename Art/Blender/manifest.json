@@ -4,19 +4,19 @@
   "assets": [
     {
       "id": "course_ridge",
-      "parts": 14,
-      "vertices": 373884,
-      "triangles": 212144,
-      "bytes": 11519652,
-      "sha256": "c5a1d9ca3e752beeca52ad5e544531391caccc60635fb9ecf96695c0e12979a3"
+      "parts": 15,
+      "vertices": 378632,
+      "triangles": 214520,
+      "bytes": 11662166,
+      "sha256": "b29a17caf41e9447f3d67ee8323c9677558996b81148dd3d4dfc8006e5b71bef"
     },
     {
       "id": "course_shonan",
-      "parts": 18,
-      "vertices": 103940,
-      "triangles": 68194,
-      "bytes": 3313796,
-      "sha256": "74d8b5adc48387759340bdd5ddf403fdd1faf0c204184e96f590e839991164f0"
+      "parts": 25,
+      "vertices": 106120,
+      "triangles": 67432,
+      "bytes": 3357327,
+      "sha256": "26e5ca963d490636d39fd360591b0581bdeee6513857e811d04dc6dc88b9185d"
     },
     {
       "id": "course_suzuka",
@@ -280,23 +280,23 @@
       "vertices": 3776,
       "triangles": 3468,
       "bytes": 132896,
-      "sha256": "324e4f26ec0fe134293d2e13de20500788a0d25bbfcc8e8f8fa4f78bb3992e65"
+      "sha256": "4fd01396261134e3472d92e91d34d82c403c5a049255413273db673d419fc689"
     },
     {
       "id": "vehicle_apex",
       "parts": 14,
-      "vertices": 7320,
-      "triangles": 5840,
-      "bytes": 246564,
-      "sha256": "c76f45490190494eed4e699c4890e37dc943d0211b6bcb15caecd72e7ed90185"
+      "vertices": 9934,
+      "triangles": 7816,
+      "bytes": 333012,
+      "sha256": "ba82c81f98682d5978ebae8747a6faa3b50bbf491181a631f62783344fcd440e"
     },
     {
       "id": "vehicle_atlas",
       "parts": 14,
-      "vertices": 7320,
-      "triangles": 5840,
-      "bytes": 246564,
-      "sha256": "042645681804be918f2df0c47c65ca35d00b66018d4d2ed33bb1d9280d63b323"
+      "vertices": 9902,
+      "triangles": 7792,
+      "bytes": 331956,
+      "sha256": "81039ac138964408a2ae96fbc5d5a9f90b692549307bc571c582df6e9d860e13"
     },
     {
       "id": "vehicle_banana",
@@ -312,15 +312,15 @@
       "vertices": 2716,
       "triangles": 2352,
       "bytes": 93964,
-      "sha256": "38545ccc31cdb95e9965e231832d0345f7233809ffef7b5339c6a6d0f858cbb1"
+      "sha256": "791589640b265d438b18b1bf472b9e1a6bdca7269b9bbc06dcf34b5bc44663c1"
     },
     {
       "id": "vehicle_kebab",
       "parts": 15,
-      "vertices": 6904,
-      "triangles": 5060,
-      "bytes": 227262,
-      "sha256": "de12162c6e45567fda535ea3d8eb526ed1e94597889134236a2add24d131e1e2"
+      "vertices": 8100,
+      "triangles": 5700,
+      "bytes": 263646,
+      "sha256": "a3ed1c2e249c42a2ff696bcea4da3b4855bba9c69cc8c7bbd5b280a9a34dc3c0"
     },
     {
       "id": "vehicle_stormbike",
@@ -328,15 +328,15 @@
       "vertices": 4200,
       "triangles": 3680,
       "bytes": 145616,
-      "sha256": "3b5b3870268d1d94b46249a2fb30ab3365d2ca44099229504667325674871632"
+      "sha256": "f7ca26cb5a93f851d4fb7a9c88d411fc6e412d6fd16321bedfcce0cc89578254"
     },
     {
       "id": "vehicle_swift",
       "parts": 14,
-      "vertices": 7318,
-      "triangles": 5836,
-      "bytes": 246468,
-      "sha256": "85eb324c5413108b7e64c8cbac6cf6b97aad307163b6b57121736e971634163b"
+      "vertices": 9900,
+      "triangles": 7800,
+      "bytes": 332004,
+      "sha256": "293d4324653aa9e6f7f733c3a4f3a9d10ecf3116649cbd3951284a878013e27f"
     },
     {
       "id": "vehicle_tuktuk",
@@ -344,15 +344,15 @@
       "vertices": 4440,
       "triangles": 3216,
       "bytes": 145870,
-      "sha256": "a27faccfabf167ce716e1775931c74fd5f22cff83cd2fbd0e3e265867bbf660c"
+      "sha256": "1b60d19fd2dec798ceafe5266c6c226bdd4aece0a40dc390754d33e92b44e476"
     },
     {
       "id": "vehicle_vortex",
       "parts": 14,
-      "vertices": 7320,
-      "triangles": 5840,
-      "bytes": 246564,
-      "sha256": "3c517513d86ec841548d29eb694b6033f5a197c6de42987333cf51b3a449305c"
+      "vertices": 9902,
+      "triangles": 7792,
+      "bytes": 331956,
+      "sha256": "38a179167972e5ceac14352f0f221ab657e1b6ab874a8bbe1f8c0c43f98896b3"
     }
   ]
 }

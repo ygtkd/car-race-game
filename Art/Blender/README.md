@@ -14,7 +14,7 @@ Blender 5.2.2 LTS で制作した、10車体・3コース・30報酬・1コイ�
 
 車体だけなら末尾に `-- --vehicles-only`、コースだけなら `-- --courses-only`、報酬だけなら `-- --items-only` を追加します。
 道路の座標は共有の走行エンジンから出力した `tracks.json` と一致させています。
-`dotnet run --project Tests/RevisionSeven/RevisionSeven.csproj -c Release` で座標と走行検証を更新できます。
+`dotnet run --project Tests/RevisionEight/RevisionEight.csproj -c Release` で座標と走行検証を更新できます。
 
 ## Blenderで編集したモデルの書き出し
 
@@ -39,3 +39,11 @@ Blenderの座標はX右、Y奥、Z上です。書き出し時にUnityのX右、Y
 3コースの道路中央と両端の計5,760地点について、地形が路面を覆っていないかを検査します。結果は `Logs/revision7-terrain.json` です。画像での確認と併用してください。
 
 新規インストールはありません。ユーザーが導入したBlenderと、既存のUnity・.NET・Python・Unity付属Node.jsを使用しました。
+
+## 改修8
+
+湘南はv2（約3.70km）。南向きの東側橋、島一周、北向きの西側橋、西の海岸、市街地の順路です。
+`docs/REVISION_8_SHONAN_ROUTE.svg` が経路図です。`train` グループのpivotを保持すると、江ノ電モチーフの列車が共通レース時刻で移動します。
+山岳のトンネル、橋の中央分離帯、シーキャンドル、烏帽子岩、線路下の盛土を追加しました。
+四輪車はBlenderのBooleanで実際のホイールアーチを開け、車軸とスポークをタイヤ幅の内側へ収めています。
+書き出し後は `python Art/Blender/update_manifest.py` で全44アセットの構造・ハッシュを確認し、manifestを更新してください。

@@ -77,7 +77,7 @@ def wheel(x,y,z,r=.38,thin=.15):
  beam('Hub',(x-thin,y,z),(x+thin,y,z),r*.24,silver,vertices=16)
  for side in [-1,1]:
   for k in range(7):
-   a=k*math.tau/7;beam('Alloy spoke',(x+side*thin,y,z),(x+side*thin,y+math.sin(a)*r*.72,z+math.cos(a)*r*.72),.027,silver,vertices=6)
+   a=k*math.tau/7;beam('Alloy spoke',(x+side*thin,y,z),(x+side*thin,y+math.sin(a)*r*.54,z+math.cos(a)*r*.54),.027,silver,vertices=6)
  GROUP='body';PIV=(0,0,0)
 def write_runtime(name,parts):
  import struct,array
@@ -90,6 +90,7 @@ def write_runtime(name,parts):
    for key,kind in [('v','f'),('n','f'),('t','I')]:array.array(kind,part[key]).tofile(output)
 
 def export(name):
+ bpy.context.preferences.filepaths.save_version=0
  bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE/(name+'.blend')),compress=True)
  deps=bpy.context.evaluated_depsgraph_get();groups={}
  for o in bpy.context.scene.objects:
@@ -97,6 +98,7 @@ def export(name):
   evaluated=o.evaluated_get(deps);me=evaluated.to_mesh();me.calc_loop_triangles();group=o.get('group','body');pivot=tuple(o.get('pivot',(0,0,0)))
   normals=o.matrix_world.to_3x3().inverted().transposed()
   for mi,m in enumerate(me.materials):
+   if m is None:m=paint
    key=(group,m.name);g=groups.setdefault(key,dict(name=group,pivot=list(pivot),color=list(m.diffuse_color),metal=float(m.get('cr_metal',0)),smooth=1-float(m.get('cr_rough',.5)),v=[],n=[],t=[]));lookup={}
    # Export face-corner normals: cube faces stay flat and bevels stay smooth.
    for tri in me.loop_triangles:
@@ -119,12 +121,12 @@ def vehicle(vid,index):
   hull('Cabin silhouette',[(-1.2*length,.72,1.02),(-.72*length,.69,1.48*height),(.35*length,.65,1.44*height),(.96*length,.75,.86)],glass)
   box('Roof panel',(0,1.46*height,-.22*length),(1.27,.04,1.0*length),body)
   for side in [-1,1]:
-   box('Side sill',(side*.98,.30,0),(.13,.14,2.7),black);box('Mirror',(side*1.04,1.05,.65),(.27,.14,.35),body)
+   box('Side sill',(side*.84,.30,0),(.09,.12,2.35),black);box('Mirror',(side*1.04,1.05,.65),(.27,.14,.35),body)
    for z in [-1.30*length,1.30*length]:wheel(side*.96,.39,z)
    box('Headlamp',(side*.62,.74,2.11*length),(.45,.12,.09),white);box('Tail lamp',(side*.64,.75,-2.11*length),(.48,.10,.07),red)
    beam('Exhaust',(side*.65,.36,-2),(side*.65,.36,-2.25),.07,silver)
    box('Door handle',(side*.977,.86,-.28),(.025,.045,.22),silver)
-  box('Front grille',(0,.48,2.12*length),(1.3,.20,.06),black);box('Splitter',(0,.27,2.05*length),(1.9,.08,.4),black)
+  box('Front grille',(0,.48,2.12*length),(1.3,.20,.06),black);box('Splitter',(0,.27,2.05*length),(1.60,.08,.3),black)
   for side in [-1,1]:box('Wing mount',(side*.6,1.0,-1.86*length),(.07,.45,.13),black)
   box('Aerodynamic wing',(0,1.23,-1.9*length),(2.02,.09,.44),body)
  elif vid=='banana':
@@ -160,7 +162,7 @@ def vehicle(vid,index):
     for side in [-1,1]:box('Storm saddle bag',(side*.38,.90,-.80),(.27,.35,.65),black,.09)
   sphere('Headlamp',(0,1.3,1.18),(.16,.12,.05),white);box('Tail lamp',(0,1.22,-1),(.28,.08,.07),red)
  else:
-  van=vid=='kebab';box('Chassis',(0,.52,0),(1.75,.4,3.5),body);box('Cabin',(0,1.1,1),(1.58,1.25,1.12),body,.17);box('Windshield',(0,1.32,1.58),(1.32,.64,.04),glass)
+  van=vid=='kebab';box('Chassis',(0,.52,0),(1.48,.32,3.2),body);box('Cabin',(0,1.1,1),(1.58,1.25,1.12),body,.17);box('Windshield',(0,1.32,1.58),(1.32,.64,.04),glass)
   if van:
    box('Kitchen',(0,1.31,-.8),(1.72,1.50,2),mat('Kitchen enamel',(.74,.69,.51)),.13);box('Serving hatch',(-.88,1.46,-.62),(.035,.69,1.34),glass)
    for j in range(7):box('Awning stripe',(-1.15,1.97,-1.45+j*.25),(.69,.065,.25),red if j%2 else white)
@@ -173,6 +175,16 @@ def vehicle(vid,index):
    else:
     for side in [-1,1]:wheel(side*.90,.4,z)
   for side in [-1,1]:box('Headlamp',(side*.59,.94,1.59),(.26,.19,.07),white);box('Tail lamp',(side*.63,.76,-1.75),(.2,.17,.06),red)
+ # Cut real wheel wells into the lower body rather than covering tires with a solid hull.
+ if index<4 or vid=='kebab':
+  targets=[o for o in bpy.context.scene.objects if o.type=='MESH' and (o.name.startswith('Sculpted body') or o.name=='Chassis')]
+  wheel_pivots={tuple(o.get('pivot',(0,0,0))) for o in bpy.context.scene.objects if str(o.get('group','')).startswith('wheel_')}
+  for pivot in wheel_pivots:
+   x,y,z=pivot
+   bpy.ops.mesh.primitive_cylinder_add(vertices=32,radius=.46,depth=.70,location=b((x,y,z)),rotation=(0,math.pi/2,0));cutter=bpy.context.object;cutter.data.materials.append(body)
+   for target in targets:
+    bpy.context.view_layer.objects.active=target;mod=target.modifiers.new('Wheel arch clearance','BOOLEAN');mod.operation='DIFFERENCE';mod.object=cutter;bpy.ops.object.modifier_apply(modifier=mod.name)
+   bpy.data.objects.remove(cutter,do_unlink=True)
  export('vehicle_'+vid)
 def tree(p,seed,palm=False):
  rng=random.Random(seed);x,y,z=p;h=rng.uniform(7,12);beam('Tree trunk',(x,y,z),(x+.3,y+h,z),.28,wood,.08)
@@ -189,9 +201,10 @@ def tree(p,seed,palm=False):
    for poly in o.data.polygons:poly.use_smooth=False
 
 def course(track):
+ global GROUP,PIV
  print('BUILD_COURSE',track['id'],flush=True)
  reset();pts=[(p['x'],p['y'],p['z']) for p in track['points']];N=len(pts);bridges=[any(track['bridges'][(i+d)%N] for d in range(-3,4)) for i in range(N)];id=track['id'];asphalt=mat('Asphalt',(.13,.145,.16),0,.92);runoff=mat('Runoff',(.33,.34,.32),0,.91)
- if id=='shonan':bridges=[(-105<p[2]<50 and p[0]>62) for p in pts]
+ if id=='shonan':bridges=[(-395<p[2]<-85 and abs(p[0])<15) for p in pts]
  def right(i):
   a=pts[(i-1)%N];c=pts[(i+1)%N];d=Vector((c[0]-a[0],0,c[2]-a[2])).normalized();return Vector((d.z,0,-d.x))
  def strip(name,lo,hi,lift,m,sel=None):
@@ -199,7 +212,9 @@ def course(track):
   for i in range(N):
    if sel and not sel(i):continue
    j=(i+1)%N;k=len(v)
-   for q,r in [(i,lo),(i,hi),(j,lo),(j,hi)]:v.append(tuple(Vector(pts[q])+right(q)*r+Vector((0,lift,0))))
+   for q,r in [(i,lo),(i,hi),(j,lo),(j,hi)]:
+    if id=='shonan' and bridges[q]:r=max(-8.5,min(8.5,r))
+    v.append(tuple(Vector(pts[q])+right(q)*r+Vector((0,lift,0))))
    f.extend([(k,k+2,k+1),(k+1,k+2,k+3)])
   return mesh(name,v,f,m)
  chalk=mat('Road paint white',(.85,.86,.84),0,.96);stripe=mat('Road paint red',(.59,.05,.035),0,.95);ink=mat('Road paint black',(.035,.039,.044),0,.97)
@@ -230,15 +245,15 @@ def course(track):
   # A broad verge meets the road; the distant landscape changes gradually.
   blend=max(0,min(1,(d-28)/100));blend=blend*blend*(3-2*blend)
   if id=='shonan':
-   island=((x-225)/150)**2+((z+235)/140)**2
-   far=18*math.exp(-island*1.7)-5 if z<90 else 4
+   island=(x/210)**2+((z+615)/180)**2
+   far=28*math.exp(-island*1.2)-5 if z<-80 else 4
    result=(h-.75)*(1-blend)+far*blend
-   channel=min((x-50)/18,(z+120)/18,(65-z)/18);water=max(0,min(1,channel));water=water*water*(3-2*water)
+   channel=min((z+430)/20,(-65-z)/20);water=max(0,min(1,channel));water=water*water*(3-2*water)
    return result*(1-water)-4*water
   hill=(9+9*math.sin(x*.012)*math.cos(z*.015)) if id=='ridge' else -2
   return h-.75+hill*blend
  minx=min(p[0] for p in pts)-150;maxx=max(p[0] for p in pts)+150;minz=min(p[2] for p in pts)-150;maxz=max(p[2] for p in pts)+150
- nx=math.ceil((maxx-minx)/7);nz=math.ceil((maxz-minz)/7);sx=(maxx-minx)/nx;sz=(maxz-minz)/nz
+ spacing=13 if id=="shonan" else 7;nx=math.ceil((maxx-minx)/spacing);nz=math.ceil((maxz-minz)/spacing);sx=(maxx-minx)/nx;sz=(maxz-minz)/nz
  v=[];f=[]
  for iz in range(nz+1):
   for ix in range(nx+1):
@@ -283,17 +298,17 @@ def course(track):
   mesh('Graded road verge',verts,trimmed,grass)
  for i in range(N):
   if bridges[i]:
-   j=(i+1)%N;a=Vector(pts[i]);c=Vector(pts[j]);r=right(i)*16;mesh('Concrete bridge deck',[tuple(a-r),tuple(a+r),tuple(c-r),tuple(c+r),tuple(a-r-Vector((0,1.1,0))),tuple(a+r-Vector((0,1.1,0))),tuple(c-r-Vector((0,1.1,0))),tuple(c+r-Vector((0,1.1,0)))],[(4,5,7,6),(0,4,6,2),(1,3,7,5)],concrete)
-   if i%8==0:
+   j=(i+1)%N;a=Vector(pts[i]);c=Vector(pts[j]);r=right(i)*(8.5 if id=='shonan' else 16);mesh('Concrete bridge deck',[tuple(a-r),tuple(a+r),tuple(c-r),tuple(c+r),tuple(a-r-Vector((0,1.1,0))),tuple(a+r-Vector((0,1.1,0))),tuple(c-r-Vector((0,1.1,0))),tuple(c+r-Vector((0,1.1,0)))],[(4,5,7,6),(0,4,6,2),(1,3,7,5)],concrete)
+   if i%8==0 and id!='shonan':
     for side in [-1,1]:
      p=a+right(i)*side*12
      if all(q[1]>a.y-4 or (p.x-q[0])**2+(p.z-q[2])**2>24**2 for q in pts):
       ground=terrain_height(p.x,p.z)-.5;top=a.y-1.1;box('Bridge pier',(p.x,(ground+top)/2,p.z),(1.6,top-ground,1.8),concrete)
   if i%4==0:
    for side in [-1,1]:
-    p=Vector(pts[i])+right(i)*side*17.4
+    p=Vector(pts[i])+right(i)*side*(8.5 if id=='shonan' and bridges[i] else 17.4)
     if any(abs(k-i)>14 and abs(k-i)<N-14 and (p.x-q[0])**2+(p.z-q[2])**2<18**2 and abs(p.y-q[1])<4 for k,q in enumerate(pts)):continue
-    q=Vector(pts[(i+4)%N])+right((i+4)%N)*side*17.4
+    q=Vector(pts[(i+4)%N])+right((i+4)%N)*side*(8.5 if id=='shonan' and bridges[i] else 17.4)
     beam('Safety rail',tuple(p+Vector((0,.75,0))),tuple(q+Vector((0,.75,0))),.12,silver,vertices=6)
     beam('Rail post',tuple(p-Vector((0,.8,0))),tuple(p+Vector((0,.82,0))),.09,concrete,vertices=6)
  def clear(x,z,r=8):return all((x-p[0])**2+(z-p[2])**2>(24+r)**2 for p in pts[::2])
@@ -301,7 +316,9 @@ def course(track):
   for side in [-1,1]:
    p=Vector(pts[i])+right(i)*side*42
    if not clear(p.x,p.z,6):continue
-   p.y=terrain_height(p.x,p.z)-.5;tree(tuple(p),i+side*31,id=='shonan')
+   p.y=terrain_height(p.x,p.z)-.5
+   if p.y<-1:continue
+   tree(tuple(p),i+side*31,id=='shonan')
    if id=='ridge':
     p+=right(i)*side*15;p.y=terrain_height(p.x,p.z)-1.2;sphere('Weathered rock',tuple(p+Vector((0,2,0))),(5,3,4),rock,9,5)
   if id=='suzuka' and i%36==0:
@@ -314,15 +331,54 @@ def course(track):
     box('Grandstand roof',(p.x,p.y+7,p.z+4),(21,.4,13),silver)
  if id=='shonan':
   box('Ocean',((minx+maxx)/2,-2,(minz+maxz)/2),(maxx-minx+600,.15,maxz-minz+600),mat('Sea',(.03,.27,.34),.1,.18),0)
-  # Island observation tower, seaside houses and a marina use original geometry inspired by regional motifs.
-  p=(220,terrain_height(220,-235)-.3,-235)
-  if clear(p[0],p[2],15):
-   beam('Observation tower',p,(p[0],p[1]+35,p[2]),2.8,white,1.4,16);beam('Observation deck',(p[0],p[1]+31,p[2]),(p[0],p[1]+36,p[2]),6,silver,5,16);beam('Beacon',(p[0],p[1]+36,p[2]),(p[0],p[1]+41,p[2]),1.7,white,vertices=12)
-  for j in range(14):
-   x=40+j*24;z=360
+  # Enoshima-inspired tower at the centre of the island; route surrounds it.
+  x,z=0,-615;y=terrain_height(x,z)
+  box('Sea Candle plaza',(x,y+.3,z),(32,.6,32),concrete)
+  beam('Sea Candle shaft',(x,y,z),(x,y+42,z),2.4,white,1.6,20)
+  beam('Sea Candle observation',(x,y+36,z),(x,y+42,z),7,glass,6.5,24)
+  for h,r in [(35,7.5),(42,7.5),(44,4)]:beam('Sea Candle gallery',(x,y+h,z),(x,y+h+.7,z),r,white,vertices=24)
+  beam('Sea Candle lantern',(x,y+44,z),(x,y+50,z),1.7,gold,1,16)
+  for k in range(8):
+   a=k*math.tau/8;beam('Sea Candle bracing',(math.cos(a)*6,y+3,z+math.sin(a)*6),(math.cos(a)*2,y+36,z+math.sin(a)*2),.20,white)
+  # Common median separates the two traversals of the same bridge.
+  box('Bridge central divider',(0,7.38,-240),(1.8,.76,310),concrete,.08)
+  for zz in range(-380,-90,40):
+   box('Bridge crossbeam',(0,5.5,zz),(37,1.4,2.0),concrete)
+   for xx in [-15,15]:box('Sea bridge pier',(xx,1.5,zz),(2,8,2.4),concrete)
+  # Tapered angular Eboshi rock silhouette offshore of the westbound seafront.
+  x,z=-465,-165
+  mesh('Eboshi rock',[(x-13,-2,z-8),(x+13,-2,z-8),(x+9,-2,z+9),(x-10,-2,z+11),(x-6,9,z-6),(x+5,12,z-4),(x+2,25,z),(x-5,22,z+3)],[(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)],rock)
+  for j in range(18):
+   x=-600+j*32;z=385+(j%2)*35
    if clear(x,z,13):
-    y=min(terrain_height(x+dx,z+dz) for dx in [-9,9] for dz in [-7,7])-.5;box('Coastal house',(x,y+4,z),(17,8,12),mat('House '+str(j%3),[(.73,.70,.60),(.45,.57,.61),(.65,.43,.32)][j%3]));box('Terracotta roof',(x,y+8.3,z),(19,.6,14),red)
-    for q in [-1,1]:box('Sea facing window',(x+q*4,y+4,z-6.1),(3,3,.1),glass)
+    y=terrain_height(x,z);box('Shonan townhouse',(x,y+4,z),(17,8,13),mat('Coast house '+str(j%3),[(.75,.70,.59),(.51,.60,.61),(.67,.42,.30)][j%3]));box('House roof',(x,y+8.3,z),(19,.6,15),red)
+    for q in [-1,1]:box('Townhouse window',(x+q*4,y+4,z-6.6),(3,3,.1),glass)
+  # Scenic railway is separate from the racing road. Cars animate together as one pivot group.
+  for zz in [363.5,366.5]:beam('Enoden rail',(-605,11,zz),(-180,11,zz),.09,silver,vertices=6)
+  for xx in range(-605,-175,5):
+   ground=min(terrain_height(xx,362),terrain_height(xx,368));box('Railway embankment',(xx,(ground+10.65)/2,365),(5.1,max(.3,10.65-ground),6),rock,0);box('Railway sleeper',(xx,10.8,365),(.8,.3,4.5),wood,0)
+  GROUP='train';PIV=(-440,11,365)
+  for xx in [-450,-432]:
+   box('Enoden green carriage',(xx,13,365),(16,3.4,3.2),mat('Enoden green',(.045,.25,.13)),.3)
+   box('Enoden cream waist',(xx,13.1,365),(16.03,.65,3.25),mat('Enoden cream',(.83,.78,.57)),.04)
+   box('Enoden silver roof',(xx,14.9,365),(16.2,.4,3.3),silver,.15)
+   for side in [-1,1]:
+    for k in range(6):box('Enoden window',(xx-6+k*2.4,14,365+side*1.63),(1.8,1.15,.04),glass,.05)
+   for offset in [-5,5]:beam('Train axle',(xx+offset,11.5,363.6),(xx+offset,11.5,366.4),.5,black,vertices=10)
+  GROUP='body';PIV=(0,0,0)
+ if id=='ridge':
+  # Short open-ended tunnel on the existing climb; no changes to the road itself.
+  verts=[];faces=[]
+  for index in range(36,61):
+   a=Vector(pts[index]);r=right(index)
+   for k in range(13):
+    angle=k*math.pi/12;verts.append(tuple(a+r*(math.cos(angle)*19)+Vector((0,math.sin(angle)*10,0))))
+  for j in range(24):
+   for k in range(12):n=j*13+k;faces.append((n,n+1,n+14,n+13))
+  shell=mesh('Mountain tunnel vault',verts,faces,concrete);mod=shell.modifiers.new('Tunnel shell thickness','SOLIDIFY');mod.thickness=.65
+  for index in range(38,60,5):
+   a=Vector(pts[index]);r=right(index)
+   for side in [-1,1]:box('Tunnel lamp',tuple(a+r*side*14+Vector((0,6,0))),(1,.25,2),white)
  # Start arch and checkered tape share the exact simulation finish plane.
  a=Vector(pts[0]);r=right(0);forward=Vector(( -r.z,0,r.x))
  for side in [-1,1]:p=a+r*side*18;beam('Finish gantry',tuple(p),tuple(p+Vector((0,7,0))),.35,silver)

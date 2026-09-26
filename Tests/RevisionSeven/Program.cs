@@ -6,7 +6,7 @@ File.WriteAllText("Art/Blender/tracks.json",JsonSerializer.Serialize(maps,new Js
 Check(Vehicles.All.Length==10,"Ten vehicles");Check(BadgeDesign.Items.Length==30,"Thirty rewards");
 var t=new Track("ridge");var last=Simulation.Spawn(t);var winner=Simulation.Spawn(t);winner.finished=true;winner.finishTime=10;Check(!Simulation.SettleOnline(new[]{winner,last},t)&&!last.dnf,"Final human is allowed to finish");last.bot=true;Check(Simulation.SettleOnline(new[]{winner,last},t)&&last.estimated&&!last.dnf,"Last CPU receives estimated time");
 float finish=winner.finishTime,dist=winner.distance;var pos=winner.Position;for(int i=0;i<100;i++)Simulation.StepCar(winner,new DriveInput{throttle=1,steer=1},t,.02f);Check((winner.Position-pos).Length>5&&winner.finishTime==finish&&winner.distance==dist,"Post-finish autopilot moves without modifying result");
-foreach(float range in new[]{19.9f,20f,20.1f}){var a=Simulation.Spawn(t);a.vehicle="atlas";a.gauge=1;var b=Simulation.Spawn(t);b.x=a.x+range;b.z=a.z;b.speed=30;new RaceSession(t).Activate(a,new[]{a,b});Check(range<=20?b.jamTime==5&&b.jamImmunity==12&&a.disruptions==1:b.jamTime==0,"Pulse boundary "+range);}
+foreach(float range in new[]{29.9f,30f,30.1f}){var a=Simulation.Spawn(t);a.vehicle="atlas";a.gauge=1;var b=Simulation.Spawn(t);b.x=a.x+range;b.z=a.z;b.speed=30;new RaceSession(t).Activate(a,new[]{a,b});Check(range<=30?b.jamTime==5&&b.jamImmunity==12&&a.disruptions==1:b.jamTime==0,"Pulse boundary "+range);}
 var rng=new Random(17);var sequences=new HashSet<string>();for(int i=0;i<20;i++){var grid=Simulation.Grid(8,rng);Check(grid.Distinct().Count()==8,"Unique grid "+i);sequences.Add(string.Join(',',grid));}Check(sequences.Count>1,"Grid randomizes");
 var reports=new List<object>();
 for(int race=0;race<10;race++){

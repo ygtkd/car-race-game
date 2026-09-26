@@ -51,7 +51,7 @@ function localize(){
  $('again').textContent=t(online?'rematch':'again');
  Club.localize();updateBest();
 }
-function updateBest(){$('lobbyTrack').textContent=t(track);$('best').textContent=time(read('cr.best.2lap.'+track,0));}
+function updateBest(){$('lobbyTrack').textContent=t(track);$('best').textContent=time(read('cr.best.2lap.'+(track==='shonan'?'shonan-v2':track),0));}
 function drawMap(canvas,cars=[]){
  if(!map.length)return;const ctx=canvas.getContext('2d');const w=canvas.width,h=canvas.height;
  const xs=map.map(p=>p.x),zs=map.map(p=>p.z),minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);
@@ -59,12 +59,12 @@ function drawMap(canvas,cars=[]){
  const px=p=>(p.x-(maxX+minX)/2)*scale+w/2,pz=p=>h/2-(p.z-(maxZ+minZ)/2)*scale;
  ctx.clearRect(0,0,w,h);ctx.lineWidth=canvas.id==='courseMap'?4:3;ctx.strokeStyle='#acb5be';ctx.lineJoin='round';
  ctx.beginPath();map.forEach((p,i)=>i?ctx.lineTo(px(p),pz(p)):ctx.moveTo(px(p),pz(p)));ctx.closePath();ctx.stroke();
- ctx.fillStyle='#d6a966';ctx.fillRect(px(map[0])-3,pz(map[0])-3,6,6);
+ ctx.save();ctx.translate(px(map[0]),pz(map[0]));const next=map[1],prev=map[map.length-1];ctx.rotate(Math.atan2(pz(next)-pz(prev),px(next)-px(prev))+Math.PI/2);ctx.fillStyle='#111';ctx.fillRect(-8,-4,16,8);for(let row=0;row<2;row++)for(let col=0;col<6;col++){ctx.fillStyle=(row+col)%2?'#15191d':'#fff';ctx.fillRect(-7.5+col*2.5,-3+row*3,2.5,3);}ctx.restore();
  cars.forEach((c,i)=>{ctx.beginPath();ctx.fillStyle=i===0?'#eebc72':'#e2e5e8';ctx.arc(px(c),pz(c),i===0?4:2.5,0,Math.PI*2);ctx.fill();});
 }
 function presentResults(cars,final=true){
  const me=online?cars.find(c=>c.id===self):cars[0];if(!me?.finished){results(cars,final);return;}
- const key=currentRaceId||telemetry?.raceId;if(finishKey!==key){finishKey=key;finishStarted=performance.now();clearInput();show('finish');}
+ const key=currentRaceId||telemetry?.raceId;if(finishKey!==key){finishKey=key;finishStarted=performance.now();clearInput();ClubAudio.fanfare?.(me.rank,cars.length,key);show('finish');}
  if(performance.now()-finishStarted>=3000)results(cars,final);
 }
 function results(cars,final=true){
@@ -75,7 +75,7 @@ function results(cars,final=true){
   name.textContent=(c.rank||'—')+'  '+c.name;result.textContent=c.dnf?t('dnf'):c.finished?time(c.finishTime):t('racing');row.append(name,result);$('resultRows').append(row);
  });
  $('again').textContent=t(online?'rematch':'again');$('again').disabled=online&&!final;
- if(!online&&me?.finished){const previous=read('cr.best.2lap.'+track,0);const best=!previous||me.finishTime<previous;const ok=!best||save('cr.best.2lap.'+track,me.finishTime);$('recordNotice').textContent=!ok?t('storageFailed'):best?t('newBest'):'';}
+ if(!online&&me?.finished){const previous=read('cr.best.2lap.'+(track==='shonan'?'shonan-v2':track),0);const best=!previous||me.finishTime<previous;const ok=!best||save('cr.best.2lap.'+(track==='shonan'?'shonan-v2':track),me.finishTime);$('recordNotice').textContent=!ok?t('storageFailed'):best?t('newBest'):'';}
  else $('recordNotice').textContent='';
  Club.record(cars,{online,self,track,raceId:currentRaceId||telemetry?.raceId});
 }
