@@ -38,10 +38,20 @@
 - 改修6の追加10レース回帰テストも成功し、全10車種のスペシャル使用を確認。
 - 設定に表示するビルドIDと全スクリプトのリリースを統一し、旧版との混在防止・更新通知を検証。
 - iPhone／Galaxy／Pixelの実機はこの環境には接続されていません。デスクトップEdgeでのタッチ・画面サイズ模擬と実機確認を区別します。
-- Azure Free上の8人継続負荷は未確認です。今回の最新依頼は実装の再開であり、push・Azure公開はまだ行っていません。
+- Azure Free上の8人継続負荷は未確認です。実装のpush・Azure公開は完了（下記参照）。
 
 ## 作業環境・容量
 
 新規インストールなし。ユーザーが導入したBlender 5.2.2 LTS、既存Unity 6000.6.2f1、.NET、Python、Unity付属Node.jsを使用。
 完了直前の空き容量は約7GiB。空き1GiB未満でビルドを停止する容量ガードを継続。既存ユーザー変更`Assets/Scripts/CarController.cs`は編集・取り込みの対象外。
 Blender公式API: https://docs.blender.org/api/main/ 。江ノ島のモチーフ参考: https://www.enoshima-seacandle.com/access/ 。外部モデルや写真素材の取り込みなし。
+
+## Azure公開作業（2026-09-26）
+
+- `5556b3f8be45117e7ff2e49c90e74a82d39232d8` をmainへpush済み。
+- 公開対象Build: `a3f899d6c14b`。
+- GitHub Actions: https://github.com/ygtkd/car-race-game/actions/runs/36209184366 。成功。公開サイトのhealth=ok、Build一致、ブラウザー8項目成功・実行時エラー0を確認。
+- `CarController.cs` の既存ユーザー変更はコミットしていない。
+
+- 公開URL: https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/
+- 公開検証記録: docs/REVISION_7_PUBLIC_VALIDATION.json。ゲーム起動、鈴鹿レース開始、開始文字非表示、旧版混在防止と更新通知を検証。

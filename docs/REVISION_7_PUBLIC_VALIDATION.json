@@ -1,0 +1,14 @@
+{
+  "id": "a3f899d6c14b",
+  "checks": [
+    "Release loads",
+    "Settings identifies running build",
+    "All executable scripts belong to one release",
+    "New release offered on menu",
+    "Update unavailable during selection",
+    "Final build race begins",
+    "Start text remains hidden",
+    "No errors in release verification"
+  ],
+  "errors": []
+}
