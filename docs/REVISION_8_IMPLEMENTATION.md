@@ -1,6 +1,6 @@
 # 改修8 実装・検証記録
 
-2026-09-26。ローカル実装・最終ビルド検証済み。Build `b89280ee95e6` を `WebBuild` に反映。今回の依頼範囲は実装。push・Azure公開は未実施。
+2026-09-26。ローカル実装・最終ビルド検証済み。Build `b89280ee95e6` を `WebBuild` に反映。追加の公開指示を受け、push・Azure公開と公開後検証まで完了。
 
 ## 実装内容
 
@@ -39,7 +39,7 @@
 - 実機は未接続。iPhone／Galaxy／Pixel相当の画面サイズとタッチをデスクトップEdgeで模擬した。実機の速度、発熱、スピーカーでの試聴は未確認。
 - 音声はWeb Audioの旋律・周波数・時刻・ミュートを検証。実際の人間による聴感評価は未実施。
 - 実走検証は自動入力を使った実シミュレーション／実サーバー。人間の手による実機テストプレイではない。
-- Azure Freeでの8人継続負荷は未確認。今回の変更を本番へ公開していない。
+- Azure Freeでの8人継続負荷は未確認。本番公開後の起動・レース開始は確認済み。
 - 新規インストールなし。既存のBlender 5.2.2 LTS、Unity 6000.6.2f1、.NET、Python、Node.jsを使用。
 - 空き容量1GiBガードを維持。`CarController.cs`の既存ユーザー変更は未編集・未取り込み。
 
@@ -62,3 +62,11 @@
 - [他車の耐性（防御成功前）](revision8/revision8-remote-ring.png)
 - [他車の防御成功エフェクト](revision8/revision8-remote-block.png)
 - [車体正面](revision8/revision8-front-apex.png)
+
+## Azure公開結果
+
+改修8 Azure公開完了（2026-09-26）：mainへa66792fをpush。Actions 36225755651 success。公開Build b89280ee95e6、health=ok、公開ブラウザー8項目成功・エラー0。湘南記録APIは初回20秒タイムアウト後、再試行HTTP 200。新規インストールなし。実機・試聴・本番8人継続負荷は未確認。CarController.csの既存ユーザー変更は未編集・未コミット。
+
+- [公開ゲーム](https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/)
+- [GitHub Actions](https://github.com/ygtkd/car-race-game/actions/runs/36225755651)
+- 検証記録: `REVISION_8_PUBLIC_VALIDATION.json`

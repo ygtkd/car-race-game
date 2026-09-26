@@ -1,0 +1,30 @@
+{
+  "id": "b89280ee95e6",
+  "checks": [
+    "Release loads",
+    "Settings identifies running build",
+    "All executable scripts belong to one release",
+    "New release offered on menu",
+    "Update unavailable during selection",
+    "Final build race begins",
+    "Start text remains hidden",
+    "No errors in release verification"
+  ],
+  "errors": [],
+  "actions": {
+    "conclusion": "success",
+    "headSha": "a66792fd68481999db3419c90a4f8ec70bca8baa",
+    "status": "completed",
+    "url": "https://github.com/ygtkd/car-race-game/actions/runs/36225755651"
+  },
+  "health": {
+    "status": "ok",
+    "protocol": 3
+  },
+  "publicUrl": "https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/",
+  "records": {
+    "endpoint": "/api/records/shonan",
+    "status": 200,
+    "note": "Initial request timed out at 20 seconds; retry returned empty array with HTTP 200."
+  }
+}
