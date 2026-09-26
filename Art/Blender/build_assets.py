@@ -71,13 +71,20 @@ def hull(name,sections,m):
 def wheel(x,y,z,r=.38,thin=.15):
  global GROUP,PIV
  GROUP=('wheel_front_' if z>0 else 'wheel_rear_')+str(x);PIV=(x,y,z)
- # Wheels in the YZ plane; topology preserves visible spokes when rolling.
- bpy.ops.mesh.primitive_torus_add(major_radius=r*.76,minor_radius=r*.24,major_segments=24,minor_segments=8,location=b(PIV),rotation=(0,math.pi/2,0));o=bpy.context.object;tag(o,'Tread',rubber)
- for poly in o.data.polygons:poly.use_smooth=True
- beam('Hub',(x-thin,y,z),(x+thin,y,z),r*.24,silver,vertices=16)
+ # Closed tyre cross-section: Unity X axle; outer radius r; rim inside sidewalls.
+ verts=[];faces=[];width=max(thin+.025,r*.28)
+ profile=[(-width*.8,r*.62),(-width,r*.84),(-width*.78,r*.97),(-width*.5,r),(width*.5,r),(width*.78,r*.97),(width,r*.84),(width*.8,r*.62)]
+ for offset,radius in profile:
+  for k in range(32):
+   a=k*math.tau/32;verts.append((x+offset,y+math.sin(a)*radius,z+math.cos(a)*radius))
+ for j in range(len(profile)):
+  for k in range(32):faces.append((j*32+k,j*32+(k+1)%32,((j+1)%len(profile))*32+(k+1)%32,((j+1)%len(profile))*32+k))
+ tyre=mesh('Tread',verts,faces,rubber)
+ for poly in tyre.data.polygons:poly.use_smooth=True
+ beam('Hub',(x-thin*.8,y,z),(x+thin*.8,y,z),r*.24,silver,vertices=16)
  for side in [-1,1]:
   for k in range(7):
-   a=k*math.tau/7;beam('Alloy spoke',(x+side*thin,y,z),(x+side*thin,y+math.sin(a)*r*.54,z+math.cos(a)*r*.54),.027,silver,vertices=6)
+   a=k*math.tau/7;beam('Alloy spoke',(x+side*thin*.8,y,z),(x+side*thin*.8,y+math.sin(a)*r*.60,z+math.cos(a)*r*.60),.027,silver,vertices=6)
  GROUP='body';PIV=(0,0,0)
 def write_runtime(name,parts):
  import struct,array
@@ -122,7 +129,7 @@ def vehicle(vid,index):
   box('Roof panel',(0,1.46*height,-.22*length),(1.27,.04,1.0*length),body)
   for side in [-1,1]:
    box('Side sill',(side*.84,.30,0),(.09,.12,2.35),black);box('Mirror',(side*1.04,1.05,.65),(.27,.14,.35),body)
-   for z in [-1.30*length,1.30*length]:wheel(side*.96,.39,z)
+   for z in [-1.30*length,1.30*length]:wheel(side*.87,.38,z)
    box('Headlamp',(side*.62,.74,2.11*length),(.45,.12,.09),white);box('Tail lamp',(side*.64,.75,-2.11*length),(.48,.10,.07),red)
    beam('Exhaust',(side*.65,.36,-2),(side*.65,.36,-2.25),.07,silver)
    box('Door handle',(side*.977,.86,-.28),(.025,.045,.22),silver)
@@ -144,11 +151,11 @@ def vehicle(vid,index):
   box('Bow headlamp',(0,.99,1.84),(.20,.11,.07),white);box('Stern lamp',(0,.99,-1.84),(.16,.10,.07),red)
   for side in [-1,1]:beam('Safety rope',(side*.47,.69,-1.5),(side*.47,.69,1.5),.03,black)
  elif vid in ['bicycle','stormbike','aerobike']:
-  motor=vid!='bicycle';wheel(0,.58,-1.27,.55,.10);wheel(0,.58,1.27,.55,.10)
+  motor=vid!='bicycle';wheel(0,.55,-1.27,.55,.10);wheel(0,.55,1.27,.55,.10)
   for a,c in [((0,.58,-1.27),(0,1.32,-.1)),((0,1.32,-.1),(0,.48,.15)),((0,.48,.15),(0,.58,-1.27)),((0,.48,.15),(0,1.4,.88)),((0,1.4,.88),(0,1.32,-.1))]:beam('Tubular frame',a,c,.075,body)
   box('Saddle',(0,1.42,-.4),(.40,.13,.68),black)
-  GROUP='steer_front';PIV=(0,.58,1.27)
-  for side in [-1,1]:beam('Fork',(side*.14,.58,1.27),(side*.14,1.55,.80),.055,silver)
+  GROUP='steer_front';PIV=(0,.55,1.27)
+  for side in [-1,1]:beam('Fork',(side*.14,.55,1.27),(side*.14,1.55,.80),.055,silver)
   beam('Handlebar',(-.48,1.63,.88),(.48,1.63,.88),.04,black)
   GROUP='body';PIV=(0,0,0)
   if motor:
@@ -171,32 +178,32 @@ def vehicle(vid,index):
    box('Bench',(0,.98,-.75),(1.44,.24,.74),black);box('Roof canopy',(0,2.01,-.15),(1.83,.15,3.22),mat('Canopy',(.81,.62,.13)),.12)
    for side in [-1,1]:beam('Canopy support',(side*.77,.66,-1.42),(side*.77,1.99,-1.42),.045,silver)
   for z in [-1.22,1.22]:
-   if not van and z>0:wheel(0,.4,z)
+   if not van and z>0:wheel(0,.38,z)
    else:
-    for side in [-1,1]:wheel(side*.90,.4,z)
+    for side in [-1,1]:wheel(side*.80,.38,z)
   for side in [-1,1]:box('Headlamp',(side*.59,.94,1.59),(.26,.19,.07),white);box('Tail lamp',(side*.63,.76,-1.75),(.2,.17,.06),red)
  # Cut real wheel wells into the lower body rather than covering tires with a solid hull.
  if index<4 or vid=='kebab':
-  targets=[o for o in bpy.context.scene.objects if o.type=='MESH' and (o.name.startswith('Sculpted body') or o.name=='Chassis')]
+  targets=[o for o in bpy.context.scene.objects if o.type=='MESH' and (o.name.startswith(('Sculpted body','Cabin silhouette')) or o.name in ['Chassis','Kitchen','Cabin'])]
   wheel_pivots={tuple(o.get('pivot',(0,0,0))) for o in bpy.context.scene.objects if str(o.get('group','')).startswith('wheel_')}
   for pivot in wheel_pivots:
    x,y,z=pivot
-   bpy.ops.mesh.primitive_cylinder_add(vertices=32,radius=.46,depth=.70,location=b((x,y,z)),rotation=(0,math.pi/2,0));cutter=bpy.context.object;cutter.data.materials.append(body)
+   bpy.ops.mesh.primitive_cylinder_add(vertices=32,radius=.48,depth=.85,location=b((x,y,z)),rotation=(0,math.pi/2,0));cutter=bpy.context.object;cutter.data.materials.append(body)
    for target in targets:
     bpy.context.view_layer.objects.active=target;mod=target.modifiers.new('Wheel arch clearance','BOOLEAN');mod.operation='DIFFERENCE';mod.object=cutter;bpy.ops.object.modifier_apply(modifier=mod.name)
    bpy.data.objects.remove(cutter,do_unlink=True)
  export('vehicle_'+vid)
-def tree(p,seed,palm=False):
+def tree(p,seed,palm=False,crowns=9):
  rng=random.Random(seed);x,y,z=p;h=rng.uniform(7,12);beam('Tree trunk',(x,y,z),(x+.3,y+h,z),.28,wood,.08)
  if palm:
   for j in range(7):
    a=j*math.tau/7;dx=math.cos(a);dz=math.sin(a);mesh('Palm frond',[(x,y+h,z),(x+dx*2-dz*.5,y+h+.7,z+dz*2+dx*.5),(x+dx*5,y+h-.5,z+dz*5),(x+dx*2+dz*.5,y+h+.7,z+dz*2-dx*.5)],[(0,1,2,3)],leaves)
  else:
-  for j in range(9):
-   a=j*2.399;d=rng.uniform(1.2,2.4);tip=(x+math.cos(a)*d,y+h*(.50+j*.045),z+math.sin(a)*d)
+  for j in range(crowns):
+   a=j*2.399;d=rng.uniform(1.2,2.4);tip=(x+math.cos(a)*d,y+h*(.50+j*.36/max(1,crowns-1)),z+math.sin(a)*d)
    beam('Branch',(x,y+h*.38,z),tip,.10,wood,.018)
    foliage=mat('Foliage '+str(j%4),[(.14,.25,.075),(.18,.29,.085),(.105,.21,.055),(.21,.31,.10)][j%4],0,1)
-   o=sphere('Irregular leaf canopy',tip,(rng.uniform(1.8,2.6),rng.uniform(1.6,2.5),rng.uniform(1.8,2.6)),foliage,10,6);centre=Vector(b(tip))
+   o=sphere('Irregular leaf canopy',tip,(rng.uniform(1.8,2.6),rng.uniform(1.6,2.5),rng.uniform(1.8,2.6)),foliage,10 if crowns==9 else 8,6 if crowns==9 else 4);centre=Vector(b(tip))
    for v in o.data.vertices:v.co=centre+(v.co-centre)*rng.uniform(.84,1.12)
    for poly in o.data.polygons:poly.use_smooth=False
 
@@ -246,8 +253,9 @@ def course(track):
   blend=max(0,min(1,(d-28)/100));blend=blend*blend*(3-2*blend)
   if id=='shonan':
    island=(x/210)**2+((z+615)/180)**2
-   far=28*math.exp(-island*1.2)-5 if z<-80 else 4
-   result=(h-.75)*(1-blend)+far*blend
+   far=78*math.exp(-island*1.15)-5 if z<-80 else 4
+   hillblend=max(0,min(1,(d-24)/55));hillblend=hillblend*hillblend*(3-2*hillblend)
+   result=(h-.75)*(1-hillblend)+far*hillblend
    channel=min((z+430)/20,(-65-z)/20);water=max(0,min(1,channel));water=water*water*(3-2*water)
    return result*(1-water)-4*water
   hill=(9+9*math.sin(x*.012)*math.cos(z*.015)) if id=='ridge' else -2
@@ -264,7 +272,7 @@ def course(track):
  if id=='shonan':terrain.data.materials.append(sand)
  for poly in terrain.data.polygons:
   poly.use_smooth=True
-  if id=='shonan' and sum(terrain.data.vertices[i].co.z for i in poly.vertices)/len(poly.vertices)<2:poly.material_index=1
+  # Beach colour is blended continuously by world height in the Unity material.
  def terrain_height(x,z):
   fx=max(0,min(nx-.00001,(x-minx)/sx));fz=max(0,min(nz-.00001,(z-minz)/sz));ix=int(fx);iz=int(fz);u=fx-ix;w=fz-iz;k=iz*(nx+1)+ix
   a,b,c,d=[v[n][1] for n in [k,k+1,k+nx+1,k+nx+2]]
@@ -353,6 +361,24 @@ def course(track):
    if clear(x,z,13):
     y=terrain_height(x,z);box('Shonan townhouse',(x,y+4,z),(17,8,13),mat('Coast house '+str(j%3),[(.75,.70,.59),(.51,.60,.61),(.67,.42,.30)][j%3]));box('House roof',(x,y+8.3,z),(19,.6,15),red)
     for q in [-1,1]:box('Townhouse window',(x+q*4,y+4,z-6.6),(3,3,.1),glass)
+  for j in range(0,N,10):
+   if bridges[j]:continue
+   for side in [-1,1]:
+    p=Vector(pts[j])+right(j)*side*(36+(j%3)*9)
+    if not clear(p.x,p.z,5):continue
+    ground=terrain_height(p.x,p.z)
+    if ground<1:continue
+    if p.z<-430:
+     if j%20==0:tree((p.x,ground-.25,p.z),900+j+side,False,crowns=3)
+     else:
+      sphere('Island shrub',(p.x,ground+.5,p.z),(2.2,1.2,1.8),leaves,8,4)
+      box('Island stone wall',(p.x,ground+.5,p.z+3),(6,1.6,1),rock,0)
+    elif p.z>40:
+     bottom=min(terrain_height(p.x+dx,p.z+dz) for dx in [-4,4] for dz in [-3,3])-.3
+     box('Coastal shop foundation',(p.x,(ground+bottom)/2,p.z),(9,max(.5,ground-bottom),7),concrete,0)
+     box('Coastal shop',(p.x,ground+2.5,p.z),(8,5,6),mat('Shop plaster '+str(j%3),[(.78,.69,.50),(.65,.72,.71),(.72,.48,.34)][j%3]),0)
+     box('Shop roof',(p.x,ground+5.15,p.z),(9,.3,7),concrete,0)
+     box('Shop window',(p.x,ground+2,p.z-3.03),(4,2,.08),glass,0)
   # Scenic railway is separate from the racing road. Cars animate together as one pivot group.
   for zz in [363.5,366.5]:beam('Enoden rail',(-605,11,zz),(-180,11,zz),.09,silver,vertices=6)
   for xx in range(-605,-175,5):

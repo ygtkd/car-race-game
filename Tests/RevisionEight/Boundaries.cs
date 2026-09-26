@@ -26,6 +26,6 @@ static class Boundaries {
   Check(coast.Tangent(east).z<0&&coast.Tangent(west).z>0,"East outbound and west inbound bridge directions");
   var car=Simulation.Spawn(coast);car.index=east;var point=coast.points[east];car.x=0;car.z=point.z;car.y=point.y;car.yaw=coast.Yaw(east);Simulation.StepCar(car,new DriveInput(),coast,.02f);Check(car.x>1&&coast.points[car.index].x>0,"Median collision retains east carriageway");
   var serialized=JsonSerializer.Serialize(clean,new JsonSerializerOptions{IncludeFields=true});var restored=JsonSerializer.Deserialize<CarState>(serialized,new JsonSerializerOptions{IncludeFields=true})!;Check(restored.cornerMask==clean.cornerMask&&restored.cornerBonuses==clean.cornerBonuses,"Snapshot retains corner award deduplication");
-  Check(coast.RecordKey=="shonan-v2"&&new Track("suzuka").RecordKey=="suzuka","Only changed layout changes record key");
+  Check(coast.RecordKey=="shonan-v3"&&new Track("suzuka").RecordKey=="suzuka","Only changed layout changes record key");
  }
 }

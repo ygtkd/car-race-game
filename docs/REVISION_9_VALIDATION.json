@@ -1,0 +1,2493 @@
+{
+  "races": [
+    {
+      "race": 0,
+      "track": "ridge",
+      "level": 1,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "apex",
+          "finishTime": 189.09485,
+          "rank": 2,
+          "specialUses": 3,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 204.86943,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 204.71266,
+          "rank": 6,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 185.5405,
+          "rank": 1,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 190.31258,
+          "rank": 4,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 204.91118,
+          "rank": 8,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 189.86696,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 204.68237,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        }
+      ]
+    },
+    {
+      "race": 1,
+      "track": "suzuka",
+      "level": 2,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "swift",
+          "finishTime": 309.14316,
+          "rank": 5,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 309.83026,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 4
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 300.0068,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 305.8241,
+          "rank": 4,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 4
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 313.9029,
+          "rank": 8,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 1
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 288.66,
+          "rank": 2,
+          "specialUses": 3,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 313.88376,
+          "rank": 7,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 284.11612,
+          "rank": 1,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        }
+      ]
+    },
+    {
+      "race": 2,
+      "track": "shonan",
+      "level": 3,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "vortex",
+          "finishTime": 337.54272,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 279.931,
+          "rank": 1,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 337.6156,
+          "rank": 8,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 310.38336,
+          "rank": 5,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 337.5018,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 2
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 284.54013,
+          "rank": 2,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 298.52838,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 8
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 301.62317,
+          "rank": 4,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        }
+      ]
+    },
+    {
+      "race": 3,
+      "track": "ridge",
+      "level": 4,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "atlas",
+          "finishTime": 149.64372,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 162.8355,
+          "rank": 8,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 150.76263,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 149.22224,
+          "rank": 4,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 149.22076,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 156.29369,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 138.35605,
+          "rank": 1,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 4
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 149.17226,
+          "rank": 2,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        }
+      ]
+    },
+    {
+      "race": 4,
+      "track": "suzuka",
+      "level": 5,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "kebab",
+          "finishTime": 236.25862,
+          "rank": 3,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 249.52625,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 238.18665,
+          "rank": 4,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 8
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 245.80887,
+          "rank": 5,
+          "specialUses": 3,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 252.84305,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 230.90726,
+          "rank": 1,
+          "specialUses": 3,
+          "guardBlocks": 0,
+          "cornerBonuses": 8
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 260.56625,
+          "rank": 8,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 234.69878,
+          "rank": 2,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 8
+        }
+      ]
+    },
+    {
+      "race": 5,
+      "track": "shonan",
+      "level": 1,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "banana",
+          "finishTime": 369.20377,
+          "rank": 2,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 384.4423,
+          "rank": 8,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 384.1411,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 369.427,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 2
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 369.67908,
+          "rank": 4,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 384.34982,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 384.0518,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 369.13965,
+          "rank": 1,
+          "specialUses": 3,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        }
+      ]
+    },
+    {
+      "race": 6,
+      "track": "ridge",
+      "level": 2,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 155.47578,
+          "rank": 1,
+          "specialUses": 3,
+          "guardBlocks": 0,
+          "cornerBonuses": 9
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 167.80467,
+          "rank": 4,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 2
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 163.25166,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 180.25035,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 172.31648,
+          "rank": 6,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 180.27437,
+          "rank": 8,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 156.735,
+          "rank": 2,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 9
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 168.07538,
+          "rank": 5,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 2
+        }
+      ]
+    },
+    {
+      "race": 7,
+      "track": "suzuka",
+      "level": 3,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "bicycle",
+          "finishTime": 269.6552,
+          "rank": 1,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 271.99405,
+          "rank": 2,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 297.2838,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 302.91873,
+          "rank": 8,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 278.4436,
+          "rank": 3,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 302.88507,
+          "rank": 7,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 289.02975,
+          "rank": 5,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 4
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 287.37836,
+          "rank": 4,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        }
+      ]
+    },
+    {
+      "race": 8,
+      "track": "shonan",
+      "level": 4,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "stormbike",
+          "finishTime": 273.989,
+          "rank": 2,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 9
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 300.75394,
+          "rank": 4,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 4
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 316.2386,
+          "rank": 8,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 4
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 263.50583,
+          "rank": 1,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 12
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 316.23178,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 4
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 288.7894,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 302.5778,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 316.19302,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 2
+        }
+      ]
+    },
+    {
+      "race": 9,
+      "track": "ridge",
+      "level": 5,
+      "recovery": 1,
+      "cars": [
+        {
+          "vehicle": "aerobike",
+          "finishTime": 136.4449,
+          "rank": 2,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 153.107,
+          "rank": 4,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 157.33157,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 157.50418,
+          "rank": 8,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 137.99454,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 157.30614,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 157.36679,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 131.28754,
+          "rank": 1,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        }
+      ]
+    },
+    {
+      "race": 10,
+      "track": "suzuka",
+      "level": 1,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "apex",
+          "finishTime": 346.1372,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 351.58472,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 345.99255,
+          "rank": 1,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 351.81625,
+          "rank": 8,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 1
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 351.53098,
+          "rank": 4,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 351.55215,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 346.04,
+          "rank": 2,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 351.79327,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        }
+      ]
+    },
+    {
+      "race": 11,
+      "track": "shonan",
+      "level": 2,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "swift",
+          "finishTime": 332.3399,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 332.7792,
+          "rank": 8,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 1
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 307.23114,
+          "rank": 1,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 311.36133,
+          "rank": 2,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 332.3898,
+          "rank": 6,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 332.58902,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 311.57773,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 317.35114,
+          "rank": 4,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        }
+      ]
+    },
+    {
+      "race": 12,
+      "track": "ridge",
+      "level": 3,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "vortex",
+          "finishTime": 187.17938,
+          "rank": 7,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 166.7757,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 187.15736,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 1
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 138.11513,
+          "rank": 2,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 8
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 187.19191,
+          "rank": 8,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 2
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 134.6449,
+          "rank": 1,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 9
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 152.46786,
+          "rank": 4,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 141.65013,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        }
+      ]
+    },
+    {
+      "race": 13,
+      "track": "suzuka",
+      "level": 4,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "atlas",
+          "finishTime": 261.84622,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 273.59772,
+          "rank": 6,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 3
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 259.49747,
+          "rank": 4,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 284.06937,
+          "rank": 7,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 284.09314,
+          "rank": 8,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 0
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 244.4864,
+          "rank": 3,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 7
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 235.84929,
+          "rank": 1,
+          "specialUses": 3,
+          "guardBlocks": 0,
+          "cornerBonuses": 8
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 240.88347,
+          "rank": 2,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 8
+        }
+      ]
+    },
+    {
+      "race": 14,
+      "track": "shonan",
+      "level": 5,
+      "recovery": 1,
+      "cars": [
+        {
+          "vehicle": "kebab",
+          "finishTime": 252.94199,
+          "rank": 1,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 12
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 254.53508,
+          "rank": 2,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 12
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 267.24118,
+          "rank": 4,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 8
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 276.66043,
+          "rank": 8,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 5
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 267.2857,
+          "rank": 5,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 9
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 276.61288,
+          "rank": 7,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 6
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 257.69357,
+          "rank": 3,
+          "specialUses": 2,
+          "guardBlocks": 0,
+          "cornerBonuses": 12
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 273.16837,
+          "rank": 6,
+          "specialUses": 1,
+          "guardBlocks": 0,
+          "cornerBonuses": 12
+        }
+      ]
+    }
+  ],
+  "cpu": [
+    {
+      "id": "ridge",
+      "vehicle": "apex",
+      "level": 2,
+      "finishTime": 151.047,
+      "recoveries": 0
+    },
+    {
+      "id": "ridge",
+      "vehicle": "apex",
+      "level": 5,
+      "finishTime": 125.271774,
+      "recoveries": 0
+    },
+    {
+      "id": "ridge",
+      "vehicle": "atlas",
+      "level": 2,
+      "finishTime": 151.6169,
+      "recoveries": 0
+    },
+    {
+      "id": "ridge",
+      "vehicle": "atlas",
+      "level": 5,
+      "finishTime": 126.094086,
+      "recoveries": 0
+    },
+    {
+      "id": "ridge",
+      "vehicle": "aerobike",
+      "level": 2,
+      "finishTime": 150.30737,
+      "recoveries": 0
+    },
+    {
+      "id": "ridge",
+      "vehicle": "aerobike",
+      "level": 5,
+      "finishTime": 123.19837,
+      "recoveries": 0
+    },
+    {
+      "id": "suzuka",
+      "vehicle": "apex",
+      "level": 2,
+      "finishTime": 274.82034,
+      "recoveries": 0
+    },
+    {
+      "id": "suzuka",
+      "vehicle": "apex",
+      "level": 5,
+      "finishTime": 233.2934,
+      "recoveries": 0
+    },
+    {
+      "id": "suzuka",
+      "vehicle": "atlas",
+      "level": 2,
+      "finishTime": 275.72522,
+      "recoveries": 0
+    },
+    {
+      "id": "suzuka",
+      "vehicle": "atlas",
+      "level": 5,
+      "finishTime": 235.26924,
+      "recoveries": 0
+    },
+    {
+      "id": "suzuka",
+      "vehicle": "aerobike",
+      "level": 2,
+      "finishTime": 273.407,
+      "recoveries": 0
+    },
+    {
+      "id": "suzuka",
+      "vehicle": "aerobike",
+      "level": 5,
+      "finishTime": 229.5476,
+      "recoveries": 0
+    }
+  ],
+  "wheels": [
+    {
+      "vehicle": "aerobike",
+      "wheels": [
+        {
+          "group": "wheel_rear_0",
+          "centre": [
+            0.0,
+            0.550000011920929,
+            -1.2699999809265137
+          ],
+          "radius": 0.550000011920929,
+          "halfWidth": 0.15399999916553497,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_0",
+          "centre": [
+            0.0,
+            0.550000011920929,
+            1.2699999809265137
+          ],
+          "radius": 0.550000011920929,
+          "halfWidth": 0.15399999916553497,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        }
+      ]
+    },
+    {
+      "vehicle": "apex",
+      "wheels": [
+        {
+          "group": "wheel_rear_-0.87",
+          "centre": [
+            -0.8700000047683716,
+            0.3799999952316284,
+            -1.2999999523162842
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_-0.87",
+          "centre": [
+            -0.8700000047683716,
+            0.3799999952316284,
+            1.2999999523162842
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_rear_0.87",
+          "centre": [
+            0.8700000047683716,
+            0.3799999952316284,
+            -1.2999999523162842
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_0.87",
+          "centre": [
+            0.8700000047683716,
+            0.3799999952316284,
+            1.2999999523162842
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        }
+      ]
+    },
+    {
+      "vehicle": "atlas",
+      "wheels": [
+        {
+          "group": "wheel_rear_-0.87",
+          "centre": [
+            -0.8700000047683716,
+            0.3799999952316284,
+            -1.3389999866485596
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_-0.87",
+          "centre": [
+            -0.8700000047683716,
+            0.3799999952316284,
+            1.3389999866485596
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_rear_0.87",
+          "centre": [
+            0.8700000047683716,
+            0.3799999952316284,
+            -1.3389999866485596
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_0.87",
+          "centre": [
+            0.8700000047683716,
+            0.3799999952316284,
+            1.3389999866485596
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        }
+      ]
+    },
+    {
+      "vehicle": "banana",
+      "wheels": []
+    },
+    {
+      "vehicle": "bicycle",
+      "wheels": [
+        {
+          "group": "wheel_rear_0",
+          "centre": [
+            0.0,
+            0.550000011920929,
+            -1.2699999809265137
+          ],
+          "radius": 0.550000011920929,
+          "halfWidth": 0.15399999916553497,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_0",
+          "centre": [
+            0.0,
+            0.550000011920929,
+            1.2699999809265137
+          ],
+          "radius": 0.550000011920929,
+          "halfWidth": 0.15399999916553497,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        }
+      ]
+    },
+    {
+      "vehicle": "kebab",
+      "wheels": [
+        {
+          "group": "wheel_rear_-0.8",
+          "centre": [
+            -0.800000011920929,
+            0.3799999952316284,
+            -1.2200000286102295
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_rear_0.8",
+          "centre": [
+            0.800000011920929,
+            0.3799999952316284,
+            -1.2200000286102295
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_-0.8",
+          "centre": [
+            -0.800000011920929,
+            0.3799999952316284,
+            1.2200000286102295
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_0.8",
+          "centre": [
+            0.800000011920929,
+            0.3799999952316284,
+            1.2200000286102295
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        }
+      ]
+    },
+    {
+      "vehicle": "stormbike",
+      "wheels": [
+        {
+          "group": "wheel_rear_0",
+          "centre": [
+            0.0,
+            0.550000011920929,
+            -1.2699999809265137
+          ],
+          "radius": 0.550000011920929,
+          "halfWidth": 0.15399999916553497,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_0",
+          "centre": [
+            0.0,
+            0.550000011920929,
+            1.2699999809265137
+          ],
+          "radius": 0.550000011920929,
+          "halfWidth": 0.15399999916553497,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        }
+      ]
+    },
+    {
+      "vehicle": "swift",
+      "wheels": [
+        {
+          "group": "wheel_rear_-0.87",
+          "centre": [
+            -0.8700000047683716,
+            0.3799999952316284,
+            -1.1699999570846558
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_-0.87",
+          "centre": [
+            -0.8700000047683716,
+            0.3799999952316284,
+            1.1699999570846558
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_rear_0.87",
+          "centre": [
+            0.8700000047683716,
+            0.3799999952316284,
+            -1.1699999570846558
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_0.87",
+          "centre": [
+            0.8700000047683716,
+            0.3799999952316284,
+            1.1699999570846558
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        }
+      ]
+    },
+    {
+      "vehicle": "tuktuk",
+      "wheels": [
+        {
+          "group": "wheel_rear_-0.8",
+          "centre": [
+            -0.800000011920929,
+            0.3799999952316284,
+            -1.2200000286102295
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_rear_0.8",
+          "centre": [
+            0.800000011920929,
+            0.3799999952316284,
+            -1.2200000286102295
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_0",
+          "centre": [
+            0.0,
+            0.3799999952316284,
+            1.2200000286102295
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        }
+      ]
+    },
+    {
+      "vehicle": "vortex",
+      "wheels": [
+        {
+          "group": "wheel_rear_-0.87",
+          "centre": [
+            -0.8700000047683716,
+            0.3799999952316284,
+            -1.3650000095367432
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_-0.87",
+          "centre": [
+            -0.8700000047683716,
+            0.3799999952316284,
+            1.3650000095367432
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_rear_0.87",
+          "centre": [
+            0.8700000047683716,
+            0.3799999952316284,
+            -1.3650000095367432
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        },
+        {
+          "group": "wheel_front_0.87",
+          "centre": [
+            0.8700000047683716,
+            0.3799999952316284,
+            1.3650000095367432
+          ],
+          "radius": 0.3799999952316284,
+          "halfWidth": 0.17499999701976776,
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "groundClearance": 0.0
+        }
+      ]
+    }
+  ],
+  "browser": {
+    "checks": [
+      "Revision 9 WebGL loads",
+      "Menu text settings removed",
+      "Both settings icons are SVG",
+      "Gear opens settings",
+      "Paired achievement and reward cards",
+      "Award close restores input",
+      "Countdown entered",
+      "Compact signal height",
+      "Race starts",
+      "Shonan runtime 3-4km",
+      "Scene ridge 37",
+      "Scene ridge 55",
+      "Scene ridge 65",
+      "Scene ridge 37",
+      "Scene ridge 55",
+      "Scene ridge 65",
+      "Scene suzuka 180",
+      "Scene suzuka 220",
+      "Scene suzuka 525",
+      "Scene suzuka 180",
+      "Scene suzuka 220",
+      "Scene suzuka 525",
+      "Scene shonan 35",
+      "Scene shonan 75",
+      "Scene shonan 140",
+      "Scene shonan 205",
+      "Scene shonan 290",
+      "Scene shonan 350",
+      "Scene shonan 410",
+      "Scene shonan 495",
+      "Scene shonan 540",
+      "Scene shonan 590",
+      "Scene shonan 35",
+      "Scene shonan 75",
+      "Scene shonan 140",
+      "Scene shonan 205",
+      "Scene shonan 290",
+      "Scene shonan 350",
+      "Scene shonan 410",
+      "Scene shonan 495",
+      "Scene shonan 540",
+      "Scene shonan 590",
+      "Scene shonan 400",
+      "Finish remains immutable during camera orbit",
+      "Guard visual fixture self-ring",
+      "Guard visual fixture remote-ring",
+      "Guard visual fixture remote-block",
+      "Front model apex",
+      "Front model swift",
+      "Front model vortex",
+      "Front model atlas",
+      "Front model kebab",
+      "Front model banana",
+      "Front model tuktuk",
+      "Front model bicycle",
+      "Front model stormbike",
+      "Front model aerobike",
+      "Scene shonan 240",
+      "Scene shonan 240",
+      "Scene shonan 240",
+      "Scene shonan 240",
+      "Scene shonan 240",
+      "Scene shonan 240",
+      "Scene shonan 240",
+      "Scene shonan 240",
+      "Scene shonan 240",
+      "Scene shonan 240",
+      "Right gear 852",
+      "Right gear 915",
+      "Right gear 891",
+      "No revision 9 runtime errors"
+    ],
+    "errors": [],
+    "note": "Desktop Edge touch emulation; scene snapshots used only for visual inspection."
+  },
+  "flow": {
+    "checks": [
+      "Binary game loads",
+      "Solo starts",
+      "Touch accelerator responds",
+      "Pause releases input",
+      "Twenty rapid steering taps release",
+      "Finish precedes results",
+      "Finish persists and ignores input",
+      "Results follow finish",
+      "Autopilot moves with frozen records",
+      "No approximation symbol",
+      "Solo replay",
+      "View state ridge 0",
+      "View state ridge 80",
+      "View state ridge 160",
+      "View state ridge 230",
+      "View state ridge 330",
+      "View state ridge 470",
+      "View state ridge 560",
+      "Scenery captures ridge",
+      "View state suzuka 0",
+      "View state suzuka 145",
+      "View state suzuka 178",
+      "View state suzuka 190",
+      "View state suzuka 215",
+      "View state suzuka 240",
+      "View state suzuka 400",
+      "View state suzuka 520",
+      "View state suzuka 535",
+      "View state suzuka 560",
+      "Scenery captures suzuka",
+      "View state shonan 0",
+      "View state shonan 150",
+      "View state shonan 295",
+      "View state shonan 320",
+      "View state shonan 400",
+      "View state shonan 470",
+      "View state shonan 550",
+      "View state shonan 580",
+      "Scenery captures shonan",
+      "iPhone landscape settings top right",
+      "Galaxy landscape settings top right",
+      "Pixel landscape settings top right",
+      "Create without code",
+      "Guest loads",
+      "Room listed",
+      "Join from list",
+      "Host-only conditions",
+      "Shared host course",
+      "Visual multiplayer car selection",
+      "Guest confirms bike",
+      "Wait for all ready",
+      "Online starts",
+      "Guest starts",
+      "Eight cars share night and CPU level",
+      "No runtime errors"
+    ],
+    "errors": [],
+    "note": "Finish and scenery use isolated render fixtures. Other interactions use production paths. Desktop size emulation is not physical-device testing."
+  },
+  "protocol": {
+    "checks": [
+      "Expanded configuration accepts more than two sockets",
+      "Invalid message connection is closed",
+      "Host selects CPU level and night",
+      "Stale load acknowledgement cannot start race",
+      "Race waits for second client loading",
+      "Shared CPU settings and randomized unique grid",
+      "Client cannot spoof position or lap",
+      "Server owns vehicle, coins and gauge",
+      "Uncharged special is rejected",
+      "Three shared coin states included in snapshots",
+      "Custom badge reaches the other player",
+      "Stale input is released and braking applied",
+      "Reconnect within 20 seconds preserves player identity",
+      "Removed manual recovery cannot force teleport or penalty",
+      "Last human continues after peer disconnect timeout",
+      "Expired session is rejected"
+    ]
+  },
+  "missions": {
+    "checks": [
+      "Mission boundary finish",
+      "Reward survives reload finish",
+      "Duplicate result ignored finish",
+      "Mission boundary explorer",
+      "Reward survives reload explorer",
+      "Duplicate result ignored explorer",
+      "Mission boundary collector",
+      "Reward survives reload collector",
+      "Duplicate result ignored collector",
+      "Mission boundary winner",
+      "Reward survives reload winner",
+      "Duplicate result ignored winner",
+      "Mission boundary garage",
+      "Reward survives reload garage",
+      "Duplicate result ignored garage",
+      "Mission boundary veteran",
+      "Reward survives reload veteran",
+      "Duplicate result ignored veteran",
+      "Mission boundary finish50",
+      "Reward survives reload finish50",
+      "Duplicate result ignored finish50",
+      "Mission boundary wins10",
+      "Reward survives reload wins10",
+      "Duplicate result ignored wins10",
+      "Mission boundary wins25",
+      "Reward survives reload wins25",
+      "Duplicate result ignored wins25",
+      "Mission boundary distance10",
+      "Reward survives reload distance10",
+      "Duplicate result ignored distance10",
+      "Mission boundary distance50",
+      "Reward survives reload distance50",
+      "Duplicate result ignored distance50",
+      "Mission boundary distance100",
+      "Reward survives reload distance100",
+      "Duplicate result ignored distance100",
+      "Mission boundary coins100",
+      "Reward survives reload coins100",
+      "Duplicate result ignored coins100",
+      "Mission boundary coins300",
+      "Reward survives reload coins300",
+      "Duplicate result ignored coins300",
+      "Mission boundary specials20",
+      "Reward survives reload specials20",
+      "Duplicate result ignored specials20",
+      "Mission boundary specials100",
+      "Reward survives reload specials100",
+      "Duplicate result ignored specials100",
+      "Mission boundary disrupt1",
+      "Reward survives reload disrupt1",
+      "Duplicate result ignored disrupt1",
+      "Mission boundary disrupt10",
+      "Reward survives reload disrupt10",
+      "Duplicate result ignored disrupt10",
+      "Mission boundary disrupt50",
+      "Reward survives reload disrupt50",
+      "Duplicate result ignored disrupt50",
+      "Mission boundary speed100",
+      "Reward survives reload speed100",
+      "Duplicate result ignored speed100",
+      "Mission boundary speed160",
+      "Reward survives reload speed160",
+      "Duplicate result ignored speed160",
+      "Mission boundary speed220",
+      "Reward survives reload speed220",
+      "Duplicate result ignored speed220",
+      "Mission boundary night1",
+      "Reward survives reload night1",
+      "Duplicate result ignored night1",
+      "Mission boundary night10",
+      "Reward survives reload night10",
+      "Duplicate result ignored night10",
+      "Mission boundary nightAll",
+      "Reward survives reload nightAll",
+      "Duplicate result ignored nightAll",
+      "Mission boundary shonan1",
+      "Reward survives reload shonan1",
+      "Duplicate result ignored shonan1",
+      "Mission boundary shonan10",
+      "Reward survives reload shonan10",
+      "Duplicate result ignored shonan10",
+      "Mission boundary bikeJam",
+      "Reward survives reload bikeJam",
+      "Duplicate result ignored bikeJam",
+      "Mission boundary bikeAero",
+      "Reward survives reload bikeAero",
+      "Duplicate result ignored bikeAero",
+      "Mission boundary nightExpert",
+      "Reward survives reload nightExpert",
+      "Duplicate result ignored nightExpert",
+      "CPU, estimated and DNF excluded",
+      "Night expert and authoritative disruptions recorded",
+      "Legacy equipment normalized and preserved",
+      "Award wording ja finish",
+      "Award wording ja explorer",
+      "Award wording ja collector",
+      "Award wording ja winner",
+      "Award wording ja garage",
+      "Award wording ja veteran",
+      "Award wording ja finish50",
+      "Award wording ja wins10",
+      "Award wording ja wins25",
+      "Award wording ja distance10",
+      "Award wording ja distance50",
+      "Award wording ja distance100",
+      "Award wording ja coins100",
+      "Award wording ja coins300",
+      "Award wording ja specials20",
+      "Award wording ja specials100",
+      "Award wording ja disrupt1",
+      "Award wording ja disrupt10",
+      "Award wording ja disrupt50",
+      "Award wording ja speed100",
+      "Award wording ja speed160",
+      "Award wording ja speed220",
+      "Award wording ja night1",
+      "Award wording ja night10",
+      "Award wording ja nightAll",
+      "Award wording ja shonan1",
+      "Award wording ja shonan10",
+      "Award wording ja bikeJam",
+      "Award wording ja bikeAero",
+      "Award wording ja nightExpert",
+      "Award wording en finish",
+      "Award wording en explorer",
+      "Award wording en collector",
+      "Award wording en winner",
+      "Award wording en garage",
+      "Award wording en veteran",
+      "Award wording en finish50",
+      "Award wording en wins10",
+      "Award wording en wins25",
+      "Award wording en distance10",
+      "Award wording en distance50",
+      "Award wording en distance100",
+      "Award wording en coins100",
+      "Award wording en coins300",
+      "Award wording en specials20",
+      "Award wording en specials100",
+      "Award wording en disrupt1",
+      "Award wording en disrupt10",
+      "Award wording en disrupt50",
+      "Award wording en speed100",
+      "Award wording en speed160",
+      "Award wording en speed220",
+      "Award wording en night1",
+      "Award wording en night10",
+      "Award wording en nightAll",
+      "Award wording en shonan1",
+      "Award wording en shonan10",
+      "Award wording en bikeJam",
+      "Award wording en bikeAero",
+      "Award wording en nightExpert",
+      "V1 and V2 archives are separate",
+      "V3 and old bests survive reload",
+      "Old history and reward preserved"
+    ]
+  },
+  "web": {
+    "checks": [
+      "Old Shonan best archived",
+      "Missions and rewards preserved",
+      "Separate local layout keys",
+      "Migration survives reload",
+      "Three low tones and one high",
+      "Four distinct fanfares",
+      "Fanfare deduplicated per race",
+      "Small-grid fanfare two",
+      "Small-grid fanfare three",
+      "Small-grid fanfare solo",
+      "Mute reaches effects bus",
+      "Music restoration scheduled on audio clock"
+    ],
+    "note": "Audio scheduling verified with an instrumented Web Audio context; not a physical-device listening test."
+  },
+  "online": {
+    "phase": "finished",
+    "raceId": "65807f049d6d4bb8a174b7a07828e341",
+    "cars": [
+      {
+        "Position": {
+          "Length": 479.43033,
+          "x": 103.682915,
+          "y": 11.683243,
+          "z": -467.9389
+        },
+        "id": "c008b7a0a6e24abbbc460cd29fb7b522",
+        "name": "Online test A",
+        "vehicle": "apex",
+        "badge": "",
+        "recoveryRemaining": 0,
+        "recoveryElapsed": 0,
+        "recoveryProtection": 0,
+        "safeDistance": 3885.9753,
+        "bot": false,
+        "estimated": false,
+        "hasFront": true,
+        "onGrass": false,
+        "lastFront": {
+          "Length": 428.2257,
+          "x": -287.7238,
+          "y": 9.048054,
+          "z": 317.03375
+        },
+        "safePoint": {
+          "Length": 430.34653,
+          "x": -290.21957,
+          "y": 9.047419,
+          "z": 317.63007
+        },
+        "safeIndex": 0,
+        "safeYaw": 1.2952291,
+        "abilityImmunity": 0,
+        "guardBoost": 0,
+        "guardFx": 0,
+        "draftCharge": 0,
+        "draftPower": 0,
+        "cornerBudget": 0.15,
+        "cornerFlash": 0,
+        "cornerSpeedSum": 0.96922827,
+        "guardTriggered": false,
+        "cornerClean": false,
+        "guardBlocks": 0,
+        "cornerActive": -1,
+        "cornerLap": 1,
+        "cornerMask": 63,
+        "cornerSamples": 1,
+        "cornerBonuses": 10,
+        "cornerPrevious": -1,
+        "gauge": 1,
+        "specialTime": 0,
+        "jamTime": 0,
+        "jamImmunity": 0,
+        "distance": 7775.1865,
+        "furthestDistance": 7775.1865,
+        "coins": 0,
+        "specialUses": 0,
+        "disruptions": 0,
+        "cpuLevel": 3,
+        "gridSlot": 0,
+        "peakSpeed": 52.99042,
+        "cruiseDistance": 4914.4106,
+        "night": true,
+        "x": 103.682915,
+        "y": 11.683243,
+        "z": -467.9389,
+        "yaw": 1.861944,
+        "speed": 18,
+        "vx": 17.242472,
+        "vz": -5.166931,
+        "steering": 0,
+        "elapsed": 307.39847,
+        "lapStart": 307.36185,
+        "bestLap": 153.27605,
+        "finishTime": 307.36185,
+        "offroad": 0,
+        "slip": 0,
+        "index": 181,
+        "lap": 2,
+        "gate": 1,
+        "rank": 2,
+        "gear": 2,
+        "finished": true,
+        "connected": true,
+        "dnf": false,
+        "wrongWay": false
+      },
+      {
+        "Position": {
+          "Length": 430.13574,
+          "x": -289.73544,
+          "y": 9.047618,
+          "z": 317.7865
+        },
+        "id": "9236cf8a2bb84d7c8d8cbaddb246960a",
+        "name": "Online test B",
+        "vehicle": "swift",
+        "badge": "",
+        "recoveryRemaining": 0,
+        "recoveryElapsed": 0,
+        "recoveryProtection": 0,
+        "safeDistance": 3885.7576,
+        "bot": false,
+        "estimated": false,
+        "hasFront": true,
+        "onGrass": false,
+        "lastFront": {
+          "Length": 428.5237,
+          "x": -287.9982,
+          "y": 9.048054,
+          "z": 317.18723
+        },
+        "safePoint": {
+          "Length": 430.4369,
+          "x": -290.4268,
+          "y": 9.047333,
+          "z": 317.5631
+        },
+        "safeIndex": 0,
+        "safeYaw": 1.2952291,
+        "abilityImmunity": 0,
+        "guardBoost": 0,
+        "guardFx": 0,
+        "draftCharge": 0,
+        "draftPower": 0,
+        "cornerBudget": 0.15,
+        "cornerFlash": 0,
+        "cornerSpeedSum": 483.04205,
+        "guardTriggered": false,
+        "cornerClean": false,
+        "guardBlocks": 0,
+        "cornerActive": -1,
+        "cornerLap": 1,
+        "cornerMask": 63,
+        "cornerSamples": 605,
+        "cornerBonuses": 11,
+        "cornerPrevious": -1,
+        "gauge": 1,
+        "specialTime": 0,
+        "jamTime": 0,
+        "jamImmunity": 0,
+        "distance": 7775.1865,
+        "furthestDistance": 7775.1865,
+        "coins": 0,
+        "specialUses": 0,
+        "disruptions": 0,
+        "cpuLevel": 3,
+        "gridSlot": 1,
+        "peakSpeed": 45.7162,
+        "cruiseDistance": 3886.4836,
+        "night": true,
+        "x": -289.73544,
+        "y": 9.047618,
+        "z": 317.7865,
+        "yaw": 1.2952291,
+        "speed": 14.520743,
+        "vx": 13.972891,
+        "vz": 3.95099,
+        "steering": -0.14576018,
+        "elapsed": 367.63376,
+        "lapStart": 367.60727,
+        "bestLap": 175.47565,
+        "finishTime": 367.60727,
+        "offroad": 0,
+        "slip": 0,
+        "index": 0,
+        "lap": 2,
+        "gate": 1,
+        "rank": 3,
+        "gear": 2,
+        "finished": true,
+        "connected": true,
+        "dnf": false,
+        "wrongWay": false
+      },
+      {
+        "Position": {
+          "Length": 710.8566,
+          "x": 216.84882,
+          "y": 37.254734,
+          "z": -675.9481
+        },
+        "id": "bot0",
+        "name": "GT 1",
+        "vehicle": "banana",
+        "badge": "",
+        "recoveryRemaining": 0,
+        "recoveryElapsed": 0,
+        "recoveryProtection": 0,
+        "safeDistance": 3885.4458,
+        "bot": true,
+        "estimated": false,
+        "hasFront": true,
+        "onGrass": false,
+        "lastFront": {
+          "Length": 428.20862,
+          "x": -288.1496,
+          "y": 9.048054,
+          "z": 316.62372
+        },
+        "safePoint": {
+          "Length": 430.5663,
+          "x": -290.72324,
+          "y": 9.047211,
+          "z": 317.46732
+        },
+        "safeIndex": 0,
+        "safeYaw": 1.2952291,
+        "abilityImmunity": 0,
+        "guardBoost": 0,
+        "guardFx": 0,
+        "draftCharge": 0,
+        "draftPower": 0,
+        "cornerBudget": 0.15,
+        "cornerFlash": 0,
+        "cornerSpeedSum": 479.98816,
+        "guardTriggered": false,
+        "cornerClean": false,
+        "guardBlocks": 0,
+        "cornerActive": -1,
+        "cornerLap": 1,
+        "cornerMask": 63,
+        "cornerSamples": 439,
+        "cornerBonuses": 11,
+        "cornerPrevious": -1,
+        "gauge": 0.74756855,
+        "specialTime": 0,
+        "jamTime": 0,
+        "jamImmunity": 0,
+        "distance": 7775.1865,
+        "furthestDistance": 7775.1865,
+        "coins": 2,
+        "specialUses": 2,
+        "disruptions": 0,
+        "cpuLevel": 3,
+        "gridSlot": 2,
+        "peakSpeed": 55,
+        "cruiseDistance": 5219.8037,
+        "night": true,
+        "x": 216.84882,
+        "y": 37.254734,
+        "z": -675.9481,
+        "yaw": 2.7300503,
+        "speed": 8.991193,
+        "vx": 3.596687,
+        "vz": -8.240473,
+        "steering": 0.64311147,
+        "elapsed": 280.655,
+        "lapStart": 280.65018,
+        "bestLap": 132.8806,
+        "finishTime": 280.65018,
+        "offroad": 0,
+        "slip": 0,
+        "index": 243,
+        "lap": 2,
+        "gate": 1,
+        "rank": 1,
+        "gear": 2,
+        "finished": true,
+        "connected": true,
+        "dnf": false,
+        "wrongWay": false
+      }
+    ]
+  },
+  "terrain": [
+    {
+      "track": "ridge",
+      "samples": 1920,
+      "penetrations": [],
+      "maxClearance": 4.0292050449218735
+    },
+    {
+      "track": "suzuka",
+      "samples": 1920,
+      "penetrations": [],
+      "maxClearance": 17.904887842773437
+    },
+    {
+      "track": "shonan",
+      "samples": 1920,
+      "penetrations": [],
+      "maxClearance": 11.335990460546874
+    }
+  ],
+  "performanceBefore": {
+    "base": "http://127.0.0.1:5111",
+    "reports": [
+      {
+        "label": "start",
+        "night": false,
+        "index": 0,
+        "median": 49.79999999999927,
+        "p95": 66.70000000000073
+      },
+      {
+        "label": "start",
+        "night": true,
+        "index": 0,
+        "median": 66.59999999999854,
+        "p95": 83.30000000000291
+      },
+      {
+        "label": "hill",
+        "night": false,
+        "index": 155,
+        "median": 33.29999999999927,
+        "p95": 50.099999999998545
+      },
+      {
+        "label": "hill",
+        "night": true,
+        "index": 155,
+        "median": 49.900000000001455,
+        "p95": 66.70000000000437
+      },
+      {
+        "label": "town",
+        "night": false,
+        "index": 529,
+        "median": 16.80000000000291,
+        "p95": 50.099999999998545
+      },
+      {
+        "label": "town",
+        "night": true,
+        "index": 529,
+        "median": 16.700000000004366,
+        "p95": 83.20000000000437
+      }
+    ],
+    "note": "Headless Edge SwiftShader 1100x650, 120 frames per stationary scene; not physical mobile performance."
+  },
+  "performanceAfter": {
+    "base": "http://127.0.0.1:5110",
+    "reports": [
+      {
+        "label": "start",
+        "night": false,
+        "index": 0,
+        "median": 49.899999999999636,
+        "p95": 66.70000000000073
+      },
+      {
+        "label": "start",
+        "night": true,
+        "index": 0,
+        "median": 66.5,
+        "p95": 83.29999999999927
+      },
+      {
+        "label": "hill",
+        "night": false,
+        "index": 235,
+        "median": 49.89999999999782,
+        "p95": 66.59999999999854
+      },
+      {
+        "label": "hill",
+        "night": true,
+        "index": 235,
+        "median": 66.5,
+        "p95": 83.30000000000291
+      },
+      {
+        "label": "town",
+        "night": false,
+        "index": 609,
+        "median": 49.89999999999418,
+        "p95": 66.70000000000437
+      },
+      {
+        "label": "town",
+        "night": true,
+        "index": 609,
+        "median": 66.59999999999854,
+        "p95": 83.30000000000291
+      }
+    ],
+    "note": "Headless Edge SwiftShader 1100x650, 120 frames per stationary scene; not physical mobile performance."
+  },
+  "coreChecks": {
+    "regression": 392,
+    "revision9RacesAndChecks": 47,
+    "boundaries": 37
+  },
+  "status": "Local implementation and final build validation complete; not pushed or deployed",
+  "limits": [
+    "Desktop Edge touch emulation only; physical phones not connected",
+    "Automated races, not human driving",
+    "Two real local WebSocket clients; no production 8-person load verification",
+    "One recovery in ridge Lv5 and one recovery in Shonan Lv5 mixed races",
+    "Software rendering scene benchmark exceeds initial 10% target at island daytime and town views; physical device performance remains unverified. Geometry and shader optimizations applied; inspect performance tables."
+  ],
+  "build": "44db0ee151c0",
+  "release": {
+    "id": "44db0ee151c0",
+    "checks": [
+      "Release loads",
+      "Settings identifies running build",
+      "All executable scripts belong to one release",
+      "New release offered on menu",
+      "Update unavailable during selection",
+      "Final build race begins",
+      "Start text remains hidden",
+      "No errors in release verification"
+    ],
+    "errors": []
+  },
+  "performanceOptimized": {
+    "base": "http://127.0.0.1:5110",
+    "reports": [
+      {
+        "label": "start",
+        "night": false,
+        "index": 0,
+        "median": 16.80000000000109,
+        "p95": 66.70000000000073
+      },
+      {
+        "label": "start",
+        "night": true,
+        "index": 0,
+        "median": 66.59999999999854,
+        "p95": 83.30000000000291
+      },
+      {
+        "label": "hill",
+        "night": false,
+        "index": 235,
+        "median": 49.79999999999927,
+        "p95": 66.70000000000073
+      },
+      {
+        "label": "hill",
+        "night": true,
+        "index": 235,
+        "median": 49.89999999999418,
+        "p95": 83.29999999999927
+      },
+      {
+        "label": "town",
+        "night": false,
+        "index": 609,
+        "median": 49.89999999999418,
+        "p95": 66.70000000000437
+      },
+      {
+        "label": "town",
+        "night": true,
+        "index": 609,
+        "median": 66.5,
+        "p95": 83.30000000000291
+      }
+    ],
+    "note": "Headless Edge SwiftShader 1100x650, 120 frames per stationary scene; not physical mobile performance."
+  },
+  "finalBrowser": {
+    "id": "44db0ee151c0",
+    "checks": [
+      "Final game loads",
+      "Menu keeps only gear",
+      "Final coast true",
+      "Final coast false",
+      "No final shader/runtime errors"
+    ],
+    "errors": []
+  }
+}

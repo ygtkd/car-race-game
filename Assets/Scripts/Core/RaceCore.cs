@@ -28,7 +28,7 @@ namespace CoastRacer.Core
         public readonly Point[] points=new Point[Samples];
         public readonly float[] distance=new float[Samples+1];
         public readonly int[] cornerIds;public readonly float width=14;
-        public string RecordKey=>id=="shonan"?"shonan-v2":id;
+        public string RecordKey=>id=="shonan"?"shonan-v3":id;
         public bool IsSeaBridge(int i)=>id=="shonan"&&points[i].z< -90&&points[i].z> -390&&Math.Abs(points[i].x)<12;
         public float BarrierAt(int i)=>IsSeaBridge(i)?8.3f:BarrierEdge;
         public float Length=>distance[Samples];
@@ -42,16 +42,25 @@ namespace CoastRacer.Core
                 points[i]=(b*2+(c-a)*t+(a*2-b*5+c*4-d)*(t*t)+(b*3-a-c*3+d)*(t*t*t))*.5f;
                 if(i>0)distance[i]=distance[i-1]+(points[i]-points[i-1]).Length;
             }
-            distance[Samples]=distance[Samples-1]+(points[0]-points[Samples-1]).Length;cornerIds=RacingExtras.BuildCorners(this);
+            distance[Samples]=distance[Samples-1]+(points[0]-points[Samples-1]).Length;
+            if(id=="shonan"){
+                // Rebase the closed route 600m before the mainland bridge entrance.
+                int entry=Nearest(new Point(9.5f,7,-90));float target=(distance[entry]-600+Length)%Length;
+                int start=0;for(int i=1;i<Samples;i++)if(Math.Abs(distance[i]-target)<Math.Abs(distance[start]-target))start=i;
+                var original=(Point[])points.Clone();for(int i=0;i<Samples;i++)points[i]=original[(start+i)%Samples];
+                distance[0]=0;for(int i=1;i<=Samples;i++)distance[i]=distance[i-1]+(points[i%Samples]-points[i-1]).Length;
+            }
+            cornerIds=RacingExtras.BuildCorners(this);
         }
         static Point[] Shonan()=>new[]{
             new Point(9.5f,7,0),new Point(9.5f,7,-100),new Point(9.5f,7,-200),new Point(9.5f,7,-300),new Point(9.5f,7,-400),
-            new Point(85,10,-465),new Point(185,15,-510),new Point(220,19,-630),new Point(145,22,-755),new Point(0,20,-795),
-            new Point(-150,16,-750),new Point(-215,12,-615),new Point(-160,10,-490),new Point(-60,8,-440),
-            new Point(-9.5f,7,-400),new Point(-9.5f,7,-300),new Point(-9.5f,7,-200),new Point(-9.5f,7,-100),
+            new Point(85,10,-460),new Point(155,18,-485),new Point(215,27,-550),new Point(170,34,-615),
+            new Point(220,38,-690),new Point(150,43,-770),new Point(60,47,-805),new Point(-20,43,-750),
+            new Point(-110,35,-790),new Point(-205,27,-700),new Point(-165,21,-625),new Point(-225,16,-550),
+            new Point(-160,11,-485),new Point(-60,8,-440),new Point(-9.5f,7,-400),new Point(-9.5f,7,-300),new Point(-9.5f,7,-200),new Point(-9.5f,7,-100),
             new Point(-65,7,12),new Point(-250,7,40),new Point(-340,7,40),new Point(-517,7,40),new Point(-612,8,95),
-            new Point(-639,10,210),new Point(-564,11,315),new Point(-415,10,330),new Point(-272,9,310),
-            new Point(-210,8,290),new Point(-60,7,220),new Point(9.5f,7,110)};
+            new Point(-639,10,210),new Point(-564,11,315),new Point(-445,10,330),new Point(-355,9,295),
+            new Point(-272,9,320),new Point(-190,8,280),new Point(-100,7,270),new Point(-40,7,205),new Point(9.5f,7,110)};
         static Point[] Ridge()=>new[]{
             new Point(0,6,0),new Point(0,6,100),new Point(0,7,220),new Point(40,10,285),
             new Point(125,17,280),new Point(170,23,220),new Point(130,30,165),

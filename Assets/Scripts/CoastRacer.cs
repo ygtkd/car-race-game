@@ -248,13 +248,14 @@ namespace CoastRacer
         }
         void Place(Transform model,CarState c,float dt)
         {
-            UpdateBlenderCar(model,c,dt);Vector3 target=V(c.Position);
+            Vector3 target=V(c.Position);target.y=track.At(track.RoadDistance(c.Position,c.index)).y;
             if(c.finished || dt<=0 || Vector3.Distance(model.position,target)>20)model.position=target;
             else model.position=Vector3.Lerp(model.position,target,1-Mathf.Exp(-18*dt));
             Point tangent=track.Tangent(c.index);
             float pitch=-Mathf.Asin(Mathf.Clamp(tangent.y,-.9f,.9f))*Mathf.Rad2Deg*Mathf.Cos(c.yaw-track.Yaw(c.index));
             Quaternion rotation=Quaternion.Euler(pitch,c.yaw*Mathf.Rad2Deg,-c.steering*Mathf.Min(2,c.speed*.06f));
             model.rotation=dt<=0?rotation:Quaternion.Slerp(model.rotation,rotation,1-Mathf.Exp(-12*dt));
+            UpdateBlenderCar(model,c,dt);model.GetComponent<BlenderWheels>()?.Ground(track,c.index);
         }
         string finishCameraRace="";float finishCameraStarted=-1;
         void CameraFollow(bool snap)

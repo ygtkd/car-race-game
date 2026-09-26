@@ -22,7 +22,7 @@ namespace CoastRacer
             if(showroomFloor)Destroy(showroomFloor);world.SetActive(false);online=false;paused=false;phase="menu";showroom=true;
             cars.Add(new CarState{vehicle=Vehicles.Get(vehicle).id,badge=Vehicles.Badge(badge)});visuals.Add(BuildCar(0,cars[0].vehicle,cars[0].badge));
             showroomFloor=new GameObject("Showroom");
-            Shape("Display plinth",PrimitiveType.Cylinder,new Vector3(0,-.14f,0),new Vector3(7,.12f,7),Mat("StudioFloor",new Color(.075f,.08f,.09f)),showroomFloor.transform);
+            Shape("Display plinth",PrimitiveType.Cylinder,new Vector3(0,-.12f,0),new Vector3(7,.12f,7),Mat("StudioFloor",new Color(.075f,.08f,.09f)),showroomFloor.transform);
             cam.rect=new Rect(0,0,1,1);cam.clearFlags=CameraClearFlags.SolidColor;cam.backgroundColor=new Color(.065f,.073f,.086f);RenderSettings.fog=false;UpdateShowroom(0);Emit(true);
         }
         void UpdateShowroom(float dt)

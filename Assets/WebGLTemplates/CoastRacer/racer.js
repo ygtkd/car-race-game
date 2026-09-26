@@ -51,7 +51,7 @@ function localize(){
  $('again').textContent=t(online?'rematch':'again');
  Club.localize();updateBest();
 }
-function updateBest(){$('lobbyTrack').textContent=t(track);$('best').textContent=time(read('cr.best.2lap.'+(track==='shonan'?'shonan-v2':track),0));}
+function updateBest(){$('lobbyTrack').textContent=t(track);$('best').textContent=time(read('cr.best.2lap.'+(track==='shonan'?'shonan-v3':track),0));}
 function drawMap(canvas,cars=[]){
  if(!map.length)return;const ctx=canvas.getContext('2d');const w=canvas.width,h=canvas.height;
  const xs=map.map(p=>p.x),zs=map.map(p=>p.z),minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);
@@ -75,7 +75,7 @@ function results(cars,final=true){
   name.textContent=(c.rank||'—')+'  '+c.name;result.textContent=c.dnf?t('dnf'):c.finished?time(c.finishTime):t('racing');row.append(name,result);$('resultRows').append(row);
  });
  $('again').textContent=t(online?'rematch':'again');$('again').disabled=online&&!final;
- if(!online&&me?.finished){const previous=read('cr.best.2lap.'+(track==='shonan'?'shonan-v2':track),0);const best=!previous||me.finishTime<previous;const ok=!best||save('cr.best.2lap.'+(track==='shonan'?'shonan-v2':track),me.finishTime);$('recordNotice').textContent=!ok?t('storageFailed'):best?t('newBest'):'';}
+ if(!online&&me?.finished){const previous=read('cr.best.2lap.'+(track==='shonan'?'shonan-v3':track),0);const best=!previous||me.finishTime<previous;const ok=!best||save('cr.best.2lap.'+(track==='shonan'?'shonan-v3':track),me.finishTime);$('recordNotice').textContent=!ok?t('storageFailed'):best?t('newBest'):'';}
  else $('recordNotice').textContent='';
  Club.record(cars,{online,self,track,raceId:currentRaceId||telemetry?.raceId});
 }
@@ -198,7 +198,7 @@ function closeSettings(){
  if(settingsPaused&&screen==='race')command('pause',{paused:false});settingsPaused=false;
  settingsFocus?.focus();
 }
-$('settingsButton').onclick=$('menuSettings').onclick=$('raceSettings').onclick=openSettings;
+$('settingsButton').onclick=$('raceSettings').onclick=openSettings;
 $('closeSettings').onclick=closeSettings;
 $('settingsOverlay').onclick=e=>{if(e.target===$('settingsOverlay'))closeSettings();};
 document.querySelectorAll('.close').forEach(e=>e.onclick=()=>show('menu'));
