@@ -7,9 +7,12 @@ namespace CoastRacer {
   float badgeViewHeight=3.4f;
   void SetBadgeView(string face){showroomAngle=face=="left"?-90:face=="right"?90:face=="rear"?180:0;badgeViewHeight=face=="top"?8:1.8f;}
   void BuildCustomBadge(Transform car,string value){
+   var holder=new GameObject("Achievement badge").transform;holder.SetParent(car,false);holder.gameObject.AddComponent<DecorationVisibility>();foreach(var part in Vehicles.Badge(value).Split(';'))BuildSingleItem(car,holder,part);
+  }
+  void BuildSingleItem(Transform car,Transform holder,string value){
    var d=BadgeDesign.Parse(value);if(d.badge=="")return;
    var filters=car.GetComponentsInChildren<MeshFilter>();var points=new List<Vector3[]>();var triangles=new List<int[]>();var bounds=new Bounds();bool first=true;
-   foreach(var mf in filters){if(mf.name.Contains("shadow"))continue;var mesh=mf.sharedMesh;if(!mesh||!mesh.isReadable)continue;var v=mesh.vertices;for(int i=0;i<v.Length;i++){v[i]=car.InverseTransformPoint(mf.transform.TransformPoint(v[i]));if(first){bounds=new Bounds(v[i],Vector3.zero);first=false;}else bounds.Encapsulate(v[i]);}points.Add(v);triangles.Add(mesh.triangles);}
+   foreach(var mf in filters){if(mf.name.Contains("shadow")||mf.transform.IsChildOf(holder))continue;var mesh=mf.sharedMesh;if(!mesh||!mesh.isReadable)continue;var v=mesh.vertices;for(int i=0;i<v.Length;i++){v[i]=car.InverseTransformPoint(mf.transform.TransformPoint(v[i]));if(first){bounds=new Bounds(v[i],Vector3.zero);first=false;}else bounds.Encapsulate(v[i]);}points.Add(v);triangles.Add(mesh.triangles);}
    if(first)return;
    Vector3 normal=d.face=="left"?Vector3.left:d.face=="right"?Vector3.right:d.face=="front"?Vector3.forward:d.face=="rear"?Vector3.back:Vector3.up;
    Vector3 u=d.face=="top"||d.face=="front"||d.face=="rear"?Vector3.right:Vector3.forward,vaxis=d.face=="top"?Vector3.forward:Vector3.up;
@@ -19,16 +22,10 @@ namespace CoastRacer {
     var indices=triangles[m];for(int t=0;t<indices.Length;t+=3){var a=vertices[indices[t]];var e1=vertices[indices[t+1]]-a;var e2=vertices[indices[t+2]]-a;var h=Vector3.Cross(dir,e2);float det=Vector3.Dot(e1,h);if(Mathf.Abs(det)<.000001f)continue;float inv=1/det;var delta=origin-a;float b=Vector3.Dot(delta,h)*inv;if(b<0||b>1)continue;var q=Vector3.Cross(delta,e1);float c=Vector3.Dot(dir,q)*inv;if(c<0||b+c>1)continue;float distance=Vector3.Dot(e2,q)*inv;if(distance>0&&distance<best){best=distance;hit=origin+dir*distance;surfaceNormal=Vector3.Cross(e1,e2).normalized;if(Vector3.Dot(surfaceNormal,normal)<0)surfaceNormal=-surfaceNormal;}}
    }
    if(best==float.MaxValue)hit=fallback;
-   var root=new GameObject("Achievement badge").transform;root.SetParent(car,false);root.localPosition=hit+surfaceNormal*.035f;var up=d.face=="top"?Vector3.forward:Vector3.up;if(Mathf.Abs(Vector3.Dot(surfaceNormal,up))>.95f)up=Vector3.right;root.localRotation=Quaternion.LookRotation(surfaceNormal,up)*Quaternion.Euler(0,0,d.angle);root.localScale=Vector3.one*(.55f*d.size);root.gameObject.AddComponent<BadgeMeshCleanup>();
-   Color color=d.color=="red"?new Color(.85f,.13f,.13f):d.color=="blue"?new Color(.1f,.5f,.95f):d.color=="green"?new Color(.16f,.7f,.38f):d.color=="violet"?new Color(.65f,.3f,.9f):d.color=="silver"?new Color(.7f,.8f,.9f):new Color(.96f,.65f,.12f);
-   var fill=Mat("Badge color "+d.color,color);var border=Mat("Badge border",new Color(.96f,.97f,1));var ink=Mat("Badge ink",new Color(.045f,.065f,.1f));
-   var outline=new List<Vector2>();if(d.shape=="shield")outline.AddRange(new[]{new Vector2(-.5f,.5f),new Vector2(-.5f,-.15f),new Vector2(0,-.6f),new Vector2(.5f,-.15f),new Vector2(.5f,.5f)});else{int n=d.shape=="hexagon"?6:32;for(int i=0;i<n;i++){float a=i*Mathf.PI*2/n;outline.Add(new Vector2(Mathf.Cos(a),Mathf.Sin(a))*.55f);}}
-   BadgePolygon(root,outline.ToArray(),1,0,border);BadgePolygon(root,outline.ToArray(),.84f,.009f,fill);
-   if(d.pattern=="checker"){for(int x=0;x<4;x++)for(int y=0;y<4;y++)if((x+y)%2==0)BadgePolygon(root,new[]{new Vector2(x*.14f-.28f,y*.14f-.20f),new Vector2(x*.14f-.14f,y*.14f-.20f),new Vector2(x*.14f-.14f,y*.14f-.06f),new Vector2(x*.14f-.28f,y*.14f-.06f)},1,.019f,ink);}
-   else if(d.pattern=="bolt")BadgePolygon(root,new[]{new Vector2(.05f,.35f),new Vector2(-.23f,-.02f),new Vector2(-.01f,-.02f),new Vector2(-.09f,-.30f),new Vector2(.24f,.08f),new Vector2(.02f,.08f)},1,.019f,ink);
-   else if(d.pattern=="wings"){foreach(int side in new[]{-1,1})for(int n=0;n<3;n++)BadgePolygon(root,new[]{new Vector2(side*.02f,.13f-n*.09f),new Vector2(side*(.39f-n*.06f),.24f-n*.08f),new Vector2(side*(.30f-n*.05f),.04f-n*.08f)},1,.019f,ink);}
-   else{var star=new Vector2[10];for(int n=0;n<10;n++){float a=Mathf.PI/2+n*Mathf.PI/5;star[n]=new Vector2(Mathf.Cos(a),Mathf.Sin(a))*(n%2==0?.32f:.14f);}BadgePolygon(root,star,1,.019f,ink);}
-   int count=Array.IndexOf(new[]{"finish","explorer","collector","winner","garage","veteran"},d.badge)+1;for(int n=0;n<count;n++){float x=(n-(count-1)*.5f)*.075f;BadgePolygon(root,new[]{new Vector2(x-.02f,-.38f),new Vector2(x+.02f,-.38f),new Vector2(x+.02f,-.32f),new Vector2(x-.02f,-.32f)},1,.022f,border);}
+   var root=new GameObject("Achievement badge").transform;root.SetParent(holder,false);root.localPosition=hit+surfaceNormal*.035f;var up=d.face=="top"?Vector3.forward:Vector3.up;if(Mathf.Abs(Vector3.Dot(surfaceNormal,up))>.95f)up=Vector3.right;root.localRotation=Quaternion.LookRotation(surfaceNormal,up)*Quaternion.Euler(0,0,d.angle);root.localScale=Vector3.one*(.55f*d.size);root.gameObject.AddComponent<BadgeMeshCleanup>();
+   var item=BlenderModel("item_"+d.badge,root);item.localRotation=Quaternion.Euler(90,0,0);int number=Array.IndexOf(BadgeDesign.Items,d.badge);float[] sizes={1,1,1,1,1.6f,1.6f,2.3f,1.6f,2.3f,1,1.6f,2.3f,1.6f,2.3f,1,2.3f,1,1.6f,2.3f,1,1.6f,2.3f,1,1.6f,2.3f,1,1.6f,1,1,2.3f};item.localScale=Vector3.one*(number>=0?sizes[number]:1);
+   Color tint=d.color=="red"?new Color(.8f,.12f,.10f):d.color=="blue"?new Color(.1f,.4f,.8f):d.color=="green"?new Color(.1f,.65f,.3f):d.color=="violet"?new Color(.6f,.15f,.8f):d.color=="silver"?new Color(.7f,.75f,.8f):new Color(.95f,.65f,.12f);
+   foreach(var renderer in item.GetComponentsInChildren<MeshRenderer>()){var source=renderer.sharedMaterial;var colored=Mat("Item tint "+source.name+" "+d.color,Color.Lerp(source.color,tint,.55f));colored.SetFloat("_Metallic",source.GetFloat("_Metallic"));colored.SetFloat("_Smoothness",source.GetFloat("_Smoothness"));renderer.sharedMaterial=colored;}
   }
   void BadgePolygon(Transform parent,Vector2[] polygon,float scale,float z,Material mat){
    var vertices=new Vector3[polygon.Length+1];Vector2 center=Vector2.zero;foreach(var p in polygon)center+=p;center/=polygon.Length;vertices[0]=new Vector3(center.x*scale,center.y*scale,z);for(int i=0;i<polygon.Length;i++)vertices[i+1]=new Vector3(polygon[i].x*scale,polygon[i].y*scale,z);

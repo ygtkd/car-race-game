@@ -21,3 +21,4 @@ UserSettings/
 *.publishsettings
 *.publishprofile
 *.pfx
+/Art/Blender/Models/*.blend[0-9]

@@ -227,3 +227,10 @@ mainへ89ac0c5をpush。Actions 35993094386 success。公開Build 5eb6ff04bcd7�
 改修6 push完了（2026-09-25）: mainへ64554c9をpush。Build c2a380677f40、検証結果はdocs/REVISION_6_IMPLEMENTATION.md。今回の依頼範囲はpushまで。Azure公開は未実施。
 
 改修6 Azure公開完了（2026-09-25）: Actions 36024381713 success、公開Build c2a380677f40、health=ok。公開ブラウザー29項目成功・エラー0。詳細docs/REVISION_6_IMPLEMENTATION.md。
+
+改修7＋Blender全面改修を実装中（2026-09-26）。Core・サーバー・UI変更、43個のBlenderアセット生成、10レース80台完走まで実施。初回WebGLビルド中。詳細docs/REVISION_7_IMPLEMENTATION.md。未push・未公開。
+
+改修7 再開後の進捗（2026-09-26）: Blenderモデル44個と専用バイナリ形式、3コースの道路中央・両端5,760地点の地形検査を完了。新WebGLビルド成功。10レース80台完走、Core回帰、30ミッション、オンラインプロトコル試験を通過。Finish・入力解除のブラウザー試験成功。最終オンラインUI試験・梱包を継続。未push・未公開、新規インストールなし。詳細docs/REVISION_7_IMPLEMENTATION.md。
+
+
+改修7＋Blender全面改修 ローカル実装完了: Build a3f899d6c14bをWebBuildへ反映。44個の編集用Blenderモデル、10車種・3コース昼夜・30報酬。自動10レース80台完走、追加10レース回帰、ブラウザー36項目、フロー55項目、ミッション93項目、通信16項目、リリース8項目を確認。実際のオンライン2周完走・最後の人間の継続・再戦を検証。新規インストールなし、CarController.csのユーザー変更は未編集。未push・未公開。詳細docs/REVISION_7_IMPLEMENTATION.mdとREVISION_7_VALIDATION.json。

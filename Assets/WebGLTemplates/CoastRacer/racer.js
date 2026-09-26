@@ -2,15 +2,15 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const dict={
-ja:{rearView:'後方を見る',single:'シングルプレイ',courses:'コース選択',languageLabel:'言語',close:'閉じる',loading:'ゲームを読み込んでいます',reload:'再読み込み',settings:'設定',ridge:'山岳サーキット',suzuka:'鈴鹿サーキット',distance:'コース全長',best:'自己ベスト',solo:'スタート',online:'オンライン対戦',sensitivity:'ハンドル感度',assist:'運転アシスト',strong:'標準',medium:'弱め',off:'なし',quality:'描画品質',low:'軽量',high:'標準',back:'戻る',name:'表示名',create:'ルームを作成',roomCode:'ルームコード',join:'ルームに参加',ready:'準備完了',notReady:'準備を解除',start:'レース開始',leave:'退室',raceComplete:'レース終了',again:'もう一度走る',menu:'メニューに戻る',paused:'一時停止',resume:'再開',position:'順位',lap:'周回',lapTime:'ラップタイム',bestLap:'ベストラップ',pause:'一時停止',steering:'操舵',brake:'ブレーキ',throttle:'アクセル',recover:'コース復帰 ＋3秒',rotate:'スマホを横向きにしてください',driver:'ドライバー',loadFailed:'読み込めませんでした。ほかのタブを閉じて再読み込みしてください。',connecting:'接続中…',connected:'オンライン接続中',reconnecting:'再接続中…（最大20秒）',connectionLost:'接続を復元できませんでした。レースを退出しました。',serverUnavailable:'対戦サーバーに接続できません。サーバーの起動状態、または満員でないか確認してください。',ROOM_NOT_FOUND:'ルームが見つかりません。',ROOM_FULL:'ルームが満員です。',SERVER_FULL:'サーバーが満員です。',RACE_RUNNING:'レース進行中です。終了後に参加してください。',SESSION_EXPIRED:'再接続期限が切れたか、サーバーが再起動しました。もう一度参加してください。',NOT_READY:'2人以上が準備完了になると開始できます。',SAVE_FAILED:'結果をサーバーに保存できませんでした。今回の結果は画面で確認できます。',INVALID_MESSAGE:'通信データを処理できませんでした。',JOIN_FIRST:'先にルームへ参加してください。',owner:'作成者',waiting:'準備中',disconnected:'切断中',dnf:'記録なし',newBest:'自己ベストを更新しました。',bestSaved:'記録はこのブラウザに保存しています。',storageFailed:'ブラウザへの記録保存が利用できません。',onlineResult:'サーバーが確定した対戦結果です。',rematch:'再戦の準備へ',wrongWay:'逆走しています',offroad:'コースに戻ってください',onlineNoPause:'オンライン対戦は一時停止できません。',recovered:'コースに復帰しました（＋3秒）。',finish:'完走',go:'スタート',error:'処理に失敗しました。',recordsUnavailable:'記録を取得できませんでした。'},
-en:{rearView:'Rear view',single:'Single player',courses:'Circuits',languageLabel:'Language',close:'Close',loading:'Loading the circuit',reload:'Reload',settings:'Settings',ridge:'Highland Circuit',suzuka:'Suzuka Circuit',distance:'CIRCUIT LENGTH',best:'PERSONAL BEST',solo:'Start',online:'Race online',sensitivity:'Steering sensitivity',assist:'Driving assists',strong:'Standard',medium:'Reduced',off:'Off',quality:'Graphics',low:'Low',high:'Standard',back:'Back',name:'Display name',create:'Create room',roomCode:'ROOM CODE',join:'Join room',ready:'Ready',notReady:'Not ready',start:'Start race',leave:'Leave room',raceComplete:'RACE COMPLETE',again:'Drive again',menu:'Return to menu',paused:'Paused',resume:'Resume',position:'POSITION',lap:'LAP',lapTime:'LAP TIME',bestLap:'BEST LAP',pause:'Pause',steering:'STEERING',brake:'BRAKE',throttle:'THROTTLE',recover:'Recover +3s',rotate:'Rotate your phone',driver:'Driver',loadFailed:'Unable to load. Close other tabs and reload.',connecting:'Connecting…',connected:'Online',reconnecting:'Reconnecting… (up to 20 seconds)',connectionLost:'Connection could not be restored. You left the race.',serverUnavailable:'Cannot connect. Check whether the server is running or full.',ROOM_NOT_FOUND:'Room not found.',ROOM_FULL:'Room is full.',SERVER_FULL:'Server is full.',RACE_RUNNING:'Race in progress. Join when it finishes.',SESSION_EXPIRED:'Session expired or server restarted. Please join again.',NOT_READY:'At least two ready players are required.',SAVE_FAILED:'Server could not save the result. Results are still visible here.',INVALID_MESSAGE:'Invalid network message.',JOIN_FIRST:'Join a room first.',owner:'Owner',waiting:'Not ready',disconnected:'Disconnected',dnf:'No time',newBest:'New personal best.',bestSaved:'Records are saved in this browser.',storageFailed:'Browser record storage is unavailable.',onlineResult:'Results confirmed by the server.',rematch:'Prepare for rematch',wrongWay:'WRONG WAY',offroad:'RETURN TO THE TRACK',onlineNoPause:'Online races cannot be paused.',recovered:'Recovered to the circuit (+3s).',finish:'Finished',go:'GO',error:'The operation failed.',recordsUnavailable:'Records unavailable.'}
+ja:{racing:'\u8d70\u884c\u4e2d',rearView:'後方を見る',single:'シングルプレイ',courses:'コース選択',languageLabel:'言語',close:'閉じる',loading:'ゲームを読み込んでいます',reload:'再読み込み',settings:'設定',ridge:'山岳サーキット',suzuka:'鈴鹿サーキット',distance:'コース全長',best:'自己ベスト',solo:'スタート',online:'オンライン対戦',sensitivity:'ハンドル感度',assist:'運転アシスト',strong:'標準',medium:'弱め',off:'なし',quality:'描画品質',low:'軽量',high:'標準',back:'戻る',name:'表示名',create:'ルームを作成',roomCode:'ルームコード',join:'ルームに参加',ready:'準備完了',notReady:'準備を解除',start:'レース開始',leave:'退室',raceComplete:'レース終了',again:'もう一度走る',menu:'メニューに戻る',paused:'一時停止',resume:'再開',position:'順位',lap:'周回',lapTime:'ラップタイム',bestLap:'ベストラップ',pause:'一時停止',steering:'操舵',brake:'ブレーキ',throttle:'アクセル',recover:'コース復帰 ＋3秒',rotate:'スマホを横向きにしてください',driver:'ドライバー',loadFailed:'読み込めませんでした。ほかのタブを閉じて再読み込みしてください。',connecting:'接続中…',connected:'オンライン接続中',reconnecting:'再接続中…（最大20秒）',connectionLost:'接続を復元できませんでした。レースを退出しました。',serverUnavailable:'対戦サーバーに接続できません。サーバーの起動状態、または満員でないか確認してください。',ROOM_NOT_FOUND:'ルームが見つかりません。',ROOM_FULL:'ルームが満員です。',SERVER_FULL:'サーバーが満員です。',RACE_RUNNING:'レース進行中です。終了後に参加してください。',SESSION_EXPIRED:'再接続期限が切れたか、サーバーが再起動しました。もう一度参加してください。',NOT_READY:'2人以上が準備完了になると開始できます。',SAVE_FAILED:'結果をサーバーに保存できませんでした。今回の結果は画面で確認できます。',INVALID_MESSAGE:'通信データを処理できませんでした。',JOIN_FIRST:'先にルームへ参加してください。',owner:'作成者',waiting:'準備中',disconnected:'切断中',dnf:'記録なし',newBest:'自己ベストを更新しました。',bestSaved:'記録はこのブラウザに保存しています。',storageFailed:'ブラウザへの記録保存が利用できません。',onlineResult:'サーバーが確定した対戦結果です。',rematch:'再戦の準備へ',wrongWay:'逆走しています',offroad:'コースに戻ってください',onlineNoPause:'オンライン対戦は一時停止できません。',recovered:'コースに復帰しました（＋3秒）。',finish:'完走',go:'スタート',error:'処理に失敗しました。',recordsUnavailable:'記録を取得できませんでした。'},
+en:{racing:'Racing',rearView:'Rear view',single:'Single player',courses:'Circuits',languageLabel:'Language',close:'Close',loading:'Loading the circuit',reload:'Reload',settings:'Settings',ridge:'Highland Circuit',suzuka:'Suzuka Circuit',distance:'CIRCUIT LENGTH',best:'PERSONAL BEST',solo:'Start',online:'Race online',sensitivity:'Steering sensitivity',assist:'Driving assists',strong:'Standard',medium:'Reduced',off:'Off',quality:'Graphics',low:'Low',high:'Standard',back:'Back',name:'Display name',create:'Create room',roomCode:'ROOM CODE',join:'Join room',ready:'Ready',notReady:'Not ready',start:'Start race',leave:'Leave room',raceComplete:'RACE COMPLETE',again:'Drive again',menu:'Return to menu',paused:'Paused',resume:'Resume',position:'POSITION',lap:'LAP',lapTime:'LAP TIME',bestLap:'BEST LAP',pause:'Pause',steering:'STEERING',brake:'BRAKE',throttle:'THROTTLE',recover:'Recover +3s',rotate:'Rotate your phone',driver:'Driver',loadFailed:'Unable to load. Close other tabs and reload.',connecting:'Connecting…',connected:'Online',reconnecting:'Reconnecting… (up to 20 seconds)',connectionLost:'Connection could not be restored. You left the race.',serverUnavailable:'Cannot connect. Check whether the server is running or full.',ROOM_NOT_FOUND:'Room not found.',ROOM_FULL:'Room is full.',SERVER_FULL:'Server is full.',RACE_RUNNING:'Race in progress. Join when it finishes.',SESSION_EXPIRED:'Session expired or server restarted. Please join again.',NOT_READY:'At least two ready players are required.',SAVE_FAILED:'Server could not save the result. Results are still visible here.',INVALID_MESSAGE:'Invalid network message.',JOIN_FIRST:'Join a room first.',owner:'Owner',waiting:'Not ready',disconnected:'Disconnected',dnf:'No time',newBest:'New personal best.',bestSaved:'Records are saved in this browser.',storageFailed:'Browser record storage is unavailable.',onlineResult:'Results confirmed by the server.',rematch:'Prepare for rematch',wrongWay:'WRONG WAY',offroad:'RETURN TO THE TRACK',onlineNoPause:'Online races cannot be paused.',recovered:'Recovered to the circuit (+3s).',finish:'Finished',go:'GO',error:'The operation failed.',recordsUnavailable:'Records unavailable.'}
 };
 Object.assign(dict.ja,Club.words.ja);Object.assign(dict.en,Club.words.en);
 const read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
 let lang=read('cr.lang','ja');if(!dict[lang])lang='ja';
 const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch{return false}};
 const t=k=>dict[lang][k]||dict.en[k]||dict[lang].error;
-let mode='solo',settingsOpen=false,settingsPaused=false,settingsFocus=null;
+let selectedRoom='',finishKey='',finishStarted=0;let mode='solo',settingsOpen=false,settingsPaused=false,settingsFocus=null;
 let unity,screen='menu',track='ridge',map=[],telemetry=null;
 let settings=read('cr.settings',{assist:1,sensitivity:1,quality:navigator.maxTouchPoints?0:1});
 let ws=null,token='',self='',room='',owner='',ready=false,online=false,closing=false,retryStart=0,retryTimer=null,lastNetworkPhase='',socketDeadline=null;
@@ -36,8 +36,8 @@ function show(name){
  const next=$(name);if(next)next.animate([{opacity:0},{opacity:1}],{duration:160});})();return screenTransition;
 }
 function showNow(name){
- screen=name;
- $('game').style.visibility=['race','pause','results','menu','vehicles','gallery'].includes(name)?'visible':'hidden';
+ screen=name;$('finishOverlay').hidden=name!=='finish';
+ $('game').style.visibility=['race','finish','pause','results','menu','vehicles','gallery'].includes(name)?'visible':'hidden';
  panels.forEach(id=>$(id).hidden=id!==name);
  $('hud').hidden=name!=='race';document.body.classList.toggle('racing',name==='race');
  if(name!=='race')clearInput();
@@ -62,12 +62,17 @@ function drawMap(canvas,cars=[]){
  ctx.fillStyle='#d6a966';ctx.fillRect(px(map[0])-3,pz(map[0])-3,6,6);
  cars.forEach((c,i)=>{ctx.beginPath();ctx.fillStyle=i===0?'#eebc72':'#e2e5e8';ctx.arc(px(c),pz(c),i===0?4:2.5,0,Math.PI*2);ctx.fill();});
 }
+function presentResults(cars,final=true){
+ const me=online?cars.find(c=>c.id===self):cars[0];if(!me?.finished){results(cars,final);return;}
+ const key=currentRaceId||telemetry?.raceId;if(finishKey!==key){finishKey=key;finishStarted=performance.now();clearInput();show('finish');}
+ if(performance.now()-finishStarted>=3000)results(cars,final);
+}
 function results(cars,final=true){
  show('results');const me=online?cars.find(c=>c.id===self):cars[0];$('resultTime').textContent=me?.dnf?t('dnf'):time(me?.finishTime);
  $('resultRows').replaceChildren();
  [...cars].sort((a,b)=>(a.rank||99)-(b.rank||99)).forEach(c=>{
   const row=document.createElement('div');row.className='resultRow';const name=document.createElement('span'),result=document.createElement('strong');
-  name.textContent=(c.rank||'—')+'  '+c.name;result.textContent=c.dnf?t('dnf'):c.finished?(c.estimated?'≈ ':'')+time(c.finishTime):t('waiting');row.append(name,result);$('resultRows').append(row);
+  name.textContent=(c.rank||'—')+'  '+c.name;result.textContent=c.dnf?t('dnf'):c.finished?time(c.finishTime):t('racing');row.append(name,result);$('resultRows').append(row);
  });
  $('again').textContent=t(online?'rematch':'again');$('again').disabled=online&&!final;
  if(!online&&me?.finished){const previous=read('cr.best.2lap.'+track,0);const best=!previous||me.finishTime<previous;const ok=!best||save('cr.best.2lap.'+track,me.finishTime);$('recordNotice').textContent=!ok?t('storageFailed'):best?t('newBest'):'';}
@@ -85,16 +90,16 @@ function receive(data){
  $('centerMessage').textContent='';
  $('drivingWarning').textContent=screen==='race'&&data.phase==='race'&&me.onGrass&&me.recoveryRemaining>0?(t('offroad')+' '+Math.ceil(me.recoveryRemaining)+(lang==='ja'?'秒':'s')):me.wrongWay?t('wrongWay'):'';
  drawMap($('miniMap'),data.cars);
- if(!online && screen==='race' && data.phase==='finished')results(data.cars);
+ if(!online && ['race','finish','results'].includes(screen) && data.phase==='finished')presentResults(data.cars);
  if(!online && screen==='race' && !settingsOpen && data.phase==='paused')show('pause');
 }
 let starting=false,currentRaceId='';
 async function startSolo(){
  if(starting)return;starting=true;online=false;lastNetworkPhase='';currentRaceId='';
- try{await Club.load(()=>command('start',{track,...Club.choice(),assist:settings.assist,sensitivity:settings.sensitivity}));command('begin');await show('race');}finally{starting=false;}
+ try{await Club.load(()=>command('start',{track,night:$('soloNight').value==='night',difficulty:Number($('soloDifficulty').value),...Club.choice(),assist:settings.assist,sensitivity:settings.sensitivity}));command('begin');await show('race');}finally{starting=false;}
 }
 function lobby(data){
- room=data.code;owner=data.owner;track=data.track;$('codeDisplay').textContent=room;$('lobbyTrack').textContent=t(track);
+ room=data.code;owner=data.owner;track=data.track;$('codeDisplay').textContent=t('lobbyTitle');$('lobbyTrack').textContent=t(track);
  $('roster').replaceChildren();
  for(const p of data.players){
   const row=document.createElement('div');row.className='person';const name=document.createElement('span'),status=document.createElement('small');
@@ -103,9 +108,9 @@ function lobby(data){
  }
  $('ready').textContent=t(ready?'notReady':'ready');$('startOnline').hidden=true;
  $('lobbySummary').textContent=(data.players.length+(data.bots||0))+' / 8 · CPU '+(data.bots||0);$('hostOptions').hidden=self!==owner;$('roomTrack').value=track;$('botCount').max=8-data.players.length;if(document.activeElement!==$('botCount'))$('botCount').value=data.bots||0;
- const chosen=data.players.find(p=>p.id===self);if(chosen)$('lobbyVehicle').value=chosen.vehicle;
+ const chosen=data.players.find(p=>p.id===self);if(chosen)$('lobbyVehicle').textContent=t('vehicleSelect')+' · '+(Club.catalog.find(v=>v.id===chosen.vehicle)?.name||chosen.vehicle);$('roomNight').value=data.night?'night':'day';$('roomDifficulty').value=data.difficulty||3;
  $('startOnline').disabled=data.players.filter(p=>p.connected).length<2||data.players.some(p=>p.connected&&!p.ready);
- if(data.phase==='lobby'){Club.network(data);show('lobby');}
+ if(data.phase==='lobby'){Club.network(data);if(screen!=='vehicles'&&pendingScreen!=='vehicles')show('lobby');}
 }
 function endConnection(){
  closing=true;clearTimeout(retryTimer);clearTimeout(socketDeadline);const socket=ws;ws=null;online=false;token='';self='';room='';owner='';ready=false;retryStart=0;lastNetworkPhase='';clearInput();if(socket){socket.onopen=socket.onmessage=socket.onclose=socket.onerror=null;try{socket.close(1000,'Leaving room');}catch{}}$('connectionStatus').hidden=true;
@@ -118,7 +123,7 @@ function connect(action){
  socket.onopen=()=>{
   if(socket!==ws)return;deadline();
   if(action==='resume')send('resume',{token});
-  else send(action,{...Club.choice(),track,code:$('roomCode').value.trim().toUpperCase()});
+  else send(action,{...Club.choice(),track,code:selectedRoom});
  };
  socket.onmessage=e=>{
   if(socket!==ws)return;deadline();
@@ -131,7 +136,7 @@ function connect(action){
    if(data.phase==='lobby'){lastNetworkPhase='lobby';return;}
    currentRaceId=data.raceId;Club.network(data);track=data.track;unity?.SendMessage('RaceGame','NetworkSnapshot',JSON.stringify(data));
    const me=data.cars.find(c=>c.id===self);
-   if(data.phase==='finished'||(data.phase==='race'&&(me?.finished||me?.dnf)))results(data.cars,data.phase==='finished');
+   if(data.phase==='finished'||(data.phase==='race'&&(me?.finished||me?.dnf)))presentResults(data.cars,data.phase==='finished');
    else if(data.phase==='countdown'||data.phase==='race'){if(screen!=='race')show('race');}
    lastNetworkPhase=data.phase;
   }
@@ -154,24 +159,25 @@ function connect(action){
 }
 $('language').onchange=()=>{lang=$('language').value;save('cr.lang',lang);localize();};
 document.querySelectorAll('[data-track]').forEach(button=>button.onclick=()=>{
- track=button.dataset.track;document.querySelectorAll('[data-track]').forEach(b=>b.classList.toggle('active',b===button));command('preview',{track});updateBest();
+ track=button.dataset.track;document.querySelectorAll('[data-track]').forEach(b=>b.classList.toggle('active',b===button));command('preview',{track,night:$('soloNight').value==='night',difficulty:Number($('soloDifficulty').value)});updateBest();
 });
+$('soloNight').onchange=$('soloDifficulty').onchange=()=>command('preview',{track,night:$('soloNight').value==='night',difficulty:Number($('soloDifficulty').value)});
 $('singleMode').onclick=()=>{mode='solo';show('vehicles');};
 $('onlineMode').onclick=()=>{mode='online';show('connect');refreshRooms();};
 $('courseBack').onclick=()=>show('vehicles');
-$('solo').onclick=()=>mode==='online'?show('connect'):startSolo();
+$('solo').onclick=()=>startSolo();
 $('createRoom').onclick=()=>{endConnection();token='';connect('create');};
-$('joinRoom').onclick=()=>{endConnection();token='';connect('join');};
+
 async function refreshRooms(){
  const list=$('roomList');list.replaceChildren();
  try{const response=await fetch('/api/rooms',{cache:'no-store'});if(!response.ok)throw new Error();const rooms=await response.json();
- for(const item of rooms){const b=document.createElement('button');b.textContent=item.code+' · '+t(item.track)+' · '+(item.players+item.bots)+' / 8';b.onclick=()=>{$('roomCode').value=item.code;endConnection();connect('join');};list.append(b);}
+ for(const item of rooms){const b=document.createElement('button');b.className='roomCard';b.textContent=(item.host||t('driver'))+' · '+t(item.track)+' · '+t(item.night?'night':'day')+' · '+(item.players+item.bots)+' / 8 · CPU '+item.bots+' Lv.'+(item.difficulty||3);b.onclick=()=>{selectedRoom=item.code;endConnection();connect('join');};list.append(b);}
  if(!rooms.length)list.textContent=t('noRooms');}catch{list.textContent=t('serverUnavailable');}
 }
 $('refreshRooms').onclick=refreshRooms;setInterval(()=>{if(screen==='connect')refreshRooms();},5000);
-function configureRoom(){send('configure',{track:$('roomTrack').value,bots:Number($('botCount').value)});}
-$('roomTrack').onchange=$('botCount').onchange=configureRoom;
-$('lobbyVehicle').onchange=()=>{Club.selectVehicle($('lobbyVehicle').value);send('profile',Club.choice());};
+function configureRoom(){send('configure',{track:$('roomTrack').value,bots:Number($('botCount').value),night:$('roomNight').value==='night',difficulty:Number($('roomDifficulty').value)});}
+$('roomTrack').onchange=$('botCount').onchange=$('roomNight').onchange=$('roomDifficulty').onchange=configureRoom;
+$('lobbyVehicle').onclick=()=>show('vehicles');
 $('ready').onclick=()=>send('ready',{ready:!ready});$('startOnline').onclick=()=>send('start');
 $('leave').onclick=()=>{endConnection();command('menu',{track});show('menu');};
 $('again').onclick=()=>{if(online)send('rematch');else startSolo();};
@@ -204,7 +210,7 @@ $('rearView').onclick=()=>{if(screen==='race'&&!settingsOpen)setRearView(!rearVi
 // Touch identifiers are reconciled with the browser's complete live touch list.
 // Pointer events are used for mouse/pen (and touch only on browsers without Touch Events).
 const heldControls=new Map(),useTouchEvents=typeof TouchEvent!=='undefined'&&navigator.maxTouchPoints>0;
-const canDrive=()=>screen==='race'&&!settingsOpen&&!pendingScreen&&$('confirmExit').hidden&&!document.hidden;
+const canDrive=()=>!telemetry?.cars?.[0]?.finished&&screen==='race'&&!settingsOpen&&!pendingScreen&&$('confirmExit').hidden&&!document.hidden;
 function controlAt(target){const el=target.closest?.('#wheel,#throttle,#brake');return el?.id;}
 function updateHeld(){
  let wheel=null;input.throttle=input.brake=0;
@@ -261,7 +267,7 @@ requestAnimationFrame(animate);
 let lastInputTick=performance.now();
 setInterval(()=>{
  const now=performance.now();if(now-lastInputTick>750)clearInput();lastInputTick=now;
- const active=screen==='race'&&!settingsOpen&&!pendingScreen&&$('confirmExit').hidden&&!document.hidden;
+ const active=!telemetry?.cars?.[0]?.finished&&screen==='race'&&!settingsOpen&&!pendingScreen&&$('confirmExit').hidden&&!document.hidden;
  const drive={steer:active?Math.max(-1,Math.min(1,input.steer+(keys.has('arrowright')||keys.has('d')?1:0)-(keys.has('arrowleft')||keys.has('a')?1:0))):0,throttle:active?Math.max(input.throttle,keys.has('arrowup')||keys.has('w')?1:0):0,brake:active?Math.max(input.brake,keys.has('arrowdown')||keys.has('s')||keys.has(' ')?1:0):(online?1:0),assist:settings.assist,sensitivity:settings.sensitivity};
  window.Racer.drive=drive;unity?.SendMessage('RaceGame','SetInput',JSON.stringify(drive));
  if(online)send('input',drive);

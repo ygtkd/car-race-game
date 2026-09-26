@@ -31,8 +31,8 @@ namespace CoastRacer.Core
         public float Length=>distance[Samples];
         public Track(string name)
         {
-            id=name=="suzuka"?"suzuka":"ridge";
-            Point[] controls=id=="suzuka"?Suzuka():Ridge();
+            id=name=="suzuka"?"suzuka":name=="shonan"?"shonan":"ridge";
+            Point[] controls=id=="suzuka"?Suzuka():id=="shonan"?Shonan():Ridge();
             for(int i=0;i<Samples;i++){
                 float t=(float)i/Samples*controls.Length;int k=(int)t;t-=k;
                 Point a=controls[(k-1+controls.Length)%controls.Length],b=controls[k],c=controls[(k+1)%controls.Length],d=controls[(k+2)%controls.Length];
@@ -41,6 +41,7 @@ namespace CoastRacer.Core
             }
             distance[Samples]=distance[Samples-1]+(points[0]-points[Samples-1]).Length;
         }
+        static Point[] Shonan()=>new[]{new Point(0,6,0),new Point(0,6,140),new Point(35,7,260),new Point(155,7,290),new Point(310,6,285),new Point(380,7,225),new Point(350,8,145),new Point(235,10,110),new Point(210,13,15),new Point(250,19,-110),new Point(340,25,-190),new Point(315,27,-280),new Point(205,22,-325),new Point(105,14,-270),new Point(100,10,-160),new Point(105,8,-65),new Point(45,6,-65)};
         static Point[] Ridge()=>new[]{
             new Point(0,6,0),new Point(0,6,100),new Point(0,7,220),new Point(40,10,285),
             new Point(125,17,280),new Point(170,23,220),new Point(130,30,165),
@@ -132,7 +133,7 @@ namespace CoastRacer.Core
         public string id="",name="",vehicle="apex",badge="";
         public float recoveryRemaining,recoveryElapsed,recoveryProtection,safeDistance;
         public bool bot,estimated,hasFront,onGrass;public Point lastFront,safePoint;public int safeIndex;public float safeYaw;
-        public float gauge,specialTime,jamTime,jamImmunity,distance,furthestDistance;public int coins,specialUses;
+        public float gauge,specialTime,jamTime,jamImmunity,distance,furthestDistance;public int coins,specialUses,disruptions,cpuLevel=3,gridSlot;public float peakSpeed,cruiseDistance;public bool night;
         public float x,y,z,yaw,speed,vx,vz,steering,elapsed,lapStart,bestLap,finishTime,offroad,slip;
         public int index,lap,gate=1,rank,gear=1;
         public bool finished,connected=true,dnf,wrongWay;
@@ -147,7 +148,7 @@ namespace CoastRacer.Core
             Point p=track.points[0],t=track.Tangent(0);
             float side=slot%2==0?-2.5f:2.5f;
             p+=new Point(t.z,0,-t.x)*side-t*(slot/2*5);
-            int index=track.Nearest(p);float distance=track.RoadDistance(p,index);return new CarState{x=p.x,y=p.y,z=p.z,yaw=track.Yaw(0),index=index,safeIndex=index,safeDistance=distance,safePoint=track.At(distance),safeYaw=track.Yaw(index)};
+            int index=track.Nearest(p);float distance=track.RoadDistance(p,index);return new CarState{gridSlot=slot,x=p.x,y=p.y,z=p.z,yaw=track.Yaw(0),index=index,safeIndex=index,safeDistance=distance,safePoint=track.At(distance),safeYaw=track.Yaw(index)};
         }
         public static void Recover(CarState car,Track t)
         {
@@ -158,13 +159,13 @@ namespace CoastRacer.Core
         }
         public static void StepCar(CarState c,DriveInput input,Track t,float dt)
         {
-            if(c.finished||c.dnf)return;
+            if(c.dnf)return;if(c.finished){Cruise(c,t,dt);return;}
             dt=Mathx.Clamp(dt,0,.05f);c.elapsed+=dt;c.recoveryProtection=Math.Max(0,c.recoveryProtection-dt);
             Point previousFront=c.hasFront?c.lastFront:Front(c);
             float previousDistance=t.RoadDistance(c.Position,c.index);
             float assist=Mathx.Clamp(input.assist,0,1);
             var spec=Vehicles.Get(c.vehicle);c.specialTime=Math.Max(0,c.specialTime-dt);c.jamTime=Math.Max(0,c.jamTime-dt);c.jamImmunity=Math.Max(0,c.jamImmunity-dt);
-            bool boost=c.specialTime>0&&(spec.special=="boost"||spec.special=="dash"),gripActive=c.specialTime>0&&(spec.special=="grip"||spec.special=="surf");
+            bool boost=c.specialTime>0&&(spec.special=="boost"||spec.special=="dash"||spec.special=="aero"),gripActive=c.specialTime>0&&(spec.special=="grip"||spec.special=="surf");
             bool cadence=c.specialTime>0&&spec.special=="cadence",feast=c.specialTime>0&&spec.special=="feast";
             c.index=t.Nearest(c.Position,c.index,6);
             Point center=t.points[c.index],forward=t.Tangent(c.index);
@@ -177,7 +178,7 @@ namespace CoastRacer.Core
             if(assist>0 && !grass && c.speed>t.TargetSpeed(c.index)+3)brake=Math.Max(brake,.45f*assist);
             throttle*=1-brake; // Braking takes priority even while a high-power special is active.
             float slope=forward.y*(float)Math.Cos(Mathx.Angle(c.yaw-t.Yaw(c.index)));
-            float acceleration=throttle*spec.acceleration*(1-.35f*c.speed/spec.maxSpeed)*(boost?SpecialPower.BoostAcceleration:cadence?SpecialPower.CadenceAcceleration:feast?SpecialPower.FeastAcceleration:gripActive?SpecialPower.GripAcceleration:1)-brake*15-.32f-c.speed*c.speed*.0015f-slope*9.81f;
+            float acceleration=throttle*spec.acceleration*(1-.35f*c.speed/spec.maxSpeed)*(boost?SpecialPower.BoostAcceleration:cadence?SpecialPower.CadenceAcceleration:feast?SpecialPower.FeastAcceleration:gripActive?SpecialPower.GripAcceleration:1)-brake*15-.32f-c.speed*c.speed*(c.specialTime>0&&spec.special=="aero"?.0003f:.0015f)-slope*9.81f;
             if(c.jamTime>0)acceleration-=SpecialPower.PulseDrag;
             if(runoff)acceleration-=2.5f+c.speed*.22f;
             if(grass)acceleration-=(3+c.speed*.18f)*(gripActive?0:1);
@@ -204,7 +205,7 @@ namespace CoastRacer.Core
                 c.x=center.x+forward.z*bound;c.z=center.z-forward.x*bound;
                 c.speed*=.55f;c.vx*=.35f;c.vz*=.35f;
             }
-            c.gear=Math.Min(6,1+(int)(c.speed/11));
+            c.gear=Math.Min(6,1+(int)(c.speed/11));c.peakSpeed=Math.Max(c.peakSpeed,c.speed);
             int gateIndex=(c.gate%Track.Gates)*Track.Samples/Track.Gates;
             int separation=Math.Abs(c.index-gateIndex);separation=Math.Min(separation,Track.Samples-separation);
             float crossFraction=1;
@@ -221,7 +222,7 @@ namespace CoastRacer.Core
                     float lapTime=crossingTime-c.lapStart;
                     c.bestLap=c.bestLap<=0?lapTime:Math.Min(c.bestLap,lapTime);
                     c.lapStart=crossingTime;c.gate=1;
-                    if(c.lap>=Laps){c.finished=true;c.finishTime=crossingTime;c.speed=0;}
+                    if(c.lap>=Laps){c.finished=true;c.finishTime=crossingTime;c.cruiseDistance=currentDistance;c.specialTime=c.jamTime=c.jamImmunity=0;}
                 }
             }
             c.lastFront=Front(c);c.hasFront=true;
@@ -232,7 +233,13 @@ namespace CoastRacer.Core
                 if(gain<30){c.distance+=gain;c.gauge=Math.Min(1,c.gauge+gain/(t.Length*1.2f));}
             }
         }
-        public static float FrontLength(string vehicle)=>vehicle=="bicycle"?1.83f:vehicle=="banana"?2.2f:vehicle=="kebab"||vehicle=="tuktuk"?1.8f:2.2f;
+        public static int[] Grid(int count,Random random){var slots=new int[count];for(int i=0;i<count;i++)slots[i]=i;for(int i=count-1;i>0;i--){int j=random.Next(i+1),v=slots[i];slots[i]=slots[j];slots[j]=v;}return slots;}
+        public static float Difficulty(int level)=>.66f+(Math.Max(1,Math.Min(5,level))-1)*.075f;
+        public static void Cruise(CarState c,Track t,float dt){
+            dt=Mathx.Clamp(dt,0,.05f);c.speed=Mathx.Move(c.speed,Math.Min(18,t.TargetSpeed(c.index)*.65f),dt*12);c.cruiseDistance+=c.speed*dt;
+            var p=t.At(c.cruiseDistance);int i=t.Nearest(p);float yaw=t.Yaw(i);c.steering=Mathx.Clamp(Mathx.Angle(yaw-c.yaw)*5,-1,1);c.yaw=yaw;c.index=i;c.x=p.x;c.y=p.y;c.z=p.z;c.vx=(float)Math.Sin(yaw)*c.speed;c.vz=(float)Math.Cos(yaw)*c.speed;
+        }
+        public static float FrontLength(string vehicle)=>vehicle=="bicycle"||vehicle=="stormbike"||vehicle=="aerobike"?1.83f:vehicle=="banana"?2.2f:vehicle=="kebab"||vehicle=="tuktuk"?1.8f:2.2f;
         public static Point Front(CarState c)=>c.Position+new Point((float)Math.Sin(c.yaw),0,(float)Math.Cos(c.yaw))*FrontLength(c.vehicle);
         public static bool CrossedFinish(Point before,Point after,Track t,out float fraction){
             Point axis=t.Tangent(0),a=before-t.points[0],b=after-t.points[0];
@@ -245,15 +252,14 @@ namespace CoastRacer.Core
             float now=0;foreach(var c in cars)now=Math.Max(now,c.elapsed);
             foreach(var c in cars){if(!c.bot||c.finished||c.dnf)continue;
                 float position=Math.Min(t.distance[c.index],t.distance[Math.Min(Track.Samples,c.gate*Track.Samples/Track.Gates)]);float left=Math.Max(1,Laps*t.Length-c.lap*t.Length-position);float seconds=0;
-                for(float d=0;d<left;d+=10){int i=t.Nearest(t.At(position+d));float speed=Math.Max(8,Math.Min(Vehicles.Get(c.vehicle).maxSpeed*.72f,t.TargetSpeed(i)*.9f));seconds+=Math.Min(10,left-d)/speed;}
-                c.finishTime=now+seconds;c.finished=true;c.estimated=true;c.speed=c.vx=c.vz=0;
+                for(float d=0;d<left;d+=10){int i=t.Nearest(t.At(position+d));float speed=Math.Max(8,Math.Min(Vehicles.Get(c.vehicle).maxSpeed*.72f,t.TargetSpeed(i)*Difficulty(c.cpuLevel)));seconds+=Math.Min(10,left-d)/speed;}
+                c.finishTime=now+seconds;c.finished=true;c.estimated=true;c.cruiseDistance=t.RoadDistance(c.Position,c.index);c.specialTime=c.jamTime=c.jamImmunity=0;
             }Rank(cars,t);
         }
         public static bool SettleOnline(IList<CarState> cars,Track t){
             var remaining=new List<CarState>();bool human=false;
             foreach(var c in cars)if(!c.finished&&!c.dnf){remaining.Add(c);if(!c.bot)human=true;}
-            if(remaining.Count==1){remaining[0].dnf=true;remaining[0].finishTime=0;}
-            else if(remaining.Count>0&&!human)EstimateBots(cars,t);
+            if(remaining.Count>0&&!human)EstimateBots(cars,t);
             else if(remaining.Count>0)return false;
             Rank(cars,t);return true;
         }

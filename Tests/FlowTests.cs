@@ -1,4 +1,4 @@
-﻿using CoastRacer.Core;
+using CoastRacer.Core;
 static class FlowTests {
  static void Check(bool value,string label){if(!value)throw new Exception(label);Console.WriteLine("PASS "+label);}
  public static void Run(){
@@ -31,7 +31,7 @@ static class FlowTests {
    var anchor=Simulation.Spawn(t);anchor.safeIndex=320;anchor.safePoint=t.points[320];anchor.safeYaw=t.Yaw(320);anchor.index=0;Simulation.Recover(anchor,t);Check(anchor.index==320&&(anchor.Position-t.points[320]).Length<.01f&&anchor.yaw==t.Yaw(320),id+" recovery retains road segment even far from current hint");
    var a=new CarState{finished=true,finishTime=100,elapsed=100,id="human"};var b=new CarState{bot=true,id="bot1",elapsed=100};var d=new CarState{bot=true,id="bot2",index=300,gate=13,elapsed=100};
    var list=new[]{a,b,d};Check(Simulation.SettleOnline(list,t)&&b.estimated&&d.estimated&&d.finishTime<b.finishTime&&a.finishTime==100,id+" CPU only estimates preserve human time");
-   var lastHuman=new CarState{id="last",elapsed=100};Check(Simulation.SettleOnline(new[]{a,lastHuman},t)&&lastHuman.dnf&&!lastHuman.estimated&&lastHuman.finishTime==0,id+" final human gets no time");
+   var lastHuman=new CarState{id="last",elapsed=100};Check(!Simulation.SettleOnline(new[]{a,lastHuman},t)&&!lastHuman.dnf&&!lastHuman.estimated&&lastHuman.finishTime==0,id+" final human remains racing");
    var h1=new CarState{id="h1"};var h2=new CarState{id="h2"};Check(!Simulation.SettleOnline(new[]{h1,h2,b},t)&&!h1.estimated,id+" never estimate humans");
    var tied=new CarState{finished=true,finishTime=100.01f};Check(Simulation.SettleOnline(new[]{a,tied},t)&&!tied.dnf,id+" simultaneous crossing retains both measured times");
    var race=new RaceSession(t);var eight=Enumerable.Range(0,8).Select(i=>{var car=Simulation.Spawn(t,i);car.id="bot"+i;car.bot=true;car.vehicle=Vehicles.All[i].id;return car;}).ToArray();

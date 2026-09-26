@@ -18,7 +18,9 @@ namespace CoastRacer.Core
             new VehicleSpec("kebab","KEBAB VAN","feast",1700,51,10.0f,10.1f),
             new VehicleSpec("banana","BANANA BOAT","surf",1150,55,9.6f,10.0f),
             new VehicleSpec("tuktuk","TUK TUK","dash",980,52,10.3f,10.1f),
-            new VehicleSpec("bicycle","BICYCLE","cadence",820,50,10.6f,10.5f)
+            new VehicleSpec("bicycle","BICYCLE","cadence",820,50,10.6f,10.5f),
+            new VehicleSpec("stormbike","STORM BIKE","shock",620,53,10.7f,10.8f),
+            new VehicleSpec("aerobike","AERO BIKE","aero",580,56,10.5f,10.6f)
         };
         public static VehicleSpec Get(string id){foreach(var v in All)if(v.id==id)return v;return All[0];}
         public static string Badge(string value)=>BadgeDesign.Normalize(value);
@@ -49,12 +51,12 @@ namespace CoastRacer.Core
         {
             if(c.finished||c.dnf||c.gauge<.9999f||c.specialTime>0)return false;
             c.gauge=0;c.specialUses++;c.specialTime=SpecialPower.Duration;
-            if(Vehicles.Get(c.vehicle).special=="feast"){c.jamTime=0;c.jamImmunity=5;}
-            if(Vehicles.Get(c.vehicle).special=="pulse")foreach(var other in cars){
+            if(Vehicles.Get(c.vehicle).special=="feast"||Vehicles.Get(c.vehicle).special=="shield"){c.jamTime=0;c.jamImmunity=Math.Max(c.jamImmunity,12);}
+            if(Vehicles.Get(c.vehicle).special=="pulse"||Vehicles.Get(c.vehicle).special=="shock")foreach(var other in cars){
                 if(other==c||other.finished||other.dnf||other.jamImmunity>0||Math.Abs(other.y-c.y)>3)continue;
                 float dx=other.x-c.x,dz=other.z-c.z;
-                if(dx*dx+dz*dz<SpecialPower.PulseRadius*SpecialPower.PulseRadius && !(Vehicles.Get(other.vehicle).special=="shield"&&other.specialTime>0)){
-                    other.speed*=SpecialPower.PulseSpeedRetained;other.vx*=SpecialPower.PulseSpeedRetained;other.vz*=SpecialPower.PulseSpeedRetained;other.jamTime=5;other.jamImmunity=5;
+                if(dx*dx+dz*dz<=SpecialPower.PulseRadius*SpecialPower.PulseRadius && !(Vehicles.Get(other.vehicle).special=="shield"&&other.specialTime>0)){
+                    other.speed*=SpecialPower.PulseSpeedRetained;other.vx*=SpecialPower.PulseSpeedRetained;other.vz*=SpecialPower.PulseSpeedRetained;other.jamTime=5;other.jamImmunity=12;c.disruptions++;
                 }
             }
             return true;
@@ -78,8 +80,8 @@ namespace CoastRacer.Core
         public void UseBotSpecial(CarState c,IList<CarState> cars)
         {
             if(c.gauge<1||c.speed<10)return;string special=Vehicles.Get(c.vehicle).special;
-            bool use=(special=="boost"||special=="dash"||special=="cadence"||special=="feast")?track.TargetSpeed(c.index)>35:(special=="grip"||special=="surf")?track.TargetSpeed(c.index)<30:false;
-            if(special=="pulse"||special=="shield")foreach(var other in cars){float dx=other.x-c.x,dz=other.z-c.z;if(other!=c&&!other.finished&&dx*dx+dz*dz<SpecialPower.PulseRadius*SpecialPower.PulseRadius)use=true;}
+            bool use=(special=="boost"||special=="dash"||special=="aero"||special=="cadence"||special=="feast")?track.TargetSpeed(c.index)>35:(special=="grip"||special=="surf")?track.TargetSpeed(c.index)<30:false;
+            if(special=="pulse"||special=="shock"||special=="shield")foreach(var other in cars){float dx=other.x-c.x,dz=other.z-c.z;if(other!=c&&!other.finished&&dx*dx+dz*dz<=SpecialPower.PulseRadius*SpecialPower.PulseRadius)use=true;}
             if(use)Activate(c,cars);
         }
         public DriveInput Bot(CarState c,float aggression=1)
@@ -111,7 +113,7 @@ namespace CoastRacer.Core
                     if(overlap>deepest){deepest=overlap;nx=d>.001f?dx/d:1;nz=d>.001f?dz/d:0;}
                 }
                 if(deepest<=0)continue;
-                float ma=Vehicles.Get(a.vehicle).mass,mb=Vehicles.Get(b.vehicle).mass;
+                float ma=(float)Math.Pow(Vehicles.Get(a.vehicle).mass/1000,2)*1000,mb=(float)Math.Pow(Vehicles.Get(b.vehicle).mass/1000,2)*1000;
                 if(a.specialTime>0&&Vehicles.Get(a.vehicle).special=="shield")ma*=SpecialPower.ShieldMass;
                 if(b.specialTime>0&&Vehicles.Get(b.vehicle).special=="shield")mb*=SpecialPower.ShieldMass;
                 float wa=mb/(ma+mb),wb=ma/(ma+mb),correction=Math.Min(deepest+.005f,1.0f);

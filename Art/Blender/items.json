@@ -1,0 +1,272 @@
+[
+  {
+    "id": "finish",
+    "condition": "初完走",
+    "name": "チェッカーピン",
+    "size": 1,
+    "index": 0,
+    "enName": "Checker pin",
+    "enCondition": "Finish your first race"
+  },
+  {
+    "id": "explorer",
+    "condition": "3コースそれぞれ完走",
+    "name": "方位磁針プレート",
+    "size": 1,
+    "index": 1,
+    "enName": "Compass plate",
+    "enCondition": "Finish all 3 courses"
+  },
+  {
+    "id": "collector",
+    "condition": "累計25コイン",
+    "name": "コインメダル",
+    "size": 1,
+    "index": 2,
+    "enName": "Coin medal",
+    "enCondition": "Collect 25 coins"
+  },
+  {
+    "id": "winner",
+    "condition": "累計3勝",
+    "name": "月桂冠エンブレム",
+    "size": 1,
+    "index": 3,
+    "enName": "Laurel emblem",
+    "enCondition": "Win 3 races"
+  },
+  {
+    "id": "garage",
+    "condition": "全10車種で完走",
+    "name": "メカニック工具旗",
+    "size": 1.6,
+    "index": 4,
+    "enName": "Mechanic flag",
+    "enCondition": "Finish with all 10 vehicles"
+  },
+  {
+    "id": "veteran",
+    "condition": "累計20完走",
+    "name": "ベテラン冠",
+    "size": 1.6,
+    "index": 5,
+    "enName": "Veteran crown",
+    "enCondition": "Finish 20 races"
+  },
+  {
+    "id": "finish50",
+    "condition": "累計50完走",
+    "name": "巨大チェッカーフラッグ",
+    "size": 2.3,
+    "index": 6,
+    "enName": "Giant checker flag",
+    "enCondition": "Finish 50 races"
+  },
+  {
+    "id": "wins10",
+    "condition": "累計10勝",
+    "name": "優勝トロフィー",
+    "size": 1.6,
+    "index": 7,
+    "enName": "Victory trophy",
+    "enCondition": "Win 10 races"
+  },
+  {
+    "id": "wins25",
+    "condition": "累計25勝",
+    "name": "チャンピオンの大翼",
+    "size": 2.3,
+    "index": 8,
+    "enName": "Champion wings",
+    "enCondition": "Win 25 races"
+  },
+  {
+    "id": "distance10",
+    "condition": "累計10km走行",
+    "name": "旅人の小旗",
+    "size": 1,
+    "index": 9,
+    "enName": "Traveler flag",
+    "enCondition": "Drive 10 km"
+  },
+  {
+    "id": "distance50",
+    "condition": "累計50km走行",
+    "name": "旅のトランク",
+    "size": 1.6,
+    "index": 10,
+    "enName": "Travel trunk",
+    "enCondition": "Drive 50 km"
+  },
+  {
+    "id": "distance100",
+    "condition": "累計100km走行",
+    "name": "大きなロケット飾り",
+    "size": 2.3,
+    "index": 11,
+    "enName": "Large rocket",
+    "enCondition": "Drive 100 km"
+  },
+  {
+    "id": "coins100",
+    "condition": "累計100コイン",
+    "name": "コイン袋",
+    "size": 1.6,
+    "index": 12,
+    "enName": "Coin pouch",
+    "enCondition": "Collect 100 coins"
+  },
+  {
+    "id": "coins300",
+    "condition": "累計300コイン",
+    "name": "宝箱",
+    "size": 2.3,
+    "index": 13,
+    "enName": "Treasure chest",
+    "enCondition": "Collect 300 coins"
+  },
+  {
+    "id": "specials20",
+    "condition": "累計20回スペシャル使用",
+    "name": "稲妻アンテナ",
+    "size": 1,
+    "index": 14,
+    "enName": "Lightning antenna",
+    "enCondition": "Use 20 specials"
+  },
+  {
+    "id": "specials100",
+    "condition": "累計100回スペシャル使用",
+    "name": "炎のツインウイング",
+    "size": 2.3,
+    "index": 15,
+    "enName": "Flame twin wings",
+    "enCondition": "Use 100 specials"
+  },
+  {
+    "id": "disrupt1",
+    "condition": "相手への妨害を初成功",
+    "name": "いたずらピン",
+    "size": 1,
+    "index": 16,
+    "enName": "Mischief pin",
+    "enCondition": "Disrupt an opponent"
+  },
+  {
+    "id": "disrupt10",
+    "condition": "累計10台への妨害成功",
+    "name": "雷雲飾り",
+    "size": 1.6,
+    "index": 17,
+    "enName": "Thunder cloud",
+    "enCondition": "Disrupt 10 opponents"
+  },
+  {
+    "id": "disrupt50",
+    "condition": "累計50台への妨害成功",
+    "name": "巨大タコの飾り",
+    "size": 2.3,
+    "index": 18,
+    "enName": "Giant octopus",
+    "enCondition": "Disrupt 50 opponents"
+  },
+  {
+    "id": "speed100",
+    "condition": "最高速度100km/h達成",
+    "name": "スピードスター",
+    "size": 1,
+    "index": 19,
+    "enName": "Speed star",
+    "enCondition": "Reach 100 km/h"
+  },
+  {
+    "id": "speed160",
+    "condition": "最高速度160km/h達成",
+    "name": "風切りフィン",
+    "size": 1.6,
+    "index": 20,
+    "enName": "Wind fins",
+    "enCondition": "Reach 160 km/h"
+  },
+  {
+    "id": "speed220",
+    "condition": "最高速度220km/h達成",
+    "name": "大型ジェット飾り",
+    "size": 2.3,
+    "index": 21,
+    "enName": "Large jet",
+    "enCondition": "Reach 220 km/h"
+  },
+  {
+    "id": "night1",
+    "condition": "夜に初完走",
+    "name": "三日月ピン",
+    "size": 1,
+    "index": 22,
+    "enName": "Crescent pin",
+    "enCondition": "Finish a night race"
+  },
+  {
+    "id": "night10",
+    "condition": "夜に累計10完走",
+    "name": "星付きナイトキャップ",
+    "size": 1.6,
+    "index": 23,
+    "enName": "Star nightcap",
+    "enCondition": "Finish 10 night races"
+  },
+  {
+    "id": "nightAll",
+    "condition": "3コースすべて夜に完走",
+    "name": "大きな星空マント",
+    "size": 2.3,
+    "index": 24,
+    "enName": "Starry cape",
+    "enCondition": "Finish all 3 courses at night"
+  },
+  {
+    "id": "shonan1",
+    "condition": "湘南海岸で初完走",
+    "name": "貝殻プレート",
+    "size": 1,
+    "index": 25,
+    "enName": "Shell plate",
+    "enCondition": "Finish Shonan Coast"
+  },
+  {
+    "id": "shonan10",
+    "condition": "湘南海岸で累計10完走",
+    "name": "サーフボード飾り",
+    "size": 1.6,
+    "index": 26,
+    "enName": "Surfboard",
+    "enCondition": "Finish Shonan Coast 10 times"
+  },
+  {
+    "id": "bikeJam",
+    "condition": "妨害型バイクで初完走",
+    "name": "小さな海賊旗",
+    "size": 1,
+    "index": 27,
+    "enName": "Pirate flag",
+    "enCondition": "Finish with STORM BIKE"
+  },
+  {
+    "id": "bikeAero",
+    "condition": "走行型バイクで初完走",
+    "name": "ヘルメット飾り",
+    "size": 1,
+    "index": 28,
+    "enName": "Helmet",
+    "enCondition": "Finish with AERO BIKE"
+  },
+  {
+    "id": "nightExpert",
+    "condition": "CPU3台以上・難易度5で、3コースそれぞれの夜にシングル優勝",
+    "name": "灯台付き巨大ウイング",
+    "size": 2.3,
+    "index": 29,
+    "enName": "Lighthouse wings",
+    "enCondition": "Win all 3 night courses solo against at least 3 level-5 CPUs"
+  }
+]

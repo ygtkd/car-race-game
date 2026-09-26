@@ -11,9 +11,9 @@ namespace CoastRacer
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")] static extern void RacerEmit(string json);
 #endif
-        [Serializable] public sealed class Command { public string action,track,id,vehicle,name,badge;public float orbit;public float assist=1,sensitivity=1;public int quality=1;public bool paused,rearView; }
-        [Serializable] public sealed class Snapshot { public string type,track,phase,self,raceId;public float countdown,time;public CarState[] cars;public CoinState[] coins; }
-        [Serializable] public sealed class Telemetry { public string type="telemetry",track,phase;public float countdown;public CarState[] cars;public Point[] map;public float length;public string raceId;public bool showroom,ready,rearView;public VehicleSpec[] vehicles;public CoinState[] coins;public NameLabel[] labels; }
+        [Serializable] public sealed class Command { public string action,track,id,vehicle,name,badge;public float orbit;public float assist=1,sensitivity=1;public int quality=1,difficulty=3;public bool paused,rearView,night; }
+        [Serializable] public sealed class Snapshot { public string type,track,phase,self,raceId;public float countdown,time;public int difficulty=3;public bool night;public CarState[] cars;public CoinState[] coins; }
+        [Serializable] public sealed class Telemetry { public string type="telemetry",track,phase;public float countdown;public CarState[] cars;public Point[] map;public float length;public string raceId;public bool showroom,ready,rearView,night;public int difficulty;public VehicleSpec[] vehicles;public CoinState[] coins;public NameLabel[] labels; }
         Track track;
         GameObject world;
         Camera cam;
@@ -148,45 +148,7 @@ namespace CoastRacer
             if(world!=null)Destroy(world);
             foreach(var v in visuals)if(v)Destroy(v.gameObject);visuals.Clear();cars.Clear();
             track=new Track(id);session=new RaceSession(track);displayedCoins=session.coins;world=new GameObject("Circuit "+track.id);
-            TerrainSurface();
-            Ribbon("Landscape ribbon",-45,-Track.GrassEdge,-.3f,grass);Ribbon("Landscape ribbon",Track.GrassEdge,45,-.3f,grass);
-            var runoff=Mat("Runoff",new Color(.34f,.36f,.33f));
-            Ribbon("Runoff left",-Track.GrassEdge,-Track.RoadEdge,-.05f,runoff);Ribbon("Runoff right",Track.RoadEdge,Track.GrassEdge,-.05f,runoff);
-            Ribbon("Racing surface",-7,7,0,road);
-            foreach(int side in new[]{-1,1}){
-                float a=side<0?-Track.RoadEdge:7f,b=side<0?-7f:Track.RoadEdge;
-                Ribbon("White curb",a,b,.025f,white);Ribbon("Red curb",a,b,.04f,red,true);
-                Ribbon("Track edge",side<0?-6.9f:6.7f,side<0?-6.7f:6.9f,.03f,white);
-            }
-            var scenery=new GameObject("Track furniture").transform;scenery.SetParent(world.transform);
-            for(int i=0;i<Track.Samples;i+=6){
-                Point p=track.points[i],t=track.Tangent(i);Vector3 r=new Vector3(t.z,0,-t.x);
-                float heading=track.Yaw(i)*Mathf.Rad2Deg;
-                for(int s=-1;s<=1;s+=2){
-                    var rail=Shape("Guardrail",PrimitiveType.Cube,V(p)+r*s*(Track.BarrierEdge+.5f)+Vector3.up*.7f,new Vector3(.22f,1.1f,6),steel,scenery);
-                    rail.transform.rotation=Quaternion.Euler(0,heading,0);
-                    if(i%18==0){
-                        Vector3 tree=V(p)+r*s*32;
-                        NaturalTree(scenery,tree,i+s*71,false);
-                    }
-                }
-                if(track.TargetSpeed(i)<24 && i%24==0){
-                    var sign=Shape("Braking marker",PrimitiveType.Cube,V(p)+r*11+Vector3.up*1.5f,new Vector3(1.5f,2,.15f),white,scenery);
-                    sign.transform.rotation=Quaternion.Euler(0,heading,0);
-                }
-            }
-            Point start=track.points[0],tan=track.Tangent(0);Vector3 right=new Vector3(tan.z,0,-tan.x);
-            for(int i=0;i<(int)Track.GrassEdge*2;i++)for(int j=0;j<2;j++){
-                var tile=Shape("Finish chequer",PrimitiveType.Cube,V(start)+right*(i-Track.GrassEdge+.5f)+V(tan)*(j-.5f)+Vector3.up*.05f,new Vector3(1,.05f,1),(i+j)%2==0?white:rubber,scenery);
-                tile.transform.rotation=Quaternion.Euler(0,track.Yaw(0)*Mathf.Rad2Deg,0);
-            }
-            for(int i=0;i<8;i++){
-                Vector3 p=V(track.At(i*10))+right*28;
-                Shape("Pit garages",PrimitiveType.Cube,p+Vector3.up*3,new Vector3(15,6,9),steel,scenery);
-                Shape("Pit glass",PrimitiveType.Cube,p-right*7.6f+Vector3.up*3,new Vector3(.1f,2.7f,7),glass,scenery);
-            }
-            // Bake scenery per material, keeping draw calls low without generating a separate prefab per object.
-            ExtraScenery(scenery);CreateBridgeDecks();CreateFinishBannerAndGround();CreateBackdrop();CombineScenery(scenery);
+            BlenderModel("course_"+track.id,world.transform);CreateBackdrop();ApplyTimeOfDay();
             cars.Add(Simulation.Spawn(track));visuals.Add(BuildCar(0));
             Place(visuals[0],cars[0],0);
             CreateCoins();CameraFollow(true);Emit(true);
@@ -210,28 +172,7 @@ namespace CoastRacer
         Transform BuildCar(int n,string vehicle=null,string badge="")
         {
             vehicle=Vehicles.Get(vehicle??(n<cars.Count?cars[n].vehicle:"apex")).id;
-            var car=new GameObject(vehicle+"/"+badge).transform;
-            Color[] colors={new Color(.68f,.71f,.73f),new Color(.55f,.13f,.1f),new Color(.12f,.25f,.38f),new Color(.61f,.50f,.19f)};
-            int vehicleIndex=Array.FindIndex(Vehicles.All,x=>x.id==vehicle);
-            Material body=Mat("Car"+vehicle,colors[vehicleIndex%colors.Length]);
-            if(vehicleIndex>=4){NoveltyBody(car,vehicle,badge,body);return car;}SculptedBody(car,body);
-            bool hatch=vehicle=="swift",touring=vehicle=="atlas";
-            Shape("Roof",PrimitiveType.Cube,new Vector3(0,1.425f,hatch?-.42f:touring?-.36f:-.215f),new Vector3(1.31f,.04f,hatch?1.48f:touring?1.34f:.96f),body,car);
-            Shape("Front splitter",PrimitiveType.Cube,new Vector3(0,.30f,2.12f),new Vector3(1.95f,.1f,.32f),rubber,car);
-            Shape("Rear diffuser",PrimitiveType.Cube,new Vector3(0,.30f,-2.1f),new Vector3(1.7f,.18f,.35f),rubber,car);
-            for(int s=-1;s<=1;s+=2){
-                Shape("Spoiler support",PrimitiveType.Cube,new Vector3(s*.6f,1.07f,-1.95f),new Vector3(.08f,.42f,.1f),rubber,car);
-                Shape("Headlamp",PrimitiveType.Cube,new Vector3(s*.62f,.76f,2.18f),new Vector3(.48f,.1f,.03f),white,car);
-                Shape("Tail lamp",PrimitiveType.Cube,new Vector3(s*.61f,.75f,-2.18f),new Vector3(.53f,.08f,.03f),red,car);
-                foreach(float z in new[]{-1.3f,1.3f}){
-                    var wheel=Shape("Tyre",PrimitiveType.Cylinder,new Vector3(s*.96f,.39f,z),new Vector3(.76f,.14f,.76f),rubber,car);
-                    wheel.transform.localRotation=Quaternion.Euler(0,0,90);
-                    var hub=Shape("Alloy wheel",PrimitiveType.Cylinder,new Vector3(s*1.105f,.39f,z),new Vector3(.5f,.012f,.5f),steel,car);
-                    hub.transform.localRotation=Quaternion.Euler(0,0,90);
-                }
-            }
-            Shape("Rear wing",PrimitiveType.Cube,new Vector3(0,1.29f,-1.95f),new Vector3(2.05f,.09f,.42f),rubber,car);
-            CustomizeCar(car,vehicle,badge,body);return car;
+            var car=BlenderModel("vehicle_"+vehicle);car.name=vehicle+"/"+badge;car.gameObject.AddComponent<BlenderWheels>();BuildCustomBadge(car,badge);return car;
         }
         [UnityEngine.Scripting.Preserve]
         public void SetInput(string json){try{input=JsonUtility.FromJson<DriveInput>(json);lastWebInput=Time.realtimeSinceStartup;}catch{input=new DriveInput();}}
@@ -246,10 +187,10 @@ namespace CoastRacer
             if(c.action=="profile"&&cars.Count>0&&!online){cars[0].name=c.name;cars[0].badge=Vehicles.Badge(c.badge);}
             if(c.action=="special"&&!online&&phase=="race"&&!paused){session.Activate(cars[0],cars);}
             if(c.action=="begin"&&!online&&phase=="loading"){phase="countdown";countdown=3;}
-            if(c.action=="preview"){online=false;phase="menu";SelectTrack(c.track);}
+            if(c.action=="preview"){online=false;phase="menu";nightMode=c.night;cpuDifficulty=Math.Max(1,Math.Min(5,c.difficulty));SelectTrack(c.track);}
             if(c.action=="start"){
-                online=false;self="";SelectTrack(c.track);cars[0].name=string.IsNullOrWhiteSpace(c.name)?"ドライバー":c.name;cars[0].id="local";cars[0].vehicle=Vehicles.Get(c.vehicle).id;cars[0].badge=Vehicles.Badge(c.badge);raceId=Guid.NewGuid().ToString("N");
-                for(int i=1;i<4;i++){cars.Add(Simulation.Spawn(track,i));cars[i].bot=true;cars[i].name="GT "+i;cars[i].id="ai"+i;cars[i].vehicle=Vehicles.All[i%4].id;visuals.Add(BuildCar(i));}
+                online=false;self="";nightMode=c.night;cpuDifficulty=Math.Max(1,Math.Min(5,c.difficulty));SelectTrack(c.track);var slots=Simulation.Grid(4,new System.Random());cars[0]=Simulation.Spawn(track,slots[0]);cars[0].cpuLevel=cpuDifficulty;cars[0].night=nightMode;cars[0].name=string.IsNullOrWhiteSpace(c.name)?"ドライバー":c.name;cars[0].id="local";cars[0].vehicle=Vehicles.Get(c.vehicle).id;cars[0].badge=Vehicles.Badge(c.badge);raceId=Guid.NewGuid().ToString("N");
+                for(int i=1;i<4;i++){cars.Add(Simulation.Spawn(track,slots[i]));cars[i].cpuLevel=cpuDifficulty;cars[i].night=nightMode;cars[i].bot=true;cars[i].name="GT "+i;cars[i].id="ai"+i;cars[i].vehicle=Vehicles.All[new System.Random(raceId.GetHashCode()+i).Next(Vehicles.All.Length)].id;visuals.Add(BuildCar(i));}
                 RefreshVisuals();paused=false;phase="loading";countdown=3;input=new DriveInput{assist=c.assist,sensitivity=c.sensitivity};accumulator=0;
             }
             if(c.action=="menu"){online=false;paused=false;phase="menu";SelectTrack(c.track??track.id);}
@@ -262,7 +203,7 @@ namespace CoastRacer
         {
             var snapshot=JsonUtility.FromJson<Snapshot>(json);
             if(snapshot==null||snapshot.cars==null||snapshot.cars.Length==0)return;
-            if(!online||track.id!=snapshot.track){SelectTrack(snapshot.track);cars.Clear();foreach(var v in visuals)Destroy(v.gameObject);visuals.Clear();}
+            nightMode=snapshot.night;cpuDifficulty=snapshot.difficulty;ApplyTimeOfDay();if(!online||showroom||track.id!=snapshot.track){SelectTrack(snapshot.track);cars.Clear();foreach(var v in visuals)Destroy(v.gameObject);visuals.Clear();}
             raceId=snapshot.raceId;displayedCoins=snapshot.coins??session.coins;online=true;self=snapshot.self;phase=snapshot.phase;countdown=snapshot.countdown;paused=false;
             var ordered=new List<CarState>(snapshot.cars);
             ordered.Sort((a,b)=>a.id==self?-1:b.id==self?1:string.CompareOrdinal(a.id,b.id));
@@ -291,7 +232,7 @@ namespace CoastRacer
                     while(accumulator>=Simulation.Step){
                         accumulator-=Simulation.Step;
                         Simulation.StepCar(cars[0],input,track,Simulation.Step);
-                        if(!online){for(int i=1;i<cars.Count;i++){session.UseBotSpecial(cars[i],cars);Simulation.StepCar(cars[i],session.Bot(cars[i],.90f),track,Simulation.Step);}session.Resolve(cars,Simulation.Step);}
+                        if(!online){for(int i=1;i<cars.Count;i++){session.UseBotSpecial(cars[i],cars);Simulation.StepCar(cars[i],session.Bot(cars[i],Simulation.Difficulty(cpuDifficulty)),track,Simulation.Step);}session.Resolve(cars,Simulation.Step);}
                     }
                     if(!online){
                         Simulation.Rank(cars,track);
@@ -299,14 +240,15 @@ namespace CoastRacer
                     }
                 }
             }
-            RefreshVisuals();UpdateCoins();UpdateSpecialVisuals();
+            if(!paused&&phase=="finished")foreach(var c in cars)Simulation.StepCar(c,new DriveInput(),track,dt);
+            ApplyTimeOfDay();RefreshVisuals();UpdateCoins();UpdateSpecialVisuals();
             for(int i=0;i<cars.Count;i++)Place(visuals[i],cars[i],dt);
             CameraFollow(false);
             sendTime-=dt;if(sendTime<=0){sendTime=.1f;Emit(false);}
         }
         void Place(Transform model,CarState c,float dt)
         {
-            Vector3 target=V(c.Position);
+            UpdateBlenderCar(model,c,dt);Vector3 target=V(c.Position);
             if(c.finished || dt<=0 || Vector3.Distance(model.position,target)>20)model.position=target;
             else model.position=Vector3.Lerp(model.position,target,1-Mathf.Exp(-18*dt));
             Point tangent=track.Tangent(c.index);
@@ -329,7 +271,7 @@ namespace CoastRacer
         {
             if(track==null)return;
             Point[] map=null;if(includeMap){map=new Point[160];for(int i=0;i<map.Length;i++)map[i]=track.points[i*4];}
-            string json=JsonUtility.ToJson(new Telemetry{track=track.id,phase=paused?"paused":phase,countdown=countdown,cars=cars.ToArray(),map=map,length=track.Length,raceId=raceId,showroom=showroom,rearView=rearView,ready=UnityEngine.Rendering.SplashScreen.isFinished,vehicles=includeMap?Vehicles.All:null,coins=displayedCoins,labels=Labels()});
+            string json=JsonUtility.ToJson(new Telemetry{track=track.id,phase=paused?"paused":phase,countdown=countdown,cars=cars.ToArray(),map=map,length=track.Length,raceId=raceId,showroom=showroom,rearView=rearView,night=nightMode,difficulty=cpuDifficulty,ready=UnityEngine.Rendering.SplashScreen.isFinished,vehicles=includeMap?Vehicles.All:null,coins=displayedCoins,labels=Labels()});
 #if UNITY_WEBGL && !UNITY_EDITOR
             RacerEmit(json);
 #endif

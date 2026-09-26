@@ -63,8 +63,8 @@ namespace CoastRacer {
    if(car.specialUses!=uses){if(uses>=0&&car.specialUses>uses){pulseOrigin=new Vector3(car.x,car.y+.25f,car.z);pulseAge=0;}uses=car.specialUses;}
    pulseAge=5-car.specialTime;
    bool jam=car.jamTime>0;string type=Vehicles.Get(car.vehicle).special;
-   if(car.specialTime<=0&&!jam)return;
-   Color color=jam?new Color(1,.25f,.25f):type=="boost"?new Color(.25f,.7f,1):type=="grip"?new Color(.4f,1,.25f):type=="shield"?new Color(.6f,.45f,1):type=="pulse"?new Color(1,.35f,.8f):type=="feast"?new Color(1,.55f,.1f):type=="surf"?new Color(.15f,1,.9f):type=="dash"?new Color(1,.85f,.15f):Color.white;
+   if(car.specialTime<=0&&!jam&&car.jamImmunity<=0)return;if(car.specialTime<=0&&car.jamImmunity>0)type="shield";
+   Color color=jam?new Color(1,.25f,.25f):type=="boost"?new Color(.25f,.7f,1):type=="grip"?new Color(.4f,1,.25f):type=="shield"?new Color(.6f,.45f,1):type=="shock"?new Color(.45f,.7f,1):type=="aero"?new Color(.4f,1,1):type=="pulse"?new Color(1,.35f,.8f):type=="feast"?new Color(1,.55f,.1f):type=="surf"?new Color(.15f,1,.9f):type=="dash"?new Color(1,.85f,.15f):Color.white;
    material.color=color;int count=quality==0?4:8;float age=car.elapsed;
    for(int n=0;n<count;n++){
 
@@ -72,7 +72,8 @@ namespace CoastRacer {
     for(int k=0;k<25;k++){
      float f=k/24f,a=f*Mathf.PI*2;Vector3 point;
      if(jam)point=new Vector3(Mathf.Cos(a)*1.5f,1.2f+n*.13f,Mathf.Sin(a)*1.5f);
-     else if(type=="pulse"){line.SetPosition(k,transform.position+Vector3.up*.25f+new Vector3(Mathf.Cos(a),0,Mathf.Sin(a))*((pulseAge+n*.12f)%1.2f)*(SpecialPower.PulseRadius/1.2f));continue;}
+     else if((type=="pulse"||type=="shock")){line.SetPosition(k,transform.position+Vector3.up*.25f+new Vector3(Mathf.Cos(a),0,Mathf.Sin(a))*((pulseAge+n*.12f)%1.2f)*(SpecialPower.PulseRadius/1.2f));continue;}
+     else if(type=="aero")point=new Vector3(Mathf.Cos(a+age*6)*(.8f+n*.10f),.8f+Mathf.Sin(a+age*6)*.65f,-.6f-f*8);
      else if(type=="shield")point=n%2==0?new Vector3(Mathf.Cos(a)*1.5f,1+Mathf.Sin(a)*1.6f,n*.1f):new Vector3(Mathf.Cos(a)*1.5f,1+(n-3)*.25f,Mathf.Sin(a)*2.6f);
      else if(type=="grip")point=new Vector3((n%2==0?-1:1)*1.1f+Mathf.Cos(a)*.24f,.18f,Mathf.Sin(a)*2.4f);
      else if(type=="surf")point=new Vector3(Mathf.Sin(a+age*4)*(.8f+n*.12f),.25f+Mathf.Cos(a+age*4)*.15f,2-f*7);

@@ -27,6 +27,7 @@ namespace CoastRacer
         }
         void UpdateShowroom(float dt)
         {
+            ApplyTimeOfDay();
             float a=showroomAngle*Mathf.Deg2Rad;cam.transform.position=new Vector3(Mathf.Sin(a)*8.7f,badgeViewHeight,Mathf.Cos(a)*8.7f);cam.transform.LookAt(new Vector3(0,.65f,0));Vector3 offset=cam.transform.right*2.2f;cam.transform.position-=offset;cam.transform.LookAt(new Vector3(0,.65f,0)-offset);cam.fieldOfView=38;
         }
         void RefreshVisuals()
@@ -73,8 +74,7 @@ namespace CoastRacer
         {
             coinVisuals.Clear();
             foreach(var coin in session.coins){
-                var obj=Shape("Coin "+coin.id,PrimitiveType.Cylinder,new Vector3(coin.x,coin.y+1.2f,coin.z),new Vector3(.9f,.09f,.9f),Mat("CarCoin",new Color(.95f,.66f,.15f)),world.transform);
-                coinVisuals.Add(obj.transform);
+                var obj=BlenderModel("prop_coin",world.transform);obj.position=new Vector3(coin.x,coin.y+1.2f,coin.z);coinVisuals.Add(obj);
             }
         }
         void UpdateCoins()
