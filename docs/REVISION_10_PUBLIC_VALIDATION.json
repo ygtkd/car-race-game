@@ -1,0 +1,73 @@
+{
+  "id": "8d24358e4132",
+  "checks": [
+    "Revision 10 game loads",
+    "Vehicle selection opens",
+    "Left swipe selects next vehicle",
+    "Right swipe selects previous",
+    "Small movement does not select",
+    "Vertical scroll does not select",
+    "Cancelled gesture does not select",
+    "Ten swipes cycle all ten vehicles once",
+    "Selection swipe does not rotate model",
+    "settings cancels selection gesture",
+    "blur cancels selection gesture",
+    "lostcapture cancels selection gesture",
+    "multitouch cancels selection gesture",
+    "Mouse drag selects next",
+    "Gallery drag keeps vehicle",
+    "Gallery drag rotates model",
+    "Japanese course name",
+    "New Shonan starts",
+    "island false applied",
+    "island true applied",
+    "cave-entry false applied",
+    "cave-entry true applied",
+    "cave false applied",
+    "cave true applied",
+    "cave-exit false applied",
+    "cave-exit true applied",
+    "station false applied",
+    "station true applied",
+    "etc false applied",
+    "etc true applied",
+    "highway false applied",
+    "highway true applied",
+    "coast false applied",
+    "coast true applied",
+    "railway false applied",
+    "railway true applied",
+    "No runtime or shader errors"
+  ],
+  "errors": [],
+  "date": "2026-09-27",
+  "actions": {
+    "conclusion": "success",
+    "headSha": "77ddaa2b34c5b5ab8ce0ebc1aba4e7333a8afa5e",
+    "status": "completed",
+    "url": "https://github.com/ygtkd/car-race-game/actions/runs/36316495397"
+  },
+  "health": {
+    "status": "ok",
+    "protocol": 3,
+    "physics": 10
+  },
+  "publicUrl": "https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/",
+  "records": {
+    "endpoint": "/api/records/shonan",
+    "attempts": [
+      {
+        "status": null,
+        "errorType": "TimeoutError",
+        "attempt": 1
+      },
+      {
+        "status": 200,
+        "recordCount": 0,
+        "attempt": 2
+      }
+    ]
+  },
+  "physicalDevicesTested": false,
+  "productionEightPlayerSoakTested": false
+}

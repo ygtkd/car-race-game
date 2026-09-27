@@ -262,3 +262,6 @@ mainへ89ac0c5をpush。Actions 35993094386 success。公開Build 5eb6ff04bcd7�
 
 
 改修10 ローカル実装・検証完了（2026-09-27）。Build 8d24358e4132をWebBuildへ反映。湘南4,707.44m・高速道路978.34m、山道／洞窟の八の字、海岸と道の駅・ETC・高速道路、スワイプ選択、高速道路基礎最高速度1.5倍を実装。共通58・回帰392・移行157・通信16・ブラウザー37・リリース8項目成功。10レース80台2周完走・強制復帰0、オンライン2台2周完走・再戦を確認。PC AMD GPUの32サンプル測定、改修10の描画更新29.68～30.13回/秒、実行時エラー0。実機未確認。新規インストールなし。CarController.csの原本は未編集、分離ビルド側はHEADと一致。未push・未公開。詳細docs/REVISION_10_IMPLEMENTATION.md、REVISION_10_VALIDATION.json、REVISION_10_PERFORMANCE.md。
+
+
+改修10 Azure公開完了（2026-09-27）。mainへ77ddaa2をpush、GitHub Actions 36316495397 success。公開Build 8d24358e4132、health=ok・physics=10。公開ブラウザー37項目成功・エラー0。新湘南記録APIは初回25秒タイムアウト後、再試行HTTP 200。実機・本番8人継続負荷は未確認。新規インストールなし。CarController.csと古い中間ビルド31d84f229152は未コミット。詳細docs/REVISION_10_PUBLIC_VALIDATION.json。

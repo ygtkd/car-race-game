@@ -72,3 +72,11 @@ node Deployment/Test-Release.mjs http://127.0.0.1:5113
 ```
 
 検証の残件は上記の実機・継続負荷等。今回の実装範囲は完了。push・Azure公開は未実施。
+
+
+## Azure公開（2026-09-27）
+実装コミット `77ddaa2b34c5b5ab8ce0ebc1aba4e7333a8afa5e` をmainへpushし、[GitHub Actions 36316495397](https://github.com/ygtkd/car-race-game/actions/runs/36316495397)で公開完了。App Service F1・SQL無料枠の設定確認も成功。
+
+公開Build `8d24358e4132`、health=ok／protocol=3／physics=10。公開URLで改修10ブラウザー37項目を通過し、起動、スワイプ、湘南レース開始、山道・洞窟・海岸・ETC・高速道路・江ノ電の昼夜を確認。実行時エラー0。湘南記録APIは初回25秒タイムアウト後、再試行でHTTP 200（新コース記録0件）。スマホ実機・本番8人の継続負荷は未確認。
+
+[公開ゲーム](https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/) ／ [公開検証記録](REVISION_10_PUBLIC_VALIDATION.json)。新規インストールなし。CarController.csの既存ユーザー変更と中間ビルド31d84f229152は未コミット。
