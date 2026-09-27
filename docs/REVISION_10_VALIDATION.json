@@ -1,0 +1,663 @@
+{
+  "date": "2026-09-27",
+  "release": "8d24358e4132",
+  "scope": "local implementation; not pushed or deployed",
+  "course": {
+    "lengthMetres": 4707.4443,
+    "highwayMainlineMetres": 978.3413,
+    "bridgeEntryDistanceMetres": 74.32715,
+    "laps": 2,
+    "recordKey": "shonan-v4",
+    "highwayBaseTopSpeedMultiplier": 1.5
+  },
+  "coreChecks": 58,
+  "regressionChecks": 392,
+  "missionMigrationChecks": 157,
+  "networkProtocolChecks": 16,
+  "browser": {
+    "id": "8d24358e4132",
+    "checks": [
+      "Revision 10 game loads",
+      "Vehicle selection opens",
+      "Left swipe selects next vehicle",
+      "Right swipe selects previous",
+      "Small movement does not select",
+      "Vertical scroll does not select",
+      "Cancelled gesture does not select",
+      "Ten swipes cycle all ten vehicles once",
+      "Selection swipe does not rotate model",
+      "settings cancels selection gesture",
+      "blur cancels selection gesture",
+      "lostcapture cancels selection gesture",
+      "multitouch cancels selection gesture",
+      "Mouse drag selects next",
+      "Gallery drag keeps vehicle",
+      "Gallery drag rotates model",
+      "Japanese course name",
+      "New Shonan starts",
+      "island false applied",
+      "island true applied",
+      "cave-entry false applied",
+      "cave-entry true applied",
+      "cave false applied",
+      "cave true applied",
+      "cave-exit false applied",
+      "cave-exit true applied",
+      "station false applied",
+      "station true applied",
+      "etc false applied",
+      "etc true applied",
+      "highway false applied",
+      "highway true applied",
+      "coast false applied",
+      "coast true applied",
+      "railway false applied",
+      "railway true applied",
+      "No runtime or shader errors"
+    ],
+    "errors": []
+  },
+  "terrain": {
+    "samples": 1920,
+    "caveRoofProbes": 213,
+    "minRoof": 10.241386345581054,
+    "errors": []
+  },
+  "sceneryClearanceRays": 7680,
+  "automatedRaces": [
+    {
+      "race": 0,
+      "level": 1,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "apex",
+          "finishTime": 414.6907,
+          "rank": 2,
+          "peakSpeed": 52.066036
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 418.21002,
+          "rank": 4,
+          "peakSpeed": 49.224266
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 417.32367,
+          "rank": 3,
+          "peakSpeed": 47.709
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 425.95047,
+          "rank": 7,
+          "peakSpeed": 40.7504
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 425.84027,
+          "rank": 6,
+          "peakSpeed": 40.541092
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 425.77835,
+          "rank": 5,
+          "peakSpeed": 40.57647
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 414.37512,
+          "rank": 1,
+          "peakSpeed": 49.476177
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 426.24673,
+          "rank": 8,
+          "peakSpeed": 46.36617
+        }
+      ]
+    },
+    {
+      "race": 1,
+      "level": 2,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "swift",
+          "finishTime": 365.97818,
+          "rank": 1,
+          "peakSpeed": 51.29037
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 385.79962,
+          "rank": 5,
+          "peakSpeed": 50.167133
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 383.35577,
+          "rank": 3,
+          "peakSpeed": 49.590034
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 389.36646,
+          "rank": 8,
+          "peakSpeed": 40.898453
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 383.39694,
+          "rank": 4,
+          "peakSpeed": 47.31178
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 385.8604,
+          "rank": 6,
+          "peakSpeed": 46.859226
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 389.3218,
+          "rank": 7,
+          "peakSpeed": 41.22076
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 372.42514,
+          "rank": 2,
+          "peakSpeed": 47.243347
+        }
+      ]
+    },
+    {
+      "race": 2,
+      "level": 3,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "vortex",
+          "finishTime": 371.81955,
+          "rank": 8,
+          "peakSpeed": 47.74499
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 325.6814,
+          "rank": 4,
+          "peakSpeed": 52
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 310.4262,
+          "rank": 2,
+          "peakSpeed": 56.753616
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 371.71957,
+          "rank": 6,
+          "peakSpeed": 41.84279
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 371.78882,
+          "rank": 7,
+          "peakSpeed": 42.511795
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 314.67496,
+          "rank": 3,
+          "peakSpeed": 52.720856
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 329.65167,
+          "rank": 5,
+          "peakSpeed": 53.15932
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 306.00534,
+          "rank": 1,
+          "peakSpeed": 61.97285
+        }
+      ]
+    },
+    {
+      "race": 3,
+      "level": 4,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "atlas",
+          "finishTime": 324.7018,
+          "rank": 1,
+          "peakSpeed": 51.728848
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 374.55304,
+          "rank": 8,
+          "peakSpeed": 40.018055
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 334.4568,
+          "rank": 4,
+          "peakSpeed": 51.597504
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 374.4599,
+          "rank": 6,
+          "peakSpeed": 40.57836
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 332.28595,
+          "rank": 3,
+          "peakSpeed": 57.05398
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 339.45898,
+          "rank": 5,
+          "peakSpeed": 53.24643
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 330.8917,
+          "rank": 2,
+          "peakSpeed": 67.63958
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 374.4915,
+          "rank": 7,
+          "peakSpeed": 40.357292
+        }
+      ]
+    },
+    {
+      "race": 4,
+      "level": 5,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "kebab",
+          "finishTime": 387.76962,
+          "rank": 8,
+          "peakSpeed": 41.88983
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 316.3375,
+          "rank": 2,
+          "peakSpeed": 53.417835
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 387.7129,
+          "rank": 6,
+          "peakSpeed": 41.728584
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 323.28925,
+          "rank": 4,
+          "peakSpeed": 53.23268
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 306.01666,
+          "rank": 1,
+          "peakSpeed": 53.13727
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 318.9587,
+          "rank": 3,
+          "peakSpeed": 63.968365
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 366.9674,
+          "rank": 5,
+          "peakSpeed": 61.80065
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 387.72446,
+          "rank": 7,
+          "peakSpeed": 41.709023
+        }
+      ]
+    },
+    {
+      "race": 5,
+      "level": 1,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "banana",
+          "finishTime": 417.57593,
+          "rank": 2,
+          "peakSpeed": 48.13413
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 408.5356,
+          "rank": 1,
+          "peakSpeed": 49.541794
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 417.7769,
+          "rank": 4,
+          "peakSpeed": 46.466084
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 426.878,
+          "rank": 5,
+          "peakSpeed": 40.874916
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 433.2895,
+          "rank": 8,
+          "peakSpeed": 36.90559
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 417.6154,
+          "rank": 3,
+          "peakSpeed": 48.89009
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 433.22913,
+          "rank": 7,
+          "peakSpeed": 36.83256
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 426.9115,
+          "rank": 6,
+          "peakSpeed": 41.11958
+        }
+      ]
+    },
+    {
+      "race": 6,
+      "level": 2,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 369.2534,
+          "rank": 2,
+          "peakSpeed": 54.951813
+        },
+        {
+          "vehicle": "bicycle",
+          "finishTime": 383.43527,
+          "rank": 5,
+          "peakSpeed": 40.976753
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 369.49905,
+          "rank": 3,
+          "peakSpeed": 51.316193
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 383.8165,
+          "rank": 7,
+          "peakSpeed": 41.09186
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 384.36426,
+          "rank": 8,
+          "peakSpeed": 41.73565
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 383.3798,
+          "rank": 4,
+          "peakSpeed": 41.30372
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 383.76093,
+          "rank": 6,
+          "peakSpeed": 41.709656
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 356.01816,
+          "rank": 1,
+          "peakSpeed": 52
+        }
+      ]
+    },
+    {
+      "race": 7,
+      "level": 3,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "bicycle",
+          "finishTime": 394.0753,
+          "rank": 6,
+          "peakSpeed": 40.403236
+        },
+        {
+          "vehicle": "stormbike",
+          "finishTime": 375.5832,
+          "rank": 3,
+          "peakSpeed": 45.363335
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 375.5397,
+          "rank": 2,
+          "peakSpeed": 45.8697
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 394.10828,
+          "rank": 7,
+          "peakSpeed": 45.371864
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 394.11035,
+          "rank": 8,
+          "peakSpeed": 40.3856
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 394.06546,
+          "rank": 5,
+          "peakSpeed": 44.976112
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 320.7641,
+          "rank": 1,
+          "peakSpeed": 52
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 391.3043,
+          "rank": 4,
+          "peakSpeed": 43.461098
+        }
+      ]
+    },
+    {
+      "race": 8,
+      "level": 4,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "stormbike",
+          "finishTime": 335.37134,
+          "rank": 3,
+          "peakSpeed": 47.314102
+        },
+        {
+          "vehicle": "aerobike",
+          "finishTime": 304.9093,
+          "rank": 1,
+          "peakSpeed": 64.20315
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 344.41492,
+          "rank": 8,
+          "peakSpeed": 50.56218
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 342.75305,
+          "rank": 6,
+          "peakSpeed": 52.271523
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 342.0084,
+          "rank": 5,
+          "peakSpeed": 45.215103
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 339.77335,
+          "rank": 4,
+          "peakSpeed": 52.480305
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 310.0255,
+          "rank": 2,
+          "peakSpeed": 56.818348
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 343.62988,
+          "rank": 7,
+          "peakSpeed": 46.051266
+        }
+      ]
+    },
+    {
+      "race": 9,
+      "level": 5,
+      "recovery": 0,
+      "cars": [
+        {
+          "vehicle": "aerobike",
+          "finishTime": 280.3217,
+          "rank": 1,
+          "peakSpeed": 68.02143
+        },
+        {
+          "vehicle": "apex",
+          "finishTime": 305.87283,
+          "rank": 5,
+          "peakSpeed": 61.78041
+        },
+        {
+          "vehicle": "swift",
+          "finishTime": 326.3722,
+          "rank": 8,
+          "peakSpeed": 42.914143
+        },
+        {
+          "vehicle": "vortex",
+          "finishTime": 297.0746,
+          "rank": 3,
+          "peakSpeed": 52.594368
+        },
+        {
+          "vehicle": "atlas",
+          "finishTime": 305.0324,
+          "rank": 4,
+          "peakSpeed": 52
+        },
+        {
+          "vehicle": "kebab",
+          "finishTime": 289.37347,
+          "rank": 2,
+          "peakSpeed": 51.977055
+        },
+        {
+          "vehicle": "banana",
+          "finishTime": 326.3249,
+          "rank": 7,
+          "peakSpeed": 42.917862
+        },
+        {
+          "vehicle": "tuktuk",
+          "finishTime": 310.41162,
+          "rank": 6,
+          "peakSpeed": 64.46321
+        }
+      ]
+    }
+  ],
+  "online": {
+    "clients": 2,
+    "twoLapsCompleted": true,
+    "standingsAgree": true,
+    "rematch": true,
+    "log": "Logs/revision10-online-final.log"
+  },
+  "asset": {
+    "id": "course_shonan",
+    "parts": 35,
+    "vertices": 172182,
+    "triangles": 112972,
+    "bytes": 5489795,
+    "sha256": "ee81c579c311a40516fa2ff93f4724d80ea44ceb65e4c4b2dab069035eb72081"
+  },
+  "unity": "6000.6.2f1",
+  "blender": "5.2.2 LTS",
+  "newInstalls": [],
+  "unverified": [
+    "physical iPhone, Galaxy, Pixel",
+    "long-term thermal throttling",
+    "production 8-player sustained load"
+  ],
+  "buildLog": "Logs/revision10-unity-clean.log",
+  "serverBuildLog": "Logs/revision10-server-build.log",
+  "performanceFile": "REVISION_10_PERFORMANCE.json",
+  "oldPhysicsRejectedHttpStatus": 426,
+  "releaseChecks": {
+    "id": "8d24358e4132",
+    "checks": [
+      "Release loads",
+      "Settings identifies running build",
+      "All executable scripts belong to one release",
+      "New release offered on menu",
+      "Update unavailable during selection",
+      "Final build race begins",
+      "Start text remains hidden",
+      "No errors in release verification"
+    ],
+    "errors": []
+  },
+  "performanceSamples": 32,
+  "performanceErrors": [],
+  "complete": true
+}

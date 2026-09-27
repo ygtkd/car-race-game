@@ -27,40 +27,86 @@ namespace CoastRacer.Core
         public readonly string id;
         public readonly Point[] points=new Point[Samples];
         public readonly float[] distance=new float[Samples+1];
+        public readonly byte[] sections=new byte[Samples]; // 0 surface, 1 cave, 2 expressway, 3 elevated ramp
         public readonly int[] cornerIds;public readonly float width=14;
-        public string RecordKey=>id=="shonan"?"shonan-v3":id;
+        public string RecordKey=>id=="shonan"?"shonan-v4":id;
         public bool IsSeaBridge(int i)=>id=="shonan"&&points[i].z< -90&&points[i].z> -390&&Math.Abs(points[i].x)<12;
-        public float BarrierAt(int i)=>IsSeaBridge(i)?8.3f:BarrierEdge;
+        public bool IsCave(int i)=>sections[(i+Samples)%Samples]==1;
+        public bool IsHighway(int i)=>sections[(i+Samples)%Samples]==2;
+        public bool IsElevated(int i)=>sections[(i+Samples)%Samples]>=2;
+        public float BarrierAt(int i)=>IsSeaBridge(i)?8.3f:IsCave(i)||IsElevated(i)?16.8f:BarrierEdge;
+        public float SpeedFactor(Point p,int i){
+            if(!IsHighway(i))return 1;
+            Point axis=Tangent(i),road=At(RoadDistance(p,i));
+            return Math.Abs(p.y-road.y)<3&&Math.Abs((p.x-road.x)*axis.z-(p.z-road.z)*axis.x)<=RoadEdge?1.5f:1;
+        }
         public float Length=>distance[Samples];
         public Track(string name)
         {
             id=name=="suzuka"?"suzuka":name=="shonan"?"shonan":"ridge";
             Point[] controls=id=="suzuka"?Suzuka():id=="shonan"?Shonan():Ridge();
+            if(id=="shonan")for(int j=0;j<controls.Length;j++){
+                var p=controls[j];if(Math.Abs(p.x)>10)p.x*=.8f;
+                if(p.z< -400)p.z=-400+(p.z+400)*.8f;else if(p.z> -90)p.z=-90+(p.z+90)*.8f;
+                controls[j]=p;
+            }
             for(int i=0;i<Samples;i++){
                 float t=(float)i/Samples*controls.Length;int k=(int)t;t-=k;
+                if(id=="shonan")sections[i]=(byte)(k>=12&&k<17?1:k>=29&&k<35?2:k>=27&&k<37?3:0);
                 Point a=controls[(k-1+controls.Length)%controls.Length],b=controls[k],c=controls[(k+1)%controls.Length],d=controls[(k+2)%controls.Length];
                 points[i]=(b*2+(c-a)*t+(a*2-b*5+c*4-d)*(t*t)+(b*3-a-c*3+d)*(t*t*t))*.5f;
+                if(id=="shonan"&&points[i].z>=-400&&points[i].z<=-90&&Math.Abs(points[i].x)<15)points[i]=new Point(points[i].x<0?-9.5f:9.5f,7,points[i].z);
                 if(i>0)distance[i]=distance[i-1]+(points[i]-points[i-1]).Length;
             }
             distance[Samples]=distance[Samples-1]+(points[0]-points[Samples-1]).Length;
-            if(id=="shonan"){
-                // Rebase the closed route 600m before the mainland bridge entrance.
-                int entry=Nearest(new Point(9.5f,7,-90));float target=(distance[entry]-600+Length)%Length;
-                int start=0;for(int i=1;i<Samples;i++)if(Math.Abs(distance[i]-target)<Math.Abs(distance[start]-target))start=i;
-                var original=(Point[])points.Clone();for(int i=0;i<Samples;i++)points[i]=original[(start+i)%Samples];
-                distance[0]=0;for(int i=1;i<=Samples;i++)distance[i]=distance[i-1]+(points[i%Samples]-points[i-1]).Length;
-            }
             cornerIds=RacingExtras.BuildCorners(this);
         }
         static Point[] Shonan()=>new[]{
-            new Point(9.5f,7,0),new Point(9.5f,7,-100),new Point(9.5f,7,-200),new Point(9.5f,7,-300),new Point(9.5f,7,-400),
-            new Point(85,10,-460),new Point(155,18,-485),new Point(215,27,-550),new Point(170,34,-615),
-            new Point(220,38,-690),new Point(150,43,-770),new Point(60,47,-805),new Point(-20,43,-750),
-            new Point(-110,35,-790),new Point(-205,27,-700),new Point(-165,21,-625),new Point(-225,16,-550),
-            new Point(-160,11,-485),new Point(-60,8,-440),new Point(-9.5f,7,-400),new Point(-9.5f,7,-300),new Point(-9.5f,7,-200),new Point(-9.5f,7,-100),
-            new Point(-65,7,12),new Point(-250,7,40),new Point(-340,7,40),new Point(-517,7,40),new Point(-612,8,95),
-            new Point(-639,10,210),new Point(-564,11,315),new Point(-445,10,330),new Point(-355,9,295),
-            new Point(-272,9,320),new Point(-190,8,280),new Point(-100,7,270),new Point(-40,7,205),new Point(9.5f,7,110)};
+            new Point(9.5f,7f,0f),
+            new Point(9.5f,7f,-100f),
+            new Point(9.5f,7f,-200f),
+            new Point(9.5f,7f,-300f),
+            new Point(9.5f,7f,-400f),
+            new Point(85f,18f,-460f),
+            new Point(160f,36f,-515f),
+            new Point(145f,48f,-595f),
+            new Point(0f,52f,-640f),
+            new Point(-135f,44f,-715f),
+            new Point(-150f,27f,-795f),
+            new Point(-70f,13f,-850f),
+            new Point(35f,10f,-830f),
+            new Point(125f,11f,-775f),
+            new Point(105f,12f,-710f),
+            new Point(0f,12f,-640f),
+            new Point(-120f,12f,-560f),
+            new Point(-130f,11f,-490f),
+            new Point(-60f,8f,-445f),
+            new Point(-9.5f,7f,-400f),
+            new Point(-9.5f,7f,-300f),
+            new Point(-9.5f,7f,-200f),
+            new Point(-9.5f,7f,-100f),
+            new Point(-65f,7f,12f),
+            new Point(-250f,7f,40f),
+            new Point(-430f,7f,40f),
+            new Point(-565f,7f,45f),
+            new Point(-650f,15f,125f),
+            new Point(-650f,27f,230f),
+            new Point(-650f,28f,320f),
+            new Point(-650f,28f,540f),
+            new Point(-500f,28f,670f),
+            new Point(-260f,28f,670f),
+            new Point(-60f,28f,670f),
+            new Point(70f,28f,550f),
+            new Point(40f,28f,380f),
+            new Point(-80f,18f,300f),
+            new Point(-190f,8f,320f),
+            new Point(-340f,7f,335f),
+            new Point(-470f,7f,300f),
+            new Point(-500f,7f,225f),
+            new Point(-375f,7f,185f),
+            new Point(-205f,7f,185f),
+            new Point(-85f,7f,145f),
+            new Point(9.5f,7f,110f)};
         static Point[] Ridge()=>new[]{
             new Point(0,6,0),new Point(0,6,100),new Point(0,7,220),new Point(40,10,285),
             new Point(125,17,280),new Point(170,23,220),new Point(130,30,165),
@@ -139,7 +185,7 @@ namespace CoastRacer.Core
                 float metres=(distance[j]-distance[i]+Length)%Length;
                 curve=Math.Max(curve,turn/Math.Max(1,metres));
             }
-            return Mathx.Clamp((float)Math.Sqrt(6.8f/Math.Max(.002f,curve)),13,58);
+            return Mathx.Clamp((float)Math.Sqrt(6.8f/Math.Max(IsHighway(i)?.0008f:.002f,curve)),13,IsHighway(i)?87:58);
         }
     }
     [Serializable] public sealed class DriveInput
@@ -199,11 +245,14 @@ namespace CoastRacer.Core
             if(assist>0 && !grass && c.speed>t.TargetSpeed(c.index)+3)brake=Math.Max(brake,.45f*assist);
             throttle*=1-brake; // Braking takes priority even while a high-power special is active.
             float slope=forward.y*(float)Math.Cos(Mathx.Angle(c.yaw-t.Yaw(c.index)));
-            float acceleration=throttle*spec.acceleration*(c.guardBoost>0?1.10f:1)*(1-.35f*c.speed/spec.maxSpeed)*(boost?SpecialPower.BoostAcceleration:cadence?SpecialPower.CadenceAcceleration:feast?SpecialPower.FeastAcceleration:gripActive?SpecialPower.GripAcceleration:1)-brake*15-.32f-c.speed*c.speed*(c.specialTime>0&&spec.special=="aero"?.0003f:.0015f)*(1-.55f*c.draftPower)-slope*9.81f;
+            float roadFactor=t.SpeedFactor(c.Position,c.index),baseSpeed=spec.maxSpeed*roadFactor;
+            float acceleration=throttle*spec.acceleration*(c.guardBoost>0?1.10f:1)*(1-.35f*c.speed/baseSpeed)*(boost?SpecialPower.BoostAcceleration:cadence?SpecialPower.CadenceAcceleration:feast?SpecialPower.FeastAcceleration:gripActive?SpecialPower.GripAcceleration:1)-brake*15-.32f-c.speed*c.speed/(roadFactor*roadFactor)*(c.specialTime>0&&spec.special=="aero"?.0003f:.0015f)*(1-.55f*c.draftPower)-slope*9.81f;
             if(c.jamTime>0)acceleration-=SpecialPower.PulseDrag;
             if(runoff)acceleration-=2.5f+c.speed*.22f;
             if(grass)acceleration-=(3+c.speed*.18f)*(gripActive?0:1);
-            c.speed=Mathx.Clamp(c.speed+acceleration*dt,0,spec.maxSpeed*(boost?SpecialPower.BoostSpeed:1)*(c.guardBoost>0?1.10f:1)*(1+.05f*c.draftPower));
+            float limit=baseSpeed*(boost?SpecialPower.BoostSpeed:1)*(c.guardBoost>0?1.10f:1)*(1+.05f*c.draftPower);
+            float next=Math.Max(0,c.speed+acceleration*dt);
+            c.speed=c.speed>limit?Math.Max(limit,Math.Min(next,c.speed-8*dt)):Math.Min(next,limit);
             float maxAngle=.58f/(1+c.speed*.04f);
             float wantedYaw=c.speed/2.7f*(float)Math.Tan(c.steering*maxAngle);
             float grip=(grass?4.2f:spec.grip)*(gripActive?SpecialPower.Grip:1);

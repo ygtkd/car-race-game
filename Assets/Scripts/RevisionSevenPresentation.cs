@@ -39,7 +39,8 @@ namespace CoastRacer {
    }
    return root;
   }
-  void ApplyTimeOfDay(){Shader.SetGlobalFloat("_CoastNight",showroom?0:nightMode?1:0);if(!showroom){RenderSettings.fogColor=nightMode?new Color(.018f,.026f,.05f):new Color(.67f,.72f,.76f);RenderSettings.fogStartDistance=nightMode?110:250;RenderSettings.fogEndDistance=nightMode?420:800;}}
+  float caveShade;
+  void ApplyTimeOfDay(){caveShade=Mathf.MoveTowards(caveShade,!showroom&&track!=null&&cars.Count>0&&track.IsCave(cars[0].index)?.86f:0,Time.deltaTime*1.5f);Shader.SetGlobalFloat("_CoastCave",caveShade);Shader.SetGlobalFloat("_CoastNight",showroom?0:nightMode?1:0);if(!showroom){RenderSettings.fogColor=nightMode?new Color(.018f,.026f,.05f):new Color(.67f,.72f,.76f);RenderSettings.fogStartDistance=nightMode?110:250;RenderSettings.fogEndDistance=nightMode?420:800;}}
   void UpdateBlenderCar(Transform model,CarState c,float dt){
    var wheels=model.GetComponent<BlenderWheels>();if(wheels)wheels.Tick(c.steering,c.speed,dt);
    var decoration=model.GetComponentInChildren<DecorationVisibility>();if(decoration)decoration.UpdateView(cam,model.position+model.forward*(rearView?-16:16)+Vector3.up*.5f,cars.IndexOf(c)==0&&!showroom);

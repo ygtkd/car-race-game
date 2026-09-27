@@ -9,7 +9,7 @@ Shader "CoastRacer/Surface"
  #pragma fragment frag
  #pragma multi_compile_fog
  #include "UnityCG.cginc"
- float _CoastNight,_Emission,_Shore;float4 _CoastHeads[8],_CoastDirections[8];int _CoastLightCount;
+ float _CoastNight,_CoastCave,_Emission,_Shore;float4 _CoastHeads[8],_CoastDirections[8];int _CoastLightCount;
  fixed4 _Color;float _Metallic,_Smoothness,_Grain;
  struct Input {float4 vertex:POSITION;float3 normal:NORMAL;};
  struct Output {float4 vertex:SV_POSITION;float3 normal:TEXCOORD0;float3 world:TEXCOORD1;UNITY_FOG_COORDS(2)};
@@ -26,9 +26,9 @@ Shader "CoastRacer/Surface"
  float3 baseColor=groundColor*(1+(noise-.5)*_Grain);
  float3 color=baseColor*(.40+.60*diffuse)*(1-.18*_Metallic)+spec*lerp(float3(1,1,1),baseColor,_Metallic);
  color+=sky*(_Smoothness*.12+fresnel*.22)*(_Metallic+.1)+studio*_Smoothness;
- float illumination=0;
- if(_CoastNight>.5){for(int h=0;h<8;h++){if(h>=_CoastLightCount)break;float3 delta=i.world-_CoastHeads[h].xyz;float dist=length(delta);float cone=smoothstep(.85,.98,dot(normalize(delta),normalize(_CoastDirections[h].xyz)))*(1-smoothstep(12,70,dist));illumination+=cone;}}
- float ground=saturate(n.y*.8+.2);color=lerp(color,color*.19+baseColor*saturate(illumination)*ground*1.8+baseColor*_Emission*1.8,_CoastNight);
+ float illumination=0;float darkness=max(_CoastNight,_CoastCave);
+ if(darkness>.5){for(int h=0;h<8;h++){if(h>=_CoastLightCount)break;float3 delta=i.world-_CoastHeads[h].xyz;float dist=length(delta);float cone=smoothstep(.85,.98,dot(normalize(delta),normalize(_CoastDirections[h].xyz)))*(1-smoothstep(12,70,dist));illumination+=cone;}}
+ float ground=saturate(n.y*.8+.2);color=lerp(color,color*.19+baseColor*saturate(illumination)*ground*1.8+baseColor*_Emission*1.8,darkness);
  fixed4 output=fixed4(color,1);UNITY_APPLY_FOG(i.fogCoord,output);return output;
  }
  ENDCG

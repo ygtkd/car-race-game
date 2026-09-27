@@ -12,11 +12,11 @@
     },
     {
       "id": "course_shonan",
-      "parts": 31,
-      "vertices": 127030,
-      "triangles": 79426,
-      "bytes": 4003395,
-      "sha256": "6cc7342d5c7e672519d78d01bd261c5be9f038ce472fedadb670be801af466f2"
+      "parts": 35,
+      "vertices": 172182,
+      "triangles": 112972,
+      "bytes": 5489795,
+      "sha256": "ee81c579c311a40516fa2ff93f4724d80ea44ceb65e4c4b2dab069035eb72081"
     },
     {
       "id": "course_suzuka",

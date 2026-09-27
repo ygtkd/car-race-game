@@ -211,7 +211,10 @@ def course(track):
  global GROUP,PIV
  print('BUILD_COURSE',track['id'],flush=True)
  reset();pts=[(p['x'],p['y'],p['z']) for p in track['points']];N=len(pts);bridges=[any(track['bridges'][(i+d)%N] for d in range(-3,4)) for i in range(N)];id=track['id'];asphalt=mat('Asphalt',(.13,.145,.16),0,.92);runoff=mat('Runoff',(.33,.34,.32),0,.91)
- if id=='shonan':bridges=[(-395<p[2]<-85 and abs(p[0])<15) for p in pts]
+ sections=track.get('sections',[0]*N);caves=[n==1 for n in sections]
+ coast_points=[p for i,p in enumerate(pts) if -520<p[0]<-55 and -80<p[2]<35 and abs(p[1]-7)<1 and pts[(i+1)%N][0]<p[0]] if id=='shonan' else []
+ if id=='shonan':bridges=[(-395<p[2]<-85 and abs(p[0])<15) or sections[i]>=2 for i,p in enumerate(pts)]
+ def sea_bridge(i):return id=='shonan' and -395<pts[i][2]<-85 and abs(pts[i][0])<15
  def right(i):
   a=pts[(i-1)%N];c=pts[(i+1)%N];d=Vector((c[0]-a[0],0,c[2]-a[2])).normalized();return Vector((d.z,0,-d.x))
  def strip(name,lo,hi,lift,m,sel=None):
@@ -220,7 +223,7 @@ def course(track):
    if sel and not sel(i):continue
    j=(i+1)%N;k=len(v)
    for q,r in [(i,lo),(i,hi),(j,lo),(j,hi)]:
-    if id=='shonan' and bridges[q]:r=max(-8.5,min(8.5,r))
+    if sea_bridge(q):r=max(-8.5,min(8.5,r))
     v.append(tuple(Vector(pts[q])+right(q)*r+Vector((0,lift,0))))
    f.extend([(k,k+2,k+1),(k+1,k+2,k+3)])
   return mesh(name,v,f,m)
@@ -234,10 +237,11 @@ def course(track):
  import functools
  @functools.lru_cache(maxsize=100000)
  def road_sample(x,z):
-  nearest=sorted(range(N),key=lambda i:(pts[i][0]-x)**2+(pts[i][2]-z)**2)[:24]
+  nearest=sorted((i for i in range(N) if not caves[i]),key=lambda i:(pts[i][0]-x)**2+(pts[i][2]-z)**2)[:24]
   candidates=[]
   for i in nearest:
    for k in [(i-1)%N,i]:
+    if caves[k]:continue
     a=pts[k];c=pts[(k+1)%N];dx=c[0]-a[0];dz=c[2]-a[2];f=max(0,min(1,((x-a[0])*dx+(z-a[2])*dz)/max(.001,dx*dx+dz*dz)))
     d=math.hypot(x-a[0]-f*dx,z-a[2]-f*dz);h=a[1]+f*(c[1]-a[1]);candidates.append((d,h,k))
   candidates.sort();d,h,k=candidates[0]
@@ -252,12 +256,16 @@ def course(track):
   # A broad verge meets the road; the distant landscape changes gradually.
   blend=max(0,min(1,(d-28)/100));blend=blend*blend*(3-2*blend)
   if id=='shonan':
-   island=(x/210)**2+((z+615)/180)**2
-   far=78*math.exp(-island*1.15)-5 if z<-80 else 4
+   island=(x/175)**2+((z+590)/175)**2
+   far=82*math.exp(-island*.9)-5 if z<-80 else 4
    hillblend=max(0,min(1,(d-24)/55));hillblend=hillblend*hillblend*(3-2*hillblend)
    result=(h-.75)*(1-hillblend)+far*hillblend
-   channel=min((z+430)/20,(-65-z)/20);water=max(0,min(1,channel));water=water*water*(3-2*water)
-   return result*(1-water)-4*water
+   channel=min((z+415)/15,(-75-z)/15);water=max(0,min(1,channel));water=water*water*(3-2*water)
+   result=result*(1-water)-4*water
+   if coast_points and -510<x<-55:
+    shore=min(coast_points,key=lambda p:abs(p[0]-x));south=shore[2]-z
+    if south>17:result=min(result,max(-4,6.2-(south-17)*.16))
+   return result
   hill=(9+9*math.sin(x*.012)*math.cos(z*.015)) if id=='ridge' else -2
   return h-.75+hill*blend
  minx=min(p[0] for p in pts)-150;maxx=max(p[0] for p in pts)+150;minz=min(p[2] for p in pts)-150;maxz=max(p[2] for p in pts)+150
@@ -267,6 +275,18 @@ def course(track):
   for ix in range(nx+1):
    x=minx+sx*ix;z=minz+sz*iz;v.append((x,raw_height(x,z),z))
    if ix<nx and iz<nz:k=iz*(nx+1)+ix;f.extend([(k,k+nx+1,k+1),(k+1,k+nx+1,k+nx+2)])
+ if id=='shonan':
+  # Clip only exposed portal triangles. Deep cave roofs and the upper crossing remain intact.
+  cave_indices=[i for i in range(N) if caves[i]]
+  def portal_block(face):
+   for vertex in [v[k] for k in face]+[tuple(sum(v[k][a] for k in face)/len(face) for a in range(3))]:
+    x,y,z=vertex
+    for i in cave_indices:
+     a=pts[i];c=pts[(i+1)%N];dx=c[0]-a[0];dz=c[2]-a[2];u=max(0,min(1,((x-a[0])*dx+(z-a[2])*dz)/max(.001,dx*dx+dz*dz)))
+     d=math.hypot(x-a[0]-u*dx,z-a[2]-u*dz);h=a[1]+u*(c[1]-a[1])
+     if d<19 and h-.1<y<h+13:return True
+   return False
+  f=[face for face in f if not portal_block(face)]
  print('TERRAIN_READY',id,len(v),flush=True)
  terrain=mesh('Continuous landscape',v,f,grass)
  if id=='shonan':terrain.data.materials.append(sand)
@@ -281,7 +301,7 @@ def course(track):
   verts=[];faces=[]
   for i in range(N):
    j=(i+1)%N
-   if bridges[i] or bridges[j]:continue
+   if bridges[i] or bridges[j] or caves[i] or caves[j]:continue
    k=len(verts)
    for q in [i,j]:
     for width in [16,21,28]:
@@ -294,6 +314,7 @@ def course(track):
   def covers_road(point):
    x,y,z=point;nearest=sorted(range(N),key=lambda k:(pts[k][0]-x)**2+(pts[k][2]-z)**2)[:24]
    for k in set(nearest+[(n-1)%N for n in nearest]):
+    if caves[k]:continue
     a=pts[k];c=pts[(k+1)%N];dx=c[0]-a[0];dz=c[2]-a[2];u=max(0,min(1,((x-a[0])*dx+(z-a[2])*dz)/max(.001,dx*dx+dz*dz)))
     if (x-a[0]-dx*u)**2+(z-a[2]-dz*u)**2<16.25**2 and y>a[1]+(c[1]-a[1])*u-.04:return True
    return False
@@ -306,17 +327,17 @@ def course(track):
   mesh('Graded road verge',verts,trimmed,grass)
  for i in range(N):
   if bridges[i]:
-   j=(i+1)%N;a=Vector(pts[i]);c=Vector(pts[j]);r=right(i)*(8.5 if id=='shonan' else 16);mesh('Concrete bridge deck',[tuple(a-r),tuple(a+r),tuple(c-r),tuple(c+r),tuple(a-r-Vector((0,1.1,0))),tuple(a+r-Vector((0,1.1,0))),tuple(c-r-Vector((0,1.1,0))),tuple(c+r-Vector((0,1.1,0)))],[(4,5,7,6),(0,4,6,2),(1,3,7,5)],concrete)
-   if i%8==0 and id!='shonan':
+   j=(i+1)%N;a=Vector(pts[i]);c=Vector(pts[j]);r=right(i)*(8.5 if sea_bridge(i) else 17);mesh('Concrete bridge deck',[tuple(a-r),tuple(a+r),tuple(c-r),tuple(c+r),tuple(a-r-Vector((0,1.1,0))),tuple(a+r-Vector((0,1.1,0))),tuple(c-r-Vector((0,1.1,0))),tuple(c+r-Vector((0,1.1,0)))],[(4,5,7,6),(0,4,6,2),(1,3,7,5)],concrete)
+   if i%8==0 and not sea_bridge(i):
     for side in [-1,1]:
      p=a+right(i)*side*12
      if all(q[1]>a.y-4 or (p.x-q[0])**2+(p.z-q[2])**2>24**2 for q in pts):
       ground=terrain_height(p.x,p.z)-.5;top=a.y-1.1;box('Bridge pier',(p.x,(ground+top)/2,p.z),(1.6,top-ground,1.8),concrete)
   if i%4==0:
    for side in [-1,1]:
-    p=Vector(pts[i])+right(i)*side*(8.5 if id=='shonan' and bridges[i] else 17.4)
+    p=Vector(pts[i])+right(i)*side*(8.5 if sea_bridge(i) else 17.4)
     if any(abs(k-i)>14 and abs(k-i)<N-14 and (p.x-q[0])**2+(p.z-q[2])**2<18**2 and abs(p.y-q[1])<4 for k,q in enumerate(pts)):continue
-    q=Vector(pts[(i+4)%N])+right((i+4)%N)*side*(8.5 if id=='shonan' and bridges[i] else 17.4)
+    q=Vector(pts[(i+4)%N])+right((i+4)%N)*side*(8.5 if sea_bridge(i) else 17.4)
     beam('Safety rail',tuple(p+Vector((0,.75,0))),tuple(q+Vector((0,.75,0))),.12,silver,vertices=6)
     beam('Rail post',tuple(p-Vector((0,.8,0))),tuple(p+Vector((0,.82,0))),.09,concrete,vertices=6)
  def clear(x,z,r=8):return all((x-p[0])**2+(z-p[2])**2>(24+r)**2 for p in pts[::2])
@@ -340,7 +361,7 @@ def course(track):
  if id=='shonan':
   box('Ocean',((minx+maxx)/2,-2,(minz+maxz)/2),(maxx-minx+600,.15,maxz-minz+600),mat('Sea',(.03,.27,.34),.1,.18),0)
   # Enoshima-inspired tower at the centre of the island; route surrounds it.
-  x,z=0,-615;y=terrain_height(x,z)
+  x,z=0,-650;y=terrain_height(x,z)
   box('Sea Candle plaza',(x,y+.3,z),(32,.6,32),concrete)
   beam('Sea Candle shaft',(x,y,z),(x,y+42,z),2.4,white,1.6,20)
   beam('Sea Candle observation',(x,y+36,z),(x,y+42,z),7,glass,6.5,24)
@@ -353,16 +374,27 @@ def course(track):
   for zz in range(-380,-90,40):
    box('Bridge crossbeam',(0,5.5,zz),(37,1.4,2.0),concrete)
    for xx in [-15,15]:box('Sea bridge pier',(xx,1.5,zz),(2,8,2.4),concrete)
+  beach=[];beachfaces=[]
+  for i in range(N):
+   a=pts[i];c=pts[(i+1)%N]
+   if a not in coast_points:continue
+   # Follow the final triangulated coast, rather than hiding a plane beneath it.
+   for distance in range(20,84,8):
+    k=len(beach)
+    for p,d in [(a,distance),(a,distance+8),(c,distance),(c,distance+8)]:
+     x,z=p[0],p[2]-d;beach.append((x,terrain_height(x,z)+.10,z))
+    beachfaces.extend([(k,k+2,k+1),(k+1,k+2,k+3)])
+  mesh('Shonan sandy beachfront',beach,beachfaces,sand)
   # Tapered angular Eboshi rock silhouette offshore of the westbound seafront.
-  x,z=-465,-165
+  x,z=-370,-165
   mesh('Eboshi rock',[(x-13,-2,z-8),(x+13,-2,z-8),(x+9,-2,z+9),(x-10,-2,z+11),(x-6,9,z-6),(x+5,12,z-4),(x+2,25,z),(x-5,22,z+3)],[(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)],rock)
   for j in range(18):
-   x=-600+j*32;z=385+(j%2)*35
+   x=-480+j*25;z=320+(j%2)*28
    if clear(x,z,13):
     y=terrain_height(x,z);box('Shonan townhouse',(x,y+4,z),(17,8,13),mat('Coast house '+str(j%3),[(.75,.70,.59),(.51,.60,.61),(.67,.42,.30)][j%3]));box('House roof',(x,y+8.3,z),(19,.6,15),red)
     for q in [-1,1]:box('Townhouse window',(x+q*4,y+4,z-6.6),(3,3,.1),glass)
   for j in range(0,N,10):
-   if bridges[j]:continue
+   if bridges[j] or caves[j]:continue
    for side in [-1,1]:
     p=Vector(pts[j])+right(j)*side*(36+(j%3)*9)
     if not clear(p.x,p.z,5):continue
@@ -380,18 +412,70 @@ def course(track):
      box('Shop roof',(p.x,ground+5.15,p.z),(9,.3,7),concrete,0)
      box('Shop window',(p.x,ground+2,p.z-3.03),(4,2,.08),glass,0)
   # Scenic railway is separate from the racing road. Cars animate together as one pivot group.
-  for zz in [363.5,366.5]:beam('Enoden rail',(-605,11,zz),(-180,11,zz),.09,silver,vertices=6)
-  for xx in range(-605,-175,5):
-   ground=min(terrain_height(xx,362),terrain_height(xx,368));box('Railway embankment',(xx,(ground+10.65)/2,365),(5.1,max(.3,10.65-ground),6),rock,0);box('Railway sleeper',(xx,10.8,365),(.8,.3,4.5),wood,0)
-  GROUP='train';PIV=(-440,11,365)
-  for xx in [-450,-432]:
-   box('Enoden green carriage',(xx,13,365),(16,3.4,3.2),mat('Enoden green',(.045,.25,.13)),.3)
-   box('Enoden cream waist',(xx,13.1,365),(16.03,.65,3.25),mat('Enoden cream',(.83,.78,.57)),.04)
-   box('Enoden silver roof',(xx,14.9,365),(16.2,.4,3.3),silver,.15)
+  for zz in [272.5,275.5]:beam('Enoden rail',(-410,11,zz),(-140,11,zz),.09,silver,vertices=6)
+  for xx in range(-410,-135,5):
+   ground=min(terrain_height(xx,271),terrain_height(xx,277));box('Railway embankment',(xx,(ground+10.65)/2,274),(5.1,max(.3,10.65-ground),6),rock,0);box('Railway sleeper',(xx,10.8,274),(.8,.3,4.5),wood,0)
+  GROUP='train';PIV=(-275,11,274)
+  for xx in [-285,-267]:
+   box('Enoden green carriage',(xx,13,274),(16,3.4,3.2),mat('Enoden green',(.045,.25,.13)),.3)
+   box('Enoden cream waist',(xx,13.1,274),(16.03,.65,3.25),mat('Enoden cream',(.83,.78,.57)),.04)
+   box('Enoden silver roof',(xx,14.9,274),(16.2,.4,3.3),silver,.15)
    for side in [-1,1]:
-    for k in range(6):box('Enoden window',(xx-6+k*2.4,14,365+side*1.63),(1.8,1.15,.04),glass,.05)
-   for offset in [-5,5]:beam('Train axle',(xx+offset,11.5,363.6),(xx+offset,11.5,366.4),.5,black,vertices=10)
+    for k in range(6):box('Enoden window',(xx-6+k*2.4,14,274+side*1.63),(1.8,1.15,.04),glass,.05)
+   for offset in [-5,5]:beam('Train axle',(xx+offset,11.5,272.6),(xx+offset,11.5,275.4),.5,black,vertices=10)
   GROUP='body';PIV=(0,0,0)
+  # A solid rock vault follows the lower loop; upper roads are never trimmed against it.
+  cave_material=mat('Cave basalt',(.16,.155,.14),0,.98)
+  vertices=[];faces=[]
+  for i in range(N):
+   if not caves[i]:continue
+   j=(i+1)%N;k=len(vertices)
+   for q in [i,j]:
+    a=Vector(pts[q]);r=right(q)
+    for n in range(17):
+     angle=n*math.pi/16
+     vertices.append(tuple(a+r*(math.cos(angle)*18.5)+Vector((0,math.sin(angle)*12.5,0))))
+   for n in range(16):faces.append((k+n,k+n+1,k+n+18,k+n+17))
+   if i%5==0:
+    for side in [-1,1]:
+     a=Vector(pts[i])+right(i)*side*17.8
+     box('Iwaya guide lamp',tuple(a+Vector((0,3,0))),(1,.7,.45),white,0)
+     beam('Cave rock rib',tuple(a),tuple(a+Vector((0,5,0))),.6,cave_material,.3,7)
+  shell=mesh('Iwaya cave vault',vertices,faces,cave_material);mod=shell.modifiers.new('Rock thickness','SOLIDIFY');mod.thickness=1.5
+  # Broad low-rise roadside station, clear of the westbound approach and right-hand ramp.
+  x,z=-460,92;y=terrain_height(x,z)
+  box('Road station foundation',(x,y+.15,z),(52,.6,32),concrete,0)
+  box('Road station market',(x,y+4,z),(42,8,20),mat('Station timber',(.46,.27,.12)),.12)
+  box('Road station canopy',(x,y+8.3,z),(52,.65,28),white,.1)
+  for dx in range(-18,19,6):box('Station shopfront',(x+dx,y+4,z-10.1),(4.5,4,.12),glass,0)
+  box('Station parking',(x,y+.1,z+34),(62,.2,30),asphalt,0)
+  for dx in range(-25,26,7):box('Parking bay line',(x+dx,y+.23,z+34),(.10,.03,10),chalk,0)
+  # Japanese station sign becomes authored mesh geometry, not a runtime font dependency.
+  for fontpath in ['C:/Windows/Fonts/YuGothM.ttc','C:/Windows/Fonts/meiryo.ttc']:
+   if Path(fontpath).exists():
+    curve=bpy.data.curves.new('Station lettering','FONT');curve.body='\u9053\u306e\u99c5 \u6e58\u5357\u3061\u304c\u3055\u304d';curve.font=bpy.data.fonts.load(fontpath);curve.align_x='CENTER';curve.size=2;curve.extrude=.025
+    o=bpy.data.objects.new('Road station sign',curve);bpy.context.collection.objects.link(o);o.location=b((x,y+7,z-10.2));o.rotation_euler=(math.pi/2,0,0);curve.materials.append(white);o['group']='body';o['pivot']=(0,0,0)
+    bpy.context.view_layer.objects.active=o;o.select_set(True);bpy.ops.object.convert(target='MESH');o.select_set(False);break
+  # ETC entry is at the transition from climbing ramp to expressway.
+  entry=next(i for i in range(N) if sections[i]==2 and sections[(i-1)%N]!=2)
+  a=Vector(pts[entry]);r=right(entry);forward=Vector((-r.z,0,r.x))
+  for side in [-1,1]:beam('ETC pillar',tuple(a+r*side*16),tuple(a+r*side*16+Vector((0,8,0))),.65,concrete,vertices=8)
+  beam('ETC gantry',tuple(a-r*17+Vector((0,8,0))),tuple(a+r*17+Vector((0,8,0))),.55,silver,vertices=8)
+  for side in [-1,1]:
+   p=a+r*side*5+Vector((0,6.7,0));sign=box('ETC open lane',tuple(p),(7,2.3,.35),mat('ETC violet',(.20,.04,.40)),.04);sign.rotation_euler[2]=math.atan2(-r.z,r.x)
+   curve=bpy.data.curves.new('ETC lettering','FONT');curve.body='ETC';curve.align_x='CENTER';curve.size=1.35;curve.extrude=.01
+   o=bpy.data.objects.new('ETC lettering',curve);bpy.context.collection.objects.link(o);o.location=b(tuple(p-forward*.3+Vector((0,-.15,0))));o.rotation_euler=(math.pi/2,0,math.atan2(-r.z,r.x));curve.materials.append(white);o['group']='body';o['pivot']=(0,0,0)
+   bpy.context.view_layer.objects.active=o;o.select_set(True);bpy.ops.object.convert(target='MESH');o.select_set(False)
+   for dx in [-2,0,2]:beam('ETC green signal',tuple(p+r*dx+Vector((0,-.75,0))),tuple(p+r*dx+Vector((0,-.35,0))),.15,mat('ETC lamp',(.92,.94,1)),vertices=6)
+  for i in range(N):
+   if sections[i]<2:continue
+   j=(i+1)%N
+   if True:
+    for side in [-1,1]:
+     a=Vector(pts[i])+right(i)*side*16.9;c=Vector(pts[j])+right(j)*side*16.9
+     beam('Expressway parapet',tuple(a+Vector((0,.7,0))),tuple(c+Vector((0,.7,0))),.42,concrete,vertices=4)
+   if sections[i]==2 and i%3==0:
+    a=Vector(pts[i]);c=Vector(pts[j]);beam('Expressway lane dash',tuple(a+Vector((0,.035,0))),tuple(c+Vector((0,.035,0))),.055,chalk,vertices=4)
  if id=='ridge':
   # Short open-ended tunnel on the existing climb; no changes to the road itself.
   verts=[];faces=[]

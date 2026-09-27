@@ -253,3 +253,12 @@ mainへ89ac0c5をpush。Actions 35993094386 success。公開Build 5eb6ff04bcd7�
 
 
 改修9 Azure公開完了（2026-09-27）。mainへ4da8cb9をpushし、GitHub Actions 36259699336が成功。公開Build 44db0ee151c0、health=ok、公開ブラウザー8項目成功・エラー0。湘南記録APIは初回503の後、再試行でHTTP 200を確認。スマホ実機と本番8人の継続負荷は未確認。新規インストールなし。CarController.csの既存ユーザー変更と中間ビルド31d84f229152は未コミット。公開URL: https://car-race-game-gmczdrgba5bph0gp.japanwest-01.azurewebsites.net/play/ 。詳細 docs/REVISION_9_PUBLIC_VALIDATION.json。
+
+
+改修10を実装中（2026-09-27）。ユーザー追記により全長4～5kmへ延長、スタート約600m制約を解除。現コース4,708.45m、高速道路本線978.34m、橋入口まで74.33m。八の字の上段山道／下段洞窟、道の駅、ETC、高速道路、スワイプ選択、v4記録移行、高速道路1.5倍補正を実装。10レース80台完走・強制復帰0、地形1920点・洞窟天井213点で異常0（天井再生成後の最終再確認は残る）。WebGLビルド中、オンライン2クライアント走行中、ブラウザー最終確認と画像・負荷測定はこれから。CarController.cs未編集。未push・未公開。容量ガード1GiB維持。
+
+
+改修10 再開・最終ビルド保存（2026-09-27）: Build 8d24358e4132 をWebBuildへ反映。全長4,707.44m、本線978.34m、八の字山道／洞窟、海岸と道の駅・ETC・高速道路、スワイプを実装。共通58・回帰392・移行157・通信16・最終ブラウザー37項目成功。10レース80台2周完走・復帰0、オンライン2台2周完走・再戦を確認。CarController.csは原本未編集、分離ビルド内はHEADと一致する空ファイルへ戻して再ビルド済み。PC GPU負荷測定の残りと最終リリース検証を継続中。docs/REVISION_10_IMPLEMENTATION.md、REVISION_10_VALIDATION.json参照。未push・未公開、新規インストールなし、空き約6.6GiB。
+
+
+改修10 ローカル実装・検証完了（2026-09-27）。Build 8d24358e4132をWebBuildへ反映。湘南4,707.44m・高速道路978.34m、山道／洞窟の八の字、海岸と道の駅・ETC・高速道路、スワイプ選択、高速道路基礎最高速度1.5倍を実装。共通58・回帰392・移行157・通信16・ブラウザー37・リリース8項目成功。10レース80台2周完走・強制復帰0、オンライン2台2周完走・再戦を確認。PC AMD GPUの32サンプル測定、改修10の描画更新29.68～30.13回/秒、実行時エラー0。実機未確認。新規インストールなし。CarController.csの原本は未編集、分離ビルド側はHEADと一致。未push・未公開。詳細docs/REVISION_10_IMPLEMENTATION.md、REVISION_10_VALIDATION.json、REVISION_10_PERFORMANCE.md。
